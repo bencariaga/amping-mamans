@@ -1566,5 +1566,3 @@ js/
 ---
 
 **Thank you for understanding and reaching the end of the description!**
-#   a m p i n g - m a m a n s  
- 
