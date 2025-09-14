@@ -1,0 +1,391 @@
+:root {
+    --danger-color: hsl(0, 70%, 50%);
+    --success-color: hsl(140, 50%, 45%);
+    --container-border: #ced4da;
+    --placeholder-color: #666;
+    --disabled-border-color-1: #bbb;
+    --disabled-border-color-2: #999;
+    --disabled-bg-color-1: #f4f4f4;
+    --disabled-bg-color-2: #ececec;
+    --disabled-text-color: #ccc;
+    --item-shadow: rgba(0, 0, 0, 0.3);
+    --item-bg: #fff;
+    --input-bg: #eee;
+    --input-border: #888;
+    --input-bg-focus: #fff;
+    --input-text: #000;
+    --date-picker-icon: invert(0%);
+    --date-picker-bg: #fff;
+    --date-picker-text: #000;
+    --dark-mode-invert: 0;
+    --arrow-color: #333;
+}
+
+[data-theme="dark"] {
+    --danger-color: hsl(0, 75%, 58%);
+    --success-color: hsl(140, 60%, 50%);
+    --container-border: #444;
+    --placeholder-color: #aaa;
+    --disabled-border-color-1: #444;
+    --disabled-border-color-2: #555;
+    --disabled-bg-color-1: #272727;
+    --disabled-bg-color-2: #323232;
+    --disabled-text-color: #aaa;
+    --item-shadow: rgba(0, 0, 0, 0.3);
+    --item-bg: #222;
+    --input-bg: #333;
+    --input-border: #444;
+    --input-bg-focus: #000;
+    --input-text: #fff;
+    --date-picker-icon: invert(100%);
+    --date-picker-bg: #333;
+    --date-picker-text: #fff;
+    --dark-mode-invert: 0;
+    --arrow-color: #fff;
+}
+
+input[type="date"] {
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(var(--dark-mode-invert));
+    cursor: pointer;
+}
+
+.form-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 0.5em;
+}
+
+.form-legend i {
+    font-size: 20px;
+}
+
+.main-content-body {
+    padding-top: 0.5rem;
+}
+
+.profile-container {
+    max-width: 1200px;
+    border-radius: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 32px;
+    padding-bottom: 16px;
+    background-color: var(--item-bg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1.5px solid var(--container-border);
+    box-shadow: 0 5px 15px var(--item-shadow);
+}
+
+.profile-section {
+    width: 100%;
+}
+
+#profileSection {
+    margin-bottom: 6rem;
+}
+
+.profile-section .dropdown {
+    position: relative;
+}
+
+.profile-section .dropdown-menu {
+    top: auto !important;
+    bottom: 100% !important;
+    max-height: 178px;
+    overflow-y: auto;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="number"] {
+    color-scheme: dark;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    appearance: auto;
+    -webkit-appearance: auto;
+    background-color: var(--input-bg);
+    filter: invert(var(--dark-mode-invert));
+}
+
+.header-title {
+    padding-left: 12px;
+}
+
+.form-legend {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-weight: bold !important;
+    margin-bottom: 0.5rem;
+}
+
+.required-asterisk {
+    color: var(--danger-color);
+}
+
+#applicantFirstNameInput,
+#applicantMiddleNameInput,
+#applicantLastNameInput,
+#applicantBirthdateInput,
+#applicantPhoneNumberInput,
+#applicantStreetInput,
+#applicantCustomOccupationInput,
+#applicantMonthlyIncomeInput,
+#applicantSuffixDropdownBtn,
+#applicantSexDropdownBtn,
+#applicantCivilStatusDropdownBtn,
+#applicantBarangayDropdownBtn,
+#applicantHouseStatusDropdownBtn,
+#applicantLotStatusDropdownBtn,
+#applicantJobStatusDropdownBtn,
+#applicantOccupationDropdownBtn,
+#applicantRepresentingPatientDropdownBtn,
+#applicantPatientCountDropdownBtn,
+#applicantPhicAffiliationDropdownBtn,
+#applicantPhicCategoryDropdownBtn,
+.form-control[id^="patientFirstNameInput-"],
+.form-control[id^="patientMiddleNameInput-"],
+.form-control[id^="patientLastNameInput-"],
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+    height: 50px;
+    border-radius: 6px;
+    padding: 12px 1rem;
+    border: 1px solid var(--input-border);
+    color: var(--input-text);
+    background-color: var(--input-bg);
+    transition: all 50ms ease;
+    font-size: 16px;
+    position: relative;
+}
+
+#applicantSuffixDropdownBtn,
+#applicantSexDropdownBtn,
+#applicantCivilStatusDropdownBtn,
+#applicantBarangayDropdownBtn,
+#applicantHouseStatusDropdownBtn,
+#applicantLotStatusDropdownBtn,
+#applicantJobStatusDropdownBtn,
+#applicantOccupationDropdownBtn,
+#applicantRepresentingPatientDropdownBtn,
+#applicantPatientCountDropdownBtn,
+#applicantPhicAffiliationDropdownBtn,
+#applicantPhicCategoryDropdownBtn,
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+    font-weight: normal;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+}
+
+[data-theme="dark"] #applicantFirstNameInput,
+[data-theme="dark"] #applicantMiddleNameInput,
+[data-theme="dark"] #applicantLastNameInput,
+[data-theme="dark"] #applicantBirthdateInput,
+[data-theme="dark"] #applicantPhoneNumberInput,
+[data-theme="dark"] #applicantStreetInput,
+[data-theme="dark"] #applicantCustomOccupationInput,
+[data-theme="dark"] #applicantMonthlyIncomeInput,
+[data-theme="dark"] #applicantSuffixDropdownBtn,
+[data-theme="dark"] #applicantSexDropdownBtn,
+[data-theme="dark"] #applicantCivilStatusDropdownBtn,
+[data-theme="dark"] #applicantBarangayDropdownBtn,
+[data-theme="dark"] #applicantHouseStatusDropdownBtn,
+[data-theme="dark"] #applicantLotStatusDropdownBtn,
+[data-theme="dark"] #applicantJobStatusDropdownBtn,
+[data-theme="dark"] #applicantOccupationDropdownBtn,
+[data-theme="dark"] #applicantRepresentingPatientDropdownBtn,
+[data-theme="dark"] #applicantPatientCountDropdownBtn,
+[data-theme="dark"] #applicantPhicAffiliationDropdownBtn,
+[data-theme="dark"] #applicantPhicCategoryDropdownBtn,
+[data-theme="dark"] .form-control[id^="patientFirstNameInput-"],
+[data-theme="dark"] .form-control[id^="patientMiddleNameInput-"],
+[data-theme="dark"] .form-control[id^="patientLastNameInput-"],
+[data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+    border-color: var(--input-border);
+}
+
+#applicantFirstNameInput:hover,
+#applicantMiddleNameInput:hover,
+#applicantLastNameInput:hover,
+#applicantBirthdateInput:hover,
+#applicantPhoneNumberInput:hover,
+#applicantStreetInput:hover,
+#applicantCustomOccupationInput:hover,
+#applicantMonthlyIncomeInput:hover,
+#applicantSuffixDropdownBtn:hover,
+#applicantSexDropdownBtn:hover,
+#applicantCivilStatusDropdownBtn:hover,
+#applicantBarangayDropdownBtn:hover,
+#applicantHouseStatusDropdownBtn:hover,
+#applicantLotStatusDropdownBtn:hover,
+#applicantJobStatusDropdownBtn:hover,
+#applicantOccupationDropdownBtn:hover,
+#applicantRepresentingPatientDropdownBtn:hover,
+#applicantPatientCountDropdownBtn:hover,
+#applicantPhicAffiliationDropdownBtn:hover,
+#applicantPhicCategoryDropdownBtn:hover,
+.form-control[id^="patientFirstNameInput-"]:hover,
+.form-control[id^="patientMiddleNameInput-"]:hover,
+.form-control[id^="patientLastNameInput-"]:hover,
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover {
+    background-color: var(--input-bg-focus);
+}
+
+#applicantFirstNameInput:focus,
+#applicantMiddleNameInput:focus,
+#applicantLastNameInput:focus,
+#applicantBirthdateInput:focus,
+#applicantPhoneNumberInput:focus,
+#applicantStreetInput:focus,
+#applicantCustomOccupationInput:focus,
+#applicantMonthlyIncomeInput:focus,
+#applicantSuffixDropdownBtn:focus,
+#applicantSexDropdownBtn:focus,
+#applicantCivilStatusDropdownBtn:focus,
+#applicantBarangayDropdownBtn:focus,
+#applicantHouseStatusDropdownBtn:focus,
+#applicantLotStatusDropdownBtn:focus,
+#applicantJobStatusDropdownBtn:focus,
+#applicantOccupationDropdownBtn:focus,
+#applicantRepresentingPatientDropdownBtn:focus,
+#applicantPatientCountDropdownBtn:focus,
+#applicantPhicAffiliationDropdownBtn:focus,
+#applicantPhicCategoryDropdownBtn:focus,
+.form-control[id^="patientFirstNameInput-"]:focus,
+.form-control[id^="patientMiddleNameInput-"]:focus,
+.form-control[id^="patientLastNameInput-"]:focus,
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+#applicantSuffixDropdownBtn::after,
+#applicantSexDropdownBtn::after,
+#applicantCivilStatusDropdownBtn::after,
+#applicantBarangayDropdownBtn::after,
+#applicantHouseStatusDropdownBtn::after,
+#applicantLotStatusDropdownBtn::after,
+#applicantJobStatusDropdownBtn::after,
+#applicantOccupationDropdownBtn::after,
+#applicantRepresentingPatientDropdownBtn::after,
+#applicantPatientCountDropdownBtn::after,
+#applicantPhicAffiliationDropdownBtn::after,
+#applicantPhicCategoryDropdownBtn::after,
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]::after {
+    position: absolute;
+    font-size: 1.5rem;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--arrow-color);
+}
+
+#applicantSuffixDropdownBtn.rotated::after,
+#applicantSexDropdownBtn.rotated::after,
+#applicantCivilStatusDropdownBtn.rotated::after,
+#applicantBarangayDropdownBtn.rotated::after,
+#applicantHouseStatusDropdownBtn.rotated::after,
+#applicantLotStatusDropdownBtn.rotated::after,
+#applicantJobStatusDropdownBtn.rotated::after,
+#applicantOccupationDropdownBtn.rotated::after,
+#applicantRepresentingPatientDropdownBtn.rotated::after,
+#applicantPatientCountDropdownBtn.rotated::after,
+#applicantPhicAffiliationDropdownBtn.rotated::after,
+#applicantPhicCategoryDropdownBtn.rotated::after,
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"].rotated::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.dropdown-menu,
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg);
+}
+
+.dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+#applicantCustomOccupationInput[disabled],
+.form-control[id^="patientFirstNameInput-"][readonly],
+.form-control[id^="patientMiddleNameInput-"][readonly],
+.form-control[id^="patientLastNameInput-"][readonly] {
+    background-color: var(--disabled-bg-color-1);
+    border-color: var(--disabled-border-color-1);
+    color: var(--placeholder-color);
+}
+
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"][disabled] {
+    background-color: var(--disabled-bg-color-2);
+    border-color: var(--disabled-border-color-2);
+}
+
+.form-control::placeholder {
+    color: var(--placeholder-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-hover);
+    border-color: var(--primary-color-hover);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}

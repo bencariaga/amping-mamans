@@ -1,0 +1,42 @@
+.amping-container {
+    width: 44rem;
+}
+
+.image-row {
+    background-color: #fff;
+    height: 11rem;
+    width: 33rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--section-shadow);
+}
+
+.image-row img {
+    height: 8rem;
+    object-fit: contain;
+}
+
+.seal-img {
+    width: 8rem;
+}
+
+.action-buttons {
+    height: 60px;
+    width: 550px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+    height: 60px;
+    width: 256px;
+}
+
+@media (max-width: 992px) {
+    .action-buttons {
+        flex-direction: column !important;
+    }
+
+    .btn-action {
+        width: 100% !important;
+    }
+}

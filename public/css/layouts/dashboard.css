@@ -1,0 +1,94 @@
+a,
+button {
+    cursor: pointer;
+}
+
+body {
+    color: var(--text-color);
+}
+
+.header-container {
+    margin-bottom: 20px;
+}
+
+.header-left {
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.card-budget {
+    height: 150px;
+    padding: 28px;
+    border-radius: 0.5rem;
+    background-color: var(--card-bg);
+    border: 1.5px solid var(--input-border);
+    box-shadow: 0 5px 15px var(--box-shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-budget:hover {
+    transform: translateY(-5px);
+    border: 1.5px solid var(--input-border);
+    box-shadow: 0 5px 15px var(--box-shadow);
+}
+
+.card-title {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.card-amount,
+.card-subamount {
+    color: var(--primary-color);
+}
+
+.card-amount {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 700;
+}
+
+.card-subtitle {
+    font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+    opacity: 0.8;
+    color: var(--text-color);
+}
+
+.card-subamount {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 700;
+}
+
+.live-clock-container {
+    display: inline-flex;
+    align-items: center;
+}
+
+.live-clock-container {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    margin-left: 26px;
+}
+
+.live-clock-container {
+    font-size: 24px;
+}
+
+@media (max-width: 992px) {
+    .live-clock-container {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-left {
+        width: 100%;
+        gap: 0.5rem;
+    }
+}

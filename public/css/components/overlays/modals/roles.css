@@ -1,0 +1,87 @@
+#new-role-name:hover,
+#new-role-name:focus,
+#editing-role-name:hover,
+#editing-role-name:focus {
+    background-color: #fff;
+    border-color: #888;
+}
+
+[data-theme="dark"] #new-role-name:hover,
+[data-theme="dark"] #new-role-name:focus,
+[data-theme="dark"] #editing-role-name:hover,
+[data-theme="dark"] #editing-role-name:focus {
+    background-color: #000;
+    border-color: #444;
+}
+
+#saveBtn,
+#cancelBtn,
+#add-role,
+#cancel-roles-changes,
+#confirm-roles-changes {
+    font-size: 16px;
+}
+
+#form-section {
+    margin-bottom: 1.5rem;
+}
+
+#form-section,
+.list-section,
+.role-item[id^="role-item-"] {
+    border-color: #888;
+}
+
+[data-theme="dark"] #form-section,
+[data-theme="dark"] .list-section,
+[data-theme="dark"] .role-item[id^="role-item-"] {
+    border-color: #444;
+}
+
+.roles-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.role-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.role-item:last-child {
+    margin-bottom: 0;
+}
+
+.role-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.role-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.role-meta {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.role-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 1rem;
+    flex-shrink: 0;
+}
