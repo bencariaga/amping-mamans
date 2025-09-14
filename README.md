@@ -156,8 +156,8 @@ The current application process, however, heavily relies on physical materials, 
 
 | Tool Name | Installation CLI Command |
 | :--- | :--- |
-| Bootstrap | `npm install bootstrap@5.3.7` |
-| Font Awesome | `npm install @fortawesome/fontawesome-free@6.7.2` |
+| Bootstrap | `npm install bootstrap@5.3.8` |
+| Font Awesome | `npm install @fortawesome/fontawesome-free@7.0.1` |
 | Popper.js | `npm install @popperjs/core@2.11.8` |
 | Axios | `npm install axios@1.9.0` |
 | Concurrently | `npm install concurrently@9.1.2` |
@@ -492,8 +492,8 @@ The current application process, however, heavily relies on physical materials, 
 | Column                 | ID Format               | Key | Data Type |                           Enum | Length | Scale | Nullable |
 | ---------------------- | --------------------- | --: | --------- | --------------------------------------: | -----------------: | ----: | -------: |
 | signer\_id             | SIGNER-YEAR-000       |  PK | varchar   |                                         |                 15 |       |       no |
-| signer\_type           |                       |     | enum      | ('Mayor','Executive Assistant','Other') |                    |       |       no |
 | member\_id             | MEMBER-YEAR-MON-00000 |  FK | varchar   |                                         |                 21 |       |       no |
+| signer\_type           |                       |     | enum      | ('Mayor','Executive Assistant','Other') |                    |       |       no |
 | post\_nominal\_letters |                       |     | varchar   |                                         |                 20 |       |      yes |
 
 ---
@@ -639,6 +639,8 @@ The current application process, however, heavily relies on physical materials, 
 
 #### routes
 
+in "**root/routes/**"
+
 ```text
 routes/
 ├─ api.php
@@ -650,6 +652,8 @@ routes/
 ---
 
 #### app
+
+in "**root/app/**"
 
 ```text
 app/
@@ -929,6 +933,8 @@ app/
 
 #### images
 
+in "**root/public/images/**"
+
 ```text
 images/
 ├─ about/
@@ -961,6 +967,8 @@ images/
 ---
 
 #### HTML (Laravel Blade)
+
+in "**root/resources/**"
 
 ```text
 resources/
@@ -1213,6 +1221,8 @@ resources/
 
 #### CSS
 
+in "**root/public/css/**"
+
 ```text
 css/
 ├─ components/
@@ -1390,6 +1400,8 @@ css/
 ---
 
 #### JavaScript
+
+in "**root/public/js/**"
 
 ```text
 js/
