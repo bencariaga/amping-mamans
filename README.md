@@ -24,7 +24,7 @@ Auxiliaries and Medical Program for Individuals and Needy Generals (AMPING) – 
   - [Dependencies](#dependencies)
     - [JavaScript / Node.js](#javascript--nodejs)
     - [Laravel / Composer](#laravel--composer)
-    - [Visual Studio Code (VS Code)](#visual-studio-code-vs-code)
+  - [Visual Studio Code Extensions Used](#visual-studio-code-extensions-used)
     - [Code Editor Theme Extensions](#code-editor-theme-extensions)
     - [Code Writing Extensions](#code-writing-extensions)
     - [PHP-Focused / Laravel-Focused Extensions](#php-focused--laravel-focused-extensions)
@@ -183,14 +183,10 @@ The current application process, however, heavily relies on physical materials, 
 | spatie/laravel-permission | [https://github.com/spatie/laravel-permission](https://github.com/spatie/laravel-permission) | associates users with permissions and roles |
 | spatie/laravel-activitylog | [https://github.com/spatie/laravel-activitylog](https://github.com/spatie/laravel-activitylog) | provides easy to use functions to log the activities of the users of the website |
 
----
-
-### Visual Studio Code (VS Code)
+## Visual Studio Code Extensions Used
 
 > ***Note:***
 > The following tabular lists are in alphabetical order.
-
----
 
 ### Code Editor Theme Extensions
 
