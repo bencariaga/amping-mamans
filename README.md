@@ -119,7 +119,7 @@ The current application process, however, heavily relies on physical materials, 
 | :--- | :--- | :--- | :--- |
 | HTML | [https://html.spec.whatwg.org/](https://html.spec.whatwg.org/) | Living Standard | as Laravel Blade |
 | CSS | [https://www.w3.org/TR/css/](https://www.w3.org/TR/css/) | CSS Snapshot 2025 | plain CSS |
-| Bootstrap | [https://getbootstrap.com/](https://getbootstrap.com/) | 5.3.8 | from ready-made UI components |
+| Bootstrap | [https://getbootstrap.com/](https://getbootstrap.com/) | 5.3.8 | for ready-made UI components |
 | Font Awesome | [https://fontawesome.com/](https://fontawesome.com/) | 7.0.1 | for icons |
 | JavaScript | [https://ecma-international.org/](https://ecma-international.org/publications-and-standards/standards/ecma-262/) | ECMAScript 2025 | plain JavaScript |
 | Node.js | [https://nodejs.org/](https://nodejs.org/) | 24.6.0 | for package management for Bootstrap and Font Awesome |
