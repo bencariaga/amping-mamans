@@ -7,8 +7,6 @@
     --disabled-bg-color: #f4f4f4;
     --disabled-text-color: #ccc;
     --item-shadow: rgba(0, 0, 0, 0.3);
-    --item-bg: #fff;
-    --input-bg: #eee;
     --input-border: #888;
     --input-bg-focus: #fff;
     --input-text: #000;
@@ -29,8 +27,6 @@
     --disabled-bg-color: #272727;
     --disabled-text-color: #000;
     --item-shadow: rgba(0, 0, 0, 0.3);
-    --item-bg: #222;
-    --input-bg: #333;
     --input-border: #444;
     --input-bg-focus: #000;
     --input-text: #fff;

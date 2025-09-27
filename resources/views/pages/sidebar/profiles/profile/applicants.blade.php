@@ -11,8 +11,8 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a> &gt;
-    <a href="{{ route('profiles.applicants.list') }}" class="text-decoration-none text-reset">Applicants</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('profiles.applicants.list') }}" class="text-decoration-none text-reset">Applicants</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('profiles.applicants.show', ['applicant' => $applicantId]) }}" class="text-decoration-none text-reset">Applicant Profile</a>
 @endsection
 

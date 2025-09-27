@@ -19,8 +19,9 @@ class TariffList extends Model
     protected $fillable = [
         'tariff_list_id',
         'data_id',
-        'effectivity_date',
+        'service_types_involved',
         'effectivity_status',
+        'effectivity_date',
     ];
 
     protected static function boot()
@@ -29,11 +30,13 @@ class TariffList extends Model
 
         static::creating(function ($tl) {
             if (empty($tl->tariff_list_id)) {
-                $year = Carbon::now()->year;
-                $base = "TARIFF-LIST-{$year}";
+                $now = Carbon::now();
+                $year = $now->year;
+                $month = Str::upper($now->format('M'));
+                $base = "TL-{$year}-{$month}";
                 $latest = static::where('tariff_list_id', 'like', "{$base}%")->latest('tariff_list_id')->first();
-                $last = $latest ? (int) Str::substr($latest->tariff_list_id, -3) : 0;
-                $next = Str::padLeft((string) ($last + 1), 3, '0');
+                $last = $latest ? (int) Str::afterLast($latest->tariff_list_id, '-') : 0;
+                $next = $last + 1;
                 $tl->tariff_list_id = "{$base}-{$next}";
             }
         });

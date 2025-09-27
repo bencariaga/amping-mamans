@@ -13,8 +13,12 @@ class DashboardController extends Controller
     public function showDashboard(): View|RedirectResponse
     {
         $tariffListController = new TariffListController();
-        $latestTariffListVersion = $tariffListController->getLatestTariffListVersion();
+        $serviceTariffs = $tariffListController->getLatestTariffListVersion();
+        return view('dashboard', ['user' => Auth::user(), 'serviceTariffs' => $serviceTariffs]);
+    }
 
-        return view('dashboard', ['user' => Auth::user(), 'latestTariffListVersion' => $latestTariffListVersion]);
+    public function guaranteeLetter(): View
+    {
+        return view('pages.dashboard.templates.guarantee-letters');
     }
 }

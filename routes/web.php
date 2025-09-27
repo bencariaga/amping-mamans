@@ -18,7 +18,6 @@ use App\Http\Controllers\Profile\UserProfileController;
 use App\Http\Controllers\Profile\ClientProfileController;
 use App\Http\Controllers\Registration\UserRegistrationController;
 use App\Http\Controllers\Registration\ClientRegistrationController;
-use App\Http\Controllers\SidebarController;
 
 Route::get('/', fn() => view('welcome'))->name('home');
 Route::get('/about', fn() => view('about'))->name('about');
@@ -30,9 +29,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/guarantee-letter', [DashboardController::class, 'guaranteeLetter'])->name('guarantee-letter');
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-
-    Route::get('/guarantee-letter', [SidebarController::class, 'guaranteeLetter'])->name('guarantee-letter');
 
     Route::prefix('profile/')->group(function () {
         Route::get('/', [UserProfileController::class, 'show'])->name('user.profile.show');
@@ -70,10 +68,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('/tariff-lists')->name('tariff-lists.')->group(function () {
-        Route::get('/', [TariffListController::class, 'showTariffLists'])->name('show');
-        Route::get('/versions', [TariffListController::class, 'showTariffListVersions'])->name('versions.show');
-        Route::get('/versions/{tariff_list_id}', [TariffListController::class, 'showTariffListTable'])->name('tables.show');
-        Route::get('/versions/{tariff_list_id}/preview', [TariffListController::class, 'getTariffListPreview'])->name('preview');
+        Route::get('/', [TariffListController::class, 'showTariffListVersions'])->name('rows.show');
+        Route::get('/{tariff_list_id}/preview', [TariffListController::class, 'getTariffListPreview'])->name('preview');
         Route::get('/create', [TariffListController::class, 'create'])->name('create');
         Route::post('/', [TariffListController::class, 'store'])->name('store');
         Route::put('/update', [TariffListController::class, 'updateTariffLists'])->name('update');

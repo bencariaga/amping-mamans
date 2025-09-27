@@ -102,29 +102,6 @@
                             <div class="nav-text">Dashboard</div>
                         </a>
 
-                        <a class="nav-link dropdown-toggle" id="systemMenuToggle" href="#systemMenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <div class="nav-icon"><i class="fas fa-cogs"></i></div>
-                            <div class="nav-text">System</div>
-                        </a>
-                        <div class="collapse" id="systemMenu">
-                            <a class="nav-link sub-nav-link" href="">
-                                <div class="nav-icon"><i class="fas fa-archive"></i></div>
-                                <div class="nav-text">Archives</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" href="">
-                                <div class="nav-icon"><i class="fas fa-user-times"></i></div>
-                                <div class="nav-text">Deactivated Accounts</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" href="">
-                                <div class="nav-icon"><i class="fas fa-file-alt"></i></div>
-                                <div class="nav-text">Logs</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" href="">
-                                <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
-                                <div class="nav-text">Reports</div>
-                            </a>
-                        </div>
-
                         <a class="nav-link" href="{{ route('profiles.users.list') }}">
                             <div class="nav-icon"><i class="fas fa-user-friends"></i></div>
                             <div class="nav-text">Users</div>
@@ -135,24 +112,29 @@
                             <div class="nav-text">Applicants</div>
                         </a>
 
-                        <a class="nav-link" href="{{ route('applications.assistance-request') }}">
-                            <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div>
-                            <div class="nav-text">Assistance Request</div>
+                        <a class="nav-link" onclick="window.openRolesModal()">
+                            <div class="nav-icon"><i class="fa-solid fa-user-tag"></i></div>
+                            <div class="nav-text">Roles</div>
                         </a>
 
-                        <a class="nav-link" href="{{ route('guarantee-letter') }}">
-                            <div class="nav-icon"><i class="fas fa-list-alt"></i></div>
-                            <div class="nav-text">Guarantee Letter</div>
+                        <a class="nav-link" onclick="window.openOccupationsModal()">
+                            <div class="nav-icon"><i class="fas fa-briefcase"></i></div>
+                            <div class="nav-text">Occupations</div>
                         </a>
 
-                        <a class="nav-link" href="">
-                            <div class="nav-icon"><i class="fas fa-paper-plane"></i></div>
-                            <div class="nav-text">Send Text Message</div>
+                        <a class="nav-link" onclick="window.openServicesModal()">
+                            <div class="nav-icon"><i class="fas fa-hand-holding-medical"></i></div>
+                            <div class="nav-text">Services</div>
                         </a>
 
-                        <a class="nav-link" href="">
-                            <div class="nav-icon"><i class="fas fa-comment-alt"></i></div>
-                            <div class="nav-text">SMS Templates</div>
+                        <a class="nav-link" href="{{ route('sponsors.list') }}">
+                            <div class="nav-icon"><i class="fas fa-hands-helping"></i></div>
+                            <div class="nav-text">Sponsors</div>
+                        </a>
+
+                        <a class="nav-link" onclick="window.openAffiliatePartnersModal()">
+                            <div class="nav-icon"><i class="fas fa-handshake"></i></div>
+                            <div class="nav-text">Affiliate Partners</div>
                         </a>
 
                         <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

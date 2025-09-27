@@ -25,7 +25,6 @@ class Contact extends Model
         'client_id',
         'contact_type',
         'phone_number',
-        'phone_number_other',
     ];
 
     protected static function boot()

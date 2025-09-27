@@ -11,7 +11,7 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a>&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;
     <a href="{{ route('applications.list') }}" class="text-decoration-none text-white">Applications</a>
 @endsection
 

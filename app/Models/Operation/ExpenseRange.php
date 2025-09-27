@@ -21,7 +21,7 @@ class ExpenseRange extends Model
         'service_id',
         'exp_range_min',
         'exp_range_max',
-        'assist_amount',
+        'discount_percent',
     ];
 
     protected static function boot()
@@ -33,7 +33,7 @@ class ExpenseRange extends Model
                 $year = Carbon::now()->year;
                 $base = "EXP-RANGE-{$year}";
                 $latest = static::where('exp_range_id', 'like', "{$base}%")->latest('exp_range_id')->first();
-                $last = $latest ? (int) Str::substr($latest->exp_range_id, -3) : 0;
+                $last = $latest ? (int) Str::substr($latest->exp_range_id, -9) : 0;
                 $next = Str::padLeft((string) ($last + 1), 9, '0');
                 $er->exp_range_id = "{$base}-{$next}";
             }

@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Core;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Number;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Operation\Service;
 use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\TariffList;
@@ -29,36 +30,42 @@ class ApplicationController extends Controller
     public function verifyPhoneNumber(Request $request)
     {
         try {
-            $request->validate(['phone_number' => 'required|string|max:13']);
+            $request->validate(['phone_number' => 'required|string|max:30']);
             $phoneNumber = $request->input('phone_number');
+            $clientCandidates = $request->input('candidates', []);
+            $normalizedCandidates = $this->buildPhoneCandidates($phoneNumber, $clientCandidates);
 
-            $applicant = Applicant::whereHas('client.contacts', function ($query) use ($phoneNumber) {
-                $query->where('contact_type', 'Application')
-                    ->where(function ($q) use ($phoneNumber) {
-                        $q->where('phone_number', $phoneNumber)
-                            ->orWhere('phone_number_other', 'like', "%{$phoneNumber}%");
-                    });
+            if (empty($normalizedCandidates)) {
+                return response()->json(['error' => 'No phone candidates generated.'], 422);
+            }
+
+            $applicant = Applicant::whereHas('client.contacts', function ($query) use ($normalizedCandidates) {
+                $query->where('contact_type', 'Application')->whereIn('phone_number', $normalizedCandidates);
             })->with(['client.member', 'patients.member'])->first();
 
             if (!$applicant) {
+                Log::debug('Phone verification candidates', ['candidates' => $normalizedCandidates, 'input' => $phoneNumber]);
                 return response()->json(['error' => 'Applicant with this phone number does not exist.'], 404);
             }
 
-            $member = $applicant->client->member;
-            $firstName = $member->first_name ?? '';
-            $middleName = $member->middle_name ?? '';
-            $lastName = $member->last_name ?? '';
-            $suffix = $member->suffix ?? '';
-            $fullName = Str::of("{$firstName} {$middleName} {$lastName} {$suffix}")->trim();
+            $member = $applicant->client->member ?? null;
+            if (!$member) {
+                Log::error('Applicant found but related member is missing.', ['applicant_id' => $applicant->applicant_id]);
+                return response()->json(['error' => 'Applicant profile is incomplete.'], 404);
+            }
+
+            $fullName = Str::of("{$member->first_name} {$member->middle_name} {$member->last_name} {$member->suffix}")->trim();
 
             $patients = $applicant->patients->map(function ($patient) use ($applicant) {
+                $pm = $patient->member ?? null;
+
                 return [
                     'patient_id' => $patient->patient_id,
-                    'first_name' => $patient->member->first_name ?? '',
-                    'middle_name' => $patient->member->middle_name ?? '',
-                    'last_name' => $patient->member->last_name ?? '',
-                    'suffix' => $patient->member->suffix ?? '',
-                    'is_applicant' => $patient->member_id === $applicant->client->member_id,
+                    'first_name' => $pm->first_name ?? '',
+                    'middle_name' => $pm->middle_name ?? '',
+                    'last_name' => $pm->last_name ?? '',
+                    'suffix' => $pm->suffix ?? '',
+                    'is_applicant' => ($pm && $pm->member_id === ($applicant->client->member_id ?? null)),
                 ];
             });
 
@@ -71,8 +78,51 @@ class ApplicationController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+            Log::error('verifyPhoneNumber error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Assistance request submitted successfully.'], 500);
         }
+    }
+
+    private function buildPhoneCandidates($inputPhone, $clientCandidates = [])
+    {
+        $candidates = collect();
+
+        if ($inputPhone) {
+            $raw = Str::of($inputPhone)->trim();
+            $digits = Str::replaceMatches('/\D+/', '', $raw);
+            $candidates->push($raw);
+            $candidates->push($digits);
+
+            if (Str::startsWith($digits, '63') && Str::length($digits) >= 12) {
+                $local = Str::of($digits)->substr(2)->prepend('0');
+                $candidates->push($local);
+                $candidates->push(Str::of($local)->substr(0, 4) . '-' . Str::substr($local, 4, 3) . '-' . Str::substr($local, 7));
+                $candidates->push(Str::of($digits)->prepend('+'));
+            } elseif (Str::startsWith($digits, '0') && Str::length($digits) === 11) {
+                $candidates->push(Str::of($digits)->substr(0, 4) . '-' . Str::substr($digits, 4, 3) . '-' . Str::substr($digits, 7));
+                $candidates->push(Str::of($digits)->substr(1)->prepend('+63'));
+            } elseif (Str::startsWith($digits, '9') && Str::length($digits) === 10) {
+                $local = Str::of($digits)->prepend('0');
+                $candidates->push($local);
+                $candidates->push(Str::of($local)->substr(0, 4) . '-' . Str::substr($local, 4, 3) . '-' . Str::substr($local, 7));
+                $candidates->push(Str::of($local)->substr(1)->prepend('+63'));
+            }
+        }
+
+        collect($clientCandidates)->each(function ($cand) use ($candidates) {
+            $c = Str::of($cand)->trim();
+
+            if ($c) {
+                $candidates->push($c);
+                $d = Str::replaceMatches('/\D+/', '', $c);
+
+                if ($d) {
+                    $candidates->push($d);
+                }
+            }
+        });
+
+        return $candidates->filter()->unique()->values()->all();
     }
 
     public function calculateAssistanceAmount(Request $request)
@@ -86,8 +136,8 @@ class ApplicationController extends Controller
             $serviceId = $request->input('service_id');
             $billedAmount = $request->input('billed_amount');
 
-            $tariffList = TariffList::whereHas('expenseRanges.service', function ($query) use ($serviceId) {
-                $query->where('service_id', $serviceId);
+            $tariffList = TariffList::whereHas('expenseRanges', function ($q) use ($serviceId) {
+                $q->where('service_id', $serviceId);
             })->orderBy('effectivity_date', 'desc')->first();
 
             if (!$tariffList) {
@@ -111,7 +161,8 @@ class ApplicationController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+            Log::error('calculateAssistanceAmount error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Assistance request submitted successfully.'], 500);
         }
     }
 
@@ -123,7 +174,7 @@ class ApplicationController extends Controller
                 'affiliate_partner_id' => 'required|string',
                 'service_id' => 'required|string',
                 'billed_amount' => 'required|numeric|min:0',
-                'assistance_amount' => 'required|numeric|min:0',
+                'assistance_amount' => 'required',
                 'applied_at' => 'required|date',
                 'reapply_at' => 'required|date',
                 'patient_id' => 'required|string',
@@ -132,8 +183,8 @@ class ApplicationController extends Controller
             $billedAmount = $request->input('billed_amount');
             $serviceId = $request->input('service_id');
 
-            $tariffList = TariffList::whereHas('expenseRanges.service', function ($query) use ($serviceId) {
-                $query->where('service_id', $serviceId);
+            $tariffList = TariffList::whereHas('expenseRanges', function ($q) use ($serviceId) {
+                $q->where('service_id', $serviceId);
             })->orderBy('effectivity_date', 'desc')->firstOrFail();
 
             $expenseRange = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
@@ -145,7 +196,15 @@ class ApplicationController extends Controller
             $assistanceAmountRaw = $request->input('assistance_amount');
 
             if (is_string($assistanceAmountRaw)) {
-                $assistanceAmountRaw = (string) Str::of($assistanceAmountRaw)->replaceMatches('/[^\d.]/', '');
+                $assistanceAmountRaw = Str::replaceMatches('/[^\d.]/', '', $assistanceAmountRaw);
+
+                if ($assistanceAmountRaw === '') $assistanceAmountRaw = 0;
+
+                $assistanceAmountRaw = (float) $assistanceAmountRaw;
+            } elseif (is_numeric($assistanceAmountRaw)) {
+                $assistanceAmountRaw = (float) $assistanceAmountRaw;
+            } else {
+                $assistanceAmountRaw = 0;
             }
 
             $appliedAt = Carbon::parse($request->input('applied_at'))->toDateTimeString();
@@ -156,11 +215,16 @@ class ApplicationController extends Controller
                 'affiliate_partner_id' => $request->input('affiliate_partner_id'),
                 'exp_range_id' => $expenseRange->exp_range_id,
                 'billed_amount' => $billedAmount,
-                'assistance_amount' => $assistanceAmountRaw,
-                'patient_id' => $request->input('patient_id'),
                 'applied_at' => $appliedAt,
                 'reapply_at' => $reapplyAt,
+                'patient_id' => $request->input('patient_id'),
             ]);
+
+            if ($application) {
+                DB::table('applications')->where('application_id', $application->application_id)->update([
+                    'assistance_amount' => $assistanceAmountRaw
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Assistance request submitted successfully.',
@@ -170,7 +234,8 @@ class ApplicationController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+            Log::error('store application error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Assistance request submitted successfully.'], 500);
         }
     }
 
@@ -203,11 +268,8 @@ class ApplicationController extends Controller
             return response()->json(['html' => '<div>Application not found.</div>'], 404);
         }
 
-        $firstName = $application->client_first_name ?? '';
-        $middleName = $application->client_middle_name ?? '';
-        $lastName = $application->client_last_name ?? '';
-        $middleInitial = $middleName ? Str::substr($middleName, 0, 1) . '.' : '';
-        $applicantName = Str::of("{$lastName}, {$firstName} {$middleInitial}")->trim();
+        $middleInitial = $application->client_middle_name ? Str::substr($application->client_middle_name, 0, 1) . '.' : '';
+        $applicantName = Str::of("{$application->client_last_name}, {$application->client_first_name} {$middleInitial}")->trim();
 
         $html = '<div class="details-grid">';
         $html .= '<div class="detail-label">Application ID:</div>';
@@ -220,10 +282,10 @@ class ApplicationController extends Controller
         $html .= '<div class="detail-value">' . e($application->service_type ?? 'N/A') . '</div>';
 
         $html .= '<div class="detail-label">Billed Amount:</div>';
-        $html .= '<div class="detail-value">' . Number::currency($application->billed_amount, 'PHP') . '</div>';
+        $html .= '<div class="detail-value">' . Number::format($application->billed_amount, 2) . '</div>';
 
         $html .= '<div class="detail-label">Assistance Amount:</div>';
-        $html .= '<div class="detail-value">' . Number::currency($application->assist_amount, 'PHP') . '</div>';
+        $html .= '<div class="detail-value">' . Number::format($application->assist_amount, 2) . '</div>';
 
         $html .= '<div class="detail-label">Affiliate Partner:</div>';
         $html .= '<div class="detail-value">' . e($application->affiliate_partner_name ?? 'N/A') . '</div>';

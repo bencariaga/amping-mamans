@@ -1,7 +1,6 @@
 :root {
     --primary-border-color: #888;
     --secondary-border-color: #a2a9af;
-    --item-bg: #fff;
     --item-shadow: rgba(0, 0, 0, 0.3);
     --item-hover-shadow: rgba(0, 0, 0, 0.3);
     --input-bg: #eee;
@@ -30,7 +29,6 @@
 [data-theme="dark"] {
     --primary-border-color: #444;
     --secondary-border-color: #555;
-    --item-bg: #222;
     --item-shadow: rgba(0, 0, 0, 0.3);
     --item-hover-shadow: rgba(0, 0, 0, 0.3);
     --input-bg: #333;

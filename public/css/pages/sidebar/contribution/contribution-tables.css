@@ -8,7 +8,6 @@
     --card-bg: rgba(255, 255, 255, 1);
     --input-border: #ced4da;
     --link-color: #0000bb;
-    --header-bg: #1b2430;
     --input-bg-focus: #fff;
     --card-header-bg: #1e293b;
     --container-color: #fff;
@@ -34,17 +33,16 @@
     --card-bg: rgba(33, 37, 41, 1);
     --input-border: #444;
     --link-color: #0d6efd;
-    --header-bg: #1b2430;
     --input-bg: #333;
     --input-bg-focus: #000;
-    --card-header-bg: #1e293b;
+    --card-header-bg: #2c3e50;
     --container-color: #191919;
     --table-header-bg: #0d6efd;
     --header-text: #fff;
     --even-row-bg: #222;
     --date-picker-icon: invert(100%);
     --box-shadow: rgba(0, 0, 0, 0.3);
-    --modal-bg: #222;
+    --modal-bg: #2c3e50;
     --modal-border: #888;
     --dark-mode-invert-1: 1;
     --dark-mode-invert-2: 0;

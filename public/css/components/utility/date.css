@@ -169,12 +169,7 @@
 .date-month-dropdown .dropdown-menu.show,
 .date-year-dropdown .dropdown-menu.show {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) var(--bg-color);
-}
-
-[data-theme="dark"] .date-month-dropdown .dropdown-menu.show,
-[data-theme="dark"] .date-year-dropdown .dropdown-menu.show {
-    scrollbar-color: rgba(255, 255, 255, 0.1) var(--bg-color);
+    scrollbar-color: #fff;
 }
 
 .date-month-dropdown .dropdown-menu.show::-webkit-scrollbar,
@@ -185,18 +180,46 @@
 
 .date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-track,
 .date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-track {
-    background: var(--bg-color);
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb,
 .date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: white;
     border-radius: 10px;
-    border: 2px solid var(--bg-color);
+    border: 2px solid rgba(0, 0, 0, 0.8);
 }
 
 .date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb:hover,
 .date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc;
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-track,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--bg-color);
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
 

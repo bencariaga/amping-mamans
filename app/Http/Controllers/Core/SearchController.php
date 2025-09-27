@@ -51,8 +51,14 @@ class SearchController extends Controller
 
         if ($search) {
             $term = "%{$search}%";
-            $baseQuery->whereHas('member', function ($q) use ($term) {
-                $q->whereRaw("CONCAT(first_name, ' ', COALESCE(middle_name,''), ' ', last_name) LIKE ?", [$term])->orWhereRaw("CONCAT(last_name, ' ', COALESCE(middle_name,''), ' ', first_name) LIKE ?", [$term]);
+            $baseQuery->where(function ($query) use ($term) {
+                $query->whereHas('member', function ($q) use ($term) {
+                    $q->whereRaw("CONCAT(first_name, ' ', COALESCE(middle_name,''), ' ', last_name) LIKE ?", [$term])->orWhereRaw("CONCAT(last_name, ' ', COALESCE(middle_name,''), ' ', first_name) LIKE ?", [$term]);
+                })->orWhereHas('contacts', function ($q) use ($term) {
+                    $q->where('phone_number', 'like', $term);
+                })->orWhereHas('occupation', function ($q) use ($term) {
+                    $q->where('occupation', 'like', $term);
+                })->orWhere('monthly_income', 'like', $term);
             });
         }
 
@@ -78,11 +84,16 @@ class SearchController extends Controller
             }], 'amount_change');
 
         if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $term = "%{$search}%";
-                $q->where('members.full_name', 'like', $term)
-                    ->orWhere('members.first_name', 'like', $term)
-                    ->orWhere('members.last_name', 'like', $term);
+            $term = "%{$search}%";
+            $query->where(function ($q) use ($term) {
+                $q->where(function ($subQuery) use ($term) {
+                    $subQuery->where('members.full_name', 'like', $term)
+                        ->orWhere('members.first_name', 'like', $term)
+                        ->orWhere('members.last_name', 'like', $term);
+                })
+                    ->orWhere('sponsors.sponsor_type', 'like', $term)
+                    ->orWhere('sponsors.designation', 'like', $term)
+                    ->orWhereRaw('CAST((SELECT SUM(amount_change) FROM budget_updates WHERE sponsor_id = sponsors.sponsor_id AND possessor = "Sponsor" AND reason = "Sponsor Donation") AS CHAR) LIKE ?', [$term]);
             });
         }
 
@@ -109,7 +120,7 @@ class SearchController extends Controller
 
         $sponsors = $perPage === 'all' ? $query->distinct()->get() : $query->distinct()->paginate($perPage);
 
-        return view('pages.dashboard.budget-updates.contribution.contributors')->with('sponsors', $sponsors);
+        return view('pages.sidebar.contribution.contributors')->with('sponsors', $sponsors);
     }
 
     public function listApplications(Request $request)

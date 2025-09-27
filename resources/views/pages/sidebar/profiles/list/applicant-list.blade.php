@@ -11,7 +11,7 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('profiles.applicants.list') }}" class="text-decoration-none text-white">Applicants</a>
 @endsection
 
@@ -96,34 +96,64 @@
             </form>
         </div>
 
-        <div class="client-card-flex mt-3">
-            @foreach($clients as $client)
-                @php
-                    $m    = $client->member;
-                    $app  = $client->applicant;
-                    $name = "{$m->last_name}, {$m->first_name}" . ($m->middle_name ? ' '.strtoupper(substr($m->middle_name,0,1)).'.' : '') . ($m->suffix ? " {$m->suffix}" : '');
-                    $phone = optional($client->contacts->firstWhere('contact_type', 'Application'))->phone_number ?? optional($client->contacts->first())->phone_number ?? '';
-                    $occupation = optional($client->occupation)->occupation;
-                    $income     = number_format($client->monthly_income, 2);
-                @endphp
+        <div class="data-table-container shadow-sm">
+            <div class="table-responsive">
+                <table class="applicant-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center applicant-table-header">Applicant Name</th>
+                            <th class="text-center applicant-table-header">Phone Number</th>
+                            <th class="text-center applicant-table-header">Occupation</th>
+                            <th class="text-center applicant-table-header">Monthly Income</th>
+                            <th class="text-center applicant-table-header">Actions</th>
+                        </tr>
+                    </thead>
 
-                @if($app)
-                    <a href="{{ route('profiles.applicants.show', ['applicant' => $app->applicant_id]) }}" class="text-decoration-none text-reset">
-                        <div class="client-card-box">
-                            <div class="client-info d-flex align-items-center">
-                                <div class="field client-name">{{ $name }}</div>
-                                <div class="field client-phone-number">{{ $phone }}
-                                    <button class="copy-symbol btn btn-primary" data-phone-number="{{ $phone }}" aria-hidden="true">
-                                        <i class="fa fa-copy"><span class="copy-word"">&nbsp;&nbsp;&nbsp;copy</span></i>
-                                    </button>
-                                </div>
-                                <div class="field client-occupation">{{ $occupation }}</div>
-                                <div class="field client-income">₱ {{ $income }}</div>
-                            </div>
-                        </div>
-                    </a>
-                @endif
-            @endforeach
+                    <tbody>
+                        @foreach($clients as $client)
+                            @php
+                                $m = $client->member;
+                                $app = $client->applicant;
+                                $last = optional($m)->last_name ?: '';
+                                $first = optional($m)->first_name ?: '';
+                                $middle = optional($m)->middle_name ?: '';
+                                $suffix = optional($m)->suffix ?: '';
+
+                                $middleInitial = $middle !== '' ? strtoupper(substr(trim($middle), 0, 1)) . '.' : '';
+
+                                $parts = [];
+
+                                if ($last !== '') $parts[] = $last . ',';
+                                if ($first !== '') $parts[] = $first;
+                                if ($middleInitial !== '') $parts[] = $middleInitial;
+                                if ($suffix !== '') $parts[] = $suffix;
+
+                                $name = trim(implode(' ', $parts));
+                                $phone = optional($client->contacts->firstWhere('contact_type', 'Application'))->phone_number ?? optional($client->contacts->first())->phone_number ?? '';
+                                $occupation = optional($client->occupation)->occupation;
+                                $income = number_format($client->monthly_income, 2);
+                            @endphp
+
+                            @if($app)
+                                <tr class="{{ $loop->even ? 'bg-light' : '' }}">
+                                    <td class="px-4 py-2 text-center">{{ $name ?? 'N/A' }}</td>
+                                    <td class="px-3 py-2 text-center">{{ $phone ?? 'N/A' }}</td>
+                                    <td class="px-3 py-2 text-center">{{ $occupation ?? 'N/A' }}</td>
+                                    <td class="px-3 py-2 text-center">₱ {{ $income ?? 'N/A' }}</td>
+                                    <td class="px-0 py-2 text-center action-buttons">
+                                        <div class="gap-3 d-flex justify-content-center">
+                                            <button class="copy-symbol btn btn-success" data-phone-number="{{ $phone }}" aria-hidden="true">
+                                                <i class="fa fa-copy"><span class="copy-word"">&nbsp;&nbsp;&nbsp;Copy Phone Number</span></i>
+                                            </button>
+                                            <a href="{{ route('profiles.applicants.show', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-primary px-3 py-2">Manage Applicant</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @endsection

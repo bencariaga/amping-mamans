@@ -11,8 +11,8 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a> &gt;
-    <a href="{{ route('profiles.users.list') }}" class="text-decoration-none text-reset">Users</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('profiles.users.list') }}" class="text-decoration-none text-reset">Users</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('user.profile.show') }}" class="text-decoration-none text-reset">My Profile</a>
 @endsection
 

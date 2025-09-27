@@ -1,9 +1,7 @@
 :root {
     --primary-border-color: #888;
-    --item-bg: #fff;
     --item-shadow: rgba(0, 0, 0, 0.3);
     --item-hover-shadow: rgba(0, 0, 0, 0.3);
-    --input-bg: #eee;
     --input-bg-hover: #fff;
     --input-bg-focus: #fff;
     --input-text-primary: #666;
@@ -19,10 +17,8 @@
 
 [data-theme="dark"] {
     --primary-border-color: #444;
-    --item-bg: #222;
     --item-shadow: rgba(0, 0, 0, 0.3);
     --item-hover-shadow: rgba(0, 0, 0, 0.3);
-    --input-bg: #333;
     --input-bg-hover: #000;
     --input-bg-focus: #333;
     --input-text-primary: #ccc;

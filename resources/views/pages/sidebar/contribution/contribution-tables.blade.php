@@ -3,7 +3,7 @@
 @section('title', 'Sponsor Contributions')
 
 @push('styles')
-    <link href="{{ asset('css/pages/dashboard/budget-updates/contribution/contribution-tables.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pages/sidebar/contribution/contribution-tables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -12,12 +12,12 @@
             sponsorId: "{{ $id }}"
         };
     </script>
-    <script src="{{ asset('js/pages/dashboard/budget-updates/contribution/contribution-tables.js') }}"></script>
+    <script src="{{ asset('js/pages/sidebar/contribution/contribution-tables.js') }}"></script>
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a> &gt;
-    <a href="{{ route('sponsors.list') }}" class="text-decoration-none text-reset">Sponsors</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('sponsors.list') }}" class="text-decoration-none text-reset">Sponsors</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('sponsors.tables.show', ['id' => $id]) }}" class="text-decoration-none text-white">Contributions</a>
 @endsection
 

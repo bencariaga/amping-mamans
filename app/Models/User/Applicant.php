@@ -23,7 +23,13 @@ class Applicant extends Model
         'city',
         'municipality',
         'barangay',
+        'subdivision',
+        'purok',
+        'sitio',
         'street',
+        'phase',
+        'block_number',
+        'house_number',
         'job_status',
         'representing_patient',
         'house_occup_status',
@@ -64,7 +70,7 @@ class Applicant extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_id', 'client_id');
     }
 
     public function patients()

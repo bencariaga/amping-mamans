@@ -11,7 +11,7 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('applications.assistance-request') }}" class="text-decoration-none text-reset">Assistance Request</a>
 @endsection
 
@@ -27,7 +27,7 @@
                 <div class="row gx-3 gy-3">
                     <div class="form-group col-md-3">
                         <label for="phoneNumber" class="form-label fw-bold">Phone Number <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="phoneNumber" placeholder="Example: 09123456789">
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Example: 0912-345-6789">
                         <small id="phoneVerificationMessage" class="form-text mt-1 d-none"></small>
                     </div>
                     <div class="form-group col-md-3">
@@ -43,7 +43,7 @@
                     <div class="form-group col-md-3">
                         <label for="serviceType" class="form-label fw-bold">Service Type <span class="required-asterisk">*</span></label>
                         <div class="dropdown">
-                            <button id="serviceTypeDropdownBtn" class="btn dropdown-toggle custom-dropdown-btn w-100 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select a service.</button>
+                            <button id="serviceTypeDropdownBtn" class="btn dropdown-toggle custom-dropdown-btn w-100 fw-bold d-flex justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select a service.</button>
                             <ul class="dropdown-menu w-100" aria-labelledby="serviceTypeDropdownBtn">
                                 <li><a class="dropdown-item" href="#" data-value="">Select a service.</a></li>
                                 @foreach($services as $service)
@@ -73,7 +73,7 @@
                     <div class="form-group col-md-3">
                         <label for="affiliatePartner" class="form-label fw-bold">Affiliate Partner <span class="required-asterisk">*</span></label>
                         <div class="dropdown">
-                            <button id="affiliatePartnerDropdownBtn" class="btn dropdown-toggle custom-dropdown-btn w-100 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select an affiliate partner.</button>
+                            <button id="affiliatePartnerDropdownBtn" class="btn dropdown-toggle custom-dropdown-btn w-100 fw-bold d-flex justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select an affiliate partner.</button>
                             <ul class="dropdown-menu w-100" aria-labelledby="affiliatePartnerDropdownBtn">
                                 <li><a class="dropdown-item" href="#" data-value="">Select an affiliate partner.</a></li>
                                 @foreach($affiliate_partners as $partner)

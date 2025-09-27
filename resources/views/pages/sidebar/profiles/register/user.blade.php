@@ -11,8 +11,8 @@
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a> &gt;
-    <a href="{{ route('profiles.users.list') }}" class="text-decoration-none text-reset">Users</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('profiles.users.list') }}" class="text-decoration-none text-reset">Users</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('profiles.users.create') }}" class="text-decoration-none text-reset">Add User</a>
 @endsection
 
@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="form-group col-md-3">
-                        <label class="form-label">Role (Custom) <span class="required-asterisk">*</span></label>
+                        <label class="form-label">Role <span class="fw-normal">(if other, please specify)</span></label>
                         <input id="customRoleInput" class="form-control" type="text" name="custom_role" value="{{ old('custom_role') }}" placeholder="Type to add a new role.">
                     </div>
                     <div class="form-group col-md-3">

@@ -3,11 +3,11 @@
 @section('title', 'Guarantee Letter')
 
 @push('styles')
-    <link href="{{ asset('css/pages/sidebar/templates/guarantee-letters.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pages/dashboard/templates/guarantee-letters.css') }}" rel="stylesheet">
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a> &gt;
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('guarantee-letter') }}" class="text-decoration-none text-reset">Guarantee Letter</a>
 @endsection
 

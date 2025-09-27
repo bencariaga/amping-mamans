@@ -1,6 +1,6 @@
 @section('footer')
     <a type="button" id="backToListBtn" class="footer-btn" href="{{ route('profiles.applicants.list') }}">
-        <div class="nav-icon"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="nav-icon"><i class="fa fa-long-arrow-alt-left"></i></div>
         <div class="nav-text">Back to List</div>
     </a>
 
@@ -9,7 +9,7 @@
         <div class="nav-text">Save Changes</div>
     </a>
 
-    <a id="deleteApplicantBtn" class="footer-btn" type="button" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+    <a type="button" id="deleteApplicantBtn" class="footer-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
         <div class="nav-icon"><i class="fa-solid fa-trash-can"></i></div>
         <div class="nav-text">Delete Account</div>
     </a>

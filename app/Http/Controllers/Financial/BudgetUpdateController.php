@@ -320,7 +320,7 @@ class BudgetUpdateController extends Controller
             return $item;
         });
 
-        return view('pages.dashboard.budget-updates.contribution.contribution-tables', [
+        return view('pages.sidebar.contribution.contribution-tables', [
             'contributions' => $contributions,
             'id' => $id,
             'sponsors' => collect([$sponsor])

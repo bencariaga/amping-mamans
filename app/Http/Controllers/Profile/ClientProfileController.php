@@ -4,26 +4,16 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Models\Storage\Data;
-use App\Models\Authentication\Account;
 use App\Models\User\Member;
 use App\Models\User\Client;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use App\Models\User\Applicant;
+use App\Models\Authentication\Account;
 
 class ClientProfileController extends Controller
 {
-    private function generateNextId(string $prefix, string $table, string $primaryKey): string
-    {
-        $year = Carbon::now()->year;
-        $base = "{$prefix}-{$year}";
-        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
-        $last = $max ? (int) Str::afterLast($max, '-') : 0;
-        return $base . '-' . Str::padLeft($last + 1, 9, '0');
-    }
-
     public function show(Applicant $applicant)
     {
         return view('pages.sidebar.profiles.profile.applicants', ['applicantId' => $applicant->applicant_id]);
@@ -53,7 +43,6 @@ class ClientProfileController extends Controller
 
             $applicant->client->contacts()->delete();
             $applicant->delete();
-
             $dataId = $applicant->client->member->account->data_id;
             $accountId = $applicant->client->member->account_id;
             $memberId = $applicant->client->member_id;

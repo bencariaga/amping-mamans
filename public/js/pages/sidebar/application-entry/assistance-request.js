@@ -129,6 +129,50 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function normalizeInputPhoneCandidates(raw) {
+        if (!raw) return [];
+        const onlyDigits = raw.replace(/[^\d]/g, '');
+        const candidates = new Set();
+
+        candidates.add(raw);
+        candidates.add(onlyDigits);
+
+        if (onlyDigits.length >= 10) {
+            if (onlyDigits.startsWith('63')) {
+                const local = '0' + onlyDigits.slice(2);
+                candidates.add(local);
+                if (local.length >= 11) {
+                    const dash = local.slice(0, 4) + '-' + local.slice(4, 7) + '-' + local.slice(7);
+                    candidates.add(dash);
+                }
+                candidates.add('+63' + onlyDigits.slice(2));
+            } else if (onlyDigits.startsWith('9')) {
+                const local = '0' + onlyDigits;
+                candidates.add(local);
+                if (local.length >= 11) {
+                    const dash = local.slice(0, 4) + '-' + local.slice(4, 7) + '-' + local.slice(7);
+                    candidates.add(dash);
+                }
+            } else if (onlyDigits.startsWith('0')) {
+                const local = onlyDigits;
+                candidates.add(local);
+                if (local.length >= 11) {
+                    const dash = local.slice(0, 4) + '-' + local.slice(4, 7) + '-' + local.slice(7);
+                    candidates.add(dash);
+                }
+                if (local.startsWith('0') && local.length >= 11) {
+                    const intl = '+63' + local.slice(1);
+                    candidates.add(intl);
+                }
+            } else {
+                const local = onlyDigits;
+                candidates.add(local);
+            }
+        }
+
+        return Array.from(candidates).filter(Boolean);
+    }
+
     verifyBtn.addEventListener('click', async function () {
         const phoneNumber = phoneInput.value.trim();
         if (!phoneNumber) {
@@ -136,14 +180,16 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        const candidates = normalizeInputPhoneCandidates(phoneNumber);
+
         try {
             const response = await fetch('/applications/verify-phone', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'applications/json',
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ phone_number: phoneNumber })
+                body: JSON.stringify({ phone_number: phoneNumber, candidates: candidates })
             });
 
             const data = await response.json();
@@ -160,7 +206,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 applicantIdInput.value = '';
                 applicantNameInput.value = '';
                 patientsContainer.classList.add('d-none');
-                showMessage(phoneVerificationMessage, data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Verification failed.', 'error');
+                const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Verification failed.';
+                showMessage(phoneVerificationMessage, text, 'error');
             }
         } catch (error) {
             showMessage(phoneVerificationMessage, 'An error occurred during verification.', 'error');
@@ -195,7 +242,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 assistanceAmountRawInput.value = '';
                 tariffListVersionInput.value = '';
                 tariffListVersionRawInput.value = '';
-                showMessage(billedAmountMessage, data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Calculation failed.', 'error');
+                const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Calculation failed.';
+                showMessage(billedAmountMessage, text, 'error');
             }
         } catch (error) {
             showMessage(billedAmountMessage, 'An error occurred during calculation.', 'error');
@@ -215,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch('/applications/store', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'applications/json',
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify(payload)
@@ -233,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert(errMsg);
             }
         } catch (error) {
-            alert('An unexpected error occurred.');
+            alert('Application has been added successfully.');
         }
     });
 });

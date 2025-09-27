@@ -13,11 +13,6 @@ class SidebarController extends Controller
         return view('pages.sidebar.application-entry.assistance-request');
     }
 
-    public function guaranteeLetter(): View
-    {
-        return view('pages.sidebar.templates.guarantee-letters');
-    }
-
     public function usersList(Request $request)
     {
         return app(SearchController::class)->listUsers($request);
@@ -38,6 +33,8 @@ class SidebarController extends Controller
         return view('pages.sidebar.profiles.register.user');
     }
 
+    /*
+
     public function archives(): View
     {
         return view('pages.sidebar.system.archives');
@@ -57,4 +54,6 @@ class SidebarController extends Controller
     {
         return view('pages.sidebar.system.reports');
     }
+
+    */
 }

@@ -3,7 +3,6 @@
 namespace App\Livewire\Client;
 
 use Livewire\Component;
-use Livewire\Attributes\Validate;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -18,71 +17,62 @@ use App\Models\User\Patient;
 
 class ClientRegistration extends Component
 {
-    #[Validate('required|string|max:20')]
     public string $first_name = '';
-
-    #[Validate('nullable|string|max:20')]
-    public string $middle_name = '';
-
-    #[Validate('required|string|max:20')]
+    public ?string $middle_name = '';
     public string $last_name = '';
-
-    #[Validate('nullable|string|in:Jr.,Sr.,II,III,IV,V')]
     public string $suffix = '';
-
-    #[Validate('required|date')]
     public string $birth_date = '';
-
-    #[Validate('required|string|in:Male,Female')]
     public string $sex = '';
-
-    #[Validate('required|string|in:Single,Married,Widowed,Separated')]
     public string $civil_status = '';
-
-    #[Validate('required|string|max:15|unique:contacts,phone_number')]
     public string $phone_number = '';
-
     public string $province = 'South Cotabato';
     public string $city = 'General Santos';
     public string $municipality = 'N / A';
-
-    #[Validate('required|string|in:Apopong,Baluan,Batomelong,Buayan,Bula,Calumpang,City Heights,Conel,Dadiangas East,Dadiangas North,Dadiangas South,Dadiangas West,Fatima,Katangawan,Labangal,Lagao,Ligaya,Mabuhay,Olympog,San Isidro,San Jose,Siguel,Sinawal,Tambler,Tinagacan,Upper Labay,Other')]
     public string $barangay = '';
-
-    #[Validate('required|string|max:50')]
+    public string $subdivision = '';
+    public string $purok = '';
+    public string $sitio = '';
     public string $street = '';
-
-    #[Validate('nullable|string|exists:occupations,occupation_id')]
+    public string $phase = '';
+    public string $block_number = '';
+    public string $house_number = '';
     public ?string $occupation_id = null;
-
-    #[Validate('nullable|string|max:30')]
     public string $custom_occupation = '';
-
-    #[Validate('required|string|in:Permanent,Contractual,Casual')]
     public string $job_status = '';
-
-    #[Validate('nullable', 'numeric', 'min:0')]
-    public ?float $monthly_income = null;
-
-    #[Validate('required|string|in:Owner,Renter,House Sharer')]
+    public string $occupation_status = '';
+    public $monthly_income = 0;
     public string $house_occup_status = '';
-
-    #[Validate('required|string|in:Owner,Renter,Lot Sharer,Informal Settler')]
     public string $lot_occup_status = '';
-
-    #[Validate('required|string|in:Affiliated,Unaffiliated')]
     public string $phic_affiliation = '';
-
-    #[Validate('nullable|string|in:Self-Employed,Sponsored,Employed')]
     public ?string $phic_category = null;
-
-    #[Validate('required|string|in:Self,Other Individual/s,Self and Other Individual/s')]
     public string $representing_patient = '';
-
-    #[Validate('nullable|integer|min:1|max:3')]
-    public ?int $patient_count = null;
-
     public array $patients = [];
+
+    protected array $rules = [
+        'first_name' => 'required|string|max:20',
+        'middle_name' => 'nullable|string|max:20',
+        'last_name' => 'required|string|max:20',
+        'suffix' => 'nullable|string|in:Sr.,Jr.,II,III,IV,V',
+        'birth_date' => 'required|date',
+        'sex' => 'required|string|in:Male,Female',
+        'civil_status' => 'required|string|in:Single,Married,Widowed,Separated',
+        'phone_number' => 'required|string|max:15|unique:contacts,phone_number',
+        'barangay' => 'nullable|string',
+        'occupation_id' => 'nullable|string|exists:occupations,occupation_id',
+        'custom_occupation' => 'nullable|string|max:30',
+        'job_status' => 'required|string|in:Permanent,Contractual,Casual',
+        'occupation_status' => 'nullable|string|in:Employed,Self-Employed,Job Order,Private Individual',
+        'monthly_income' => 'required|integer|min:0|max:9999999',
+        'house_occup_status' => 'required|string|in:Owner,Renter,House Sharer',
+        'lot_occup_status' => 'required|string|in:Owner,Renter,Lot Sharer,Informal Settler',
+        'phic_affiliation' => 'required|string|in:Affiliated,Unaffiliated',
+        'phic_category' => 'nullable|string|in:Self-Employed,Sponsored,Employed',
+        'representing_patient' => 'required|string|in:Self,Other Individual',
+        'patients.*.first_name' => 'required|string|max:20',
+        'patients.*.middle_name' => 'nullable|string|max:20',
+        'patients.*.last_name' => 'required|string|max:20',
+        'patients.*.suffix' => 'nullable|string|max:5',
+    ];
 
     private function generateNextId(string $prefix, string $table, string $primaryKey): string
     {
@@ -96,27 +86,17 @@ class ClientRegistration extends Component
     public function mount()
     {
         $this->job_status = '';
-        $this->monthly_income = null;
+        $this->monthly_income = 0;
+
         $this->patients = [
-            1 => ['first_name' => '', 'middle_name' => '', 'last_name' => '', 'suffix' => ''],
-            2 => ['first_name' => '', 'middle_name' => '', 'last_name' => '', 'suffix' => ''],
-            3 => ['first_name' => '', 'middle_name' => '', 'last_name' => '', 'suffix' => ''],
+            1 => ['first_name' => '', 'middle_name' => '', 'last_name' => '', 'suffix' => '']
         ];
     }
 
     public function updated($propertyName)
     {
-        if ($propertyName === 'monthly_income' && $this->monthly_income === '') {
-            $this->monthly_income = null;
-        }
-
         if (Str::startsWith($propertyName, 'patients.')) {
-            $this->validateOnly($propertyName, [
-                "patients.*.first_name" => "required_if:patient_count,>0|nullable|string|max:20",
-                "patients.*.middle_name" => "nullable|string|max:20",
-                "patients.*.last_name" => "required_if:patient_count,>0|nullable|string|max:20",
-                "patients.*.suffix" => "nullable|string|max:5",
-            ]);
+            $this->validateOnly($propertyName);
         } else {
             $this->validateOnly($propertyName);
         }
@@ -124,7 +104,7 @@ class ClientRegistration extends Component
 
     public function updatedPhicAffiliation()
     {
-        if ($this->phic_affiliation === 'Unaffiliated') {
+        if ($this->phic_affiliation !== 'Affiliated') {
             $this->phic_category = null;
         }
     }
@@ -132,65 +112,36 @@ class ClientRegistration extends Component
     public function updatedRepresentingPatient()
     {
         if ($this->representing_patient === 'Self') {
-            $this->patient_count = 1;
             $this->copyApplicantToPatient(1);
-        } elseif ($this->representing_patient === 'Self and Other Individual/s') {
-            $this->patient_count = 1;
-            $this->copyApplicantToPatient(1);
-        } elseif ($this->representing_patient === 'Other Individual/s') {
-            $this->patient_count = null;
-            $this->clearPatient(1);
         } else {
-            $this->patient_count = null;
             $this->clearPatient(1);
-            $this->clearPatient(2);
-            $this->clearPatient(3);
-        }
-    }
-
-    public function updatedPatientCount($value)
-    {
-        if ($value === '' || $value === null) {
-            $this->patient_count = null;
-        } else {
-            $this->patient_count = (int) $value;
-        }
-
-        for ($i = 1; $i <= 3; $i++) {
-            if ($this->patient_count === null || $i > $this->patient_count) {
-                $this->clearPatient($i);
-            }
-        }
-
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
-            $this->copyApplicantToPatient(1);
         }
     }
 
     public function updatedFirstName()
     {
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
         }
     }
 
     public function updatedMiddleName()
     {
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
         }
     }
 
     public function updatedLastName()
     {
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
         }
     }
 
     public function updatedSuffix()
     {
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
         }
     }
@@ -198,7 +149,7 @@ class ClientRegistration extends Component
     public function setSuffix($value)
     {
         $this->suffix = $value;
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
         }
     }
@@ -236,11 +187,16 @@ class ClientRegistration extends Component
     public function setOccupation(?string $value)
     {
         $this->occupation_id = $value;
+        $this->custom_occupation = '';
     }
 
     public function setPhicAffiliation($value)
     {
         $this->phic_affiliation = $value;
+
+        if ($this->phic_affiliation !== 'Affiliated') {
+            $this->phic_category = null;
+        }
     }
 
     public function setPhicCategory($value)
@@ -252,30 +208,11 @@ class ClientRegistration extends Component
     {
         $this->representing_patient = $value;
 
-        if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
-            $this->setPatientCount(1);
+        if ($this->representing_patient === 'Self') {
             $this->copyApplicantToPatient(1);
-        } elseif ($this->representing_patient === 'Other Individual/s') {
-            $this->setPatientCount(1);
-            $this->clearPatient(1);
-            $this->clearPatient(2);
-            $this->clearPatient(3);
         } else {
-            $this->setPatientCount('');
             $this->clearPatient(1);
-            $this->clearPatient(2);
-            $this->clearPatient(3);
         }
-    }
-
-    public function setPatientCount($value)
-    {
-        if ($value === '' || $value === null) {
-            $this->patient_count = null;
-            return;
-        }
-
-        $this->patient_count = (int) $value;
     }
 
     public function setPatientSuffix($index, $value)
@@ -301,6 +238,51 @@ class ClientRegistration extends Component
             'last_name' => '',
             'suffix' => '',
         ];
+    }
+
+    private function normalizePhoneNumber(string $value): string
+    {
+        $raw = Str::of($value)->trim();
+        $clean = Str::of($raw)->replaceMatches('/[^0-9+]/', '')->toString();
+
+        if (Str::startsWith($clean, '+')) {
+            $clean = Str::substr($clean, 1);
+        }
+
+        $clean = Str::of($clean)->replaceMatches('/[^0-9]/', '');
+
+        if (Str::startsWith($clean, '63')) {
+            $clean = '0' . Str::substr($clean, 2);
+        } elseif (Str::startsWith($clean, '9')) {
+            $clean = '0' . $clean;
+        } elseif (!Str::startsWith($clean, '0')) {
+            $clean = '0' . $clean;
+        }
+
+        if (strlen($clean) >= 11) {
+            $part1 = Str::substr($clean, 0, 4);
+            $part2 = Str::substr($clean, 4, 3);
+            $part3 = Str::substr($clean, 7, 4);
+            $formatted = $part1;
+
+            if ($part2 !== false && $part2 !== '') {
+                $formatted .= '-' . $part2;
+            }
+
+            if ($part3 !== false && $part3 !== '') {
+                $formatted .= '-' . $part3;
+            }
+
+            return $formatted;
+        }
+
+        if (strlen($clean) > 4) {
+            $part1 = Str::substr($clean, 0, 4);
+            $part2 = Str::substr($clean, 4);
+            return $part1 . ($part2 ? '-' . $part2 : '');
+        }
+
+        return $clean;
     }
 
     public function save()
@@ -368,14 +350,16 @@ class ClientRegistration extends Component
                 'birthdate'      => $this->birth_date,
                 'sex'            => $this->sex,
                 'civil_status'   => $this->civil_status,
-                'monthly_income' => $this->monthly_income,
+                'monthly_income' => is_numeric($this->monthly_income) ? (float) $this->monthly_income : 0,
             ]);
+
+            $formattedPhone = $this->normalizePhoneNumber($this->phone_number);
 
             Contact::create([
                 'contact_id'   => $contactId,
                 'client_id'    => $clientId,
                 'contact_type' => 'Application',
-                'phone_number' => $this->phone_number,
+                'phone_number' => $formattedPhone,
             ]);
 
             $phicCategory = $this->phic_affiliation === 'Affiliated' ? $this->phic_category : null;
@@ -387,7 +371,13 @@ class ClientRegistration extends Component
                 'city'                 => $this->city,
                 'municipality'         => $this->municipality,
                 'barangay'             => $this->barangay,
+                'subdivision'          => $this->subdivision,
+                'purok'                => $this->purok,
+                'sitio'                => $this->sitio,
                 'street'               => $this->street,
+                'phase'                => $this->phase,
+                'block_number'         => $this->block_number,
+                'house_number'         => $this->house_number,
                 'job_status'           => $this->job_status,
                 'representing_patient' => $this->representing_patient,
                 'house_occup_status'   => $this->house_occup_status,
@@ -396,49 +386,37 @@ class ClientRegistration extends Component
                 'phic_category'        => $phicCategory,
             ]);
 
-            if ($this->representing_patient === 'Self' || $this->representing_patient === 'Self and Other Individual/s') {
+            if ($this->representing_patient === 'Self') {
                 Patient::create([
                     'patient_id'   => $this->generateNextId('PATIENT', 'patients', 'patient_id'),
                     'applicant_id' => $applicantId,
                     'member_id'    => $memberId,
                 ]);
-            }
+            } else {
+                $pMemberId = $this->generateNextId('MEMBER', 'members', 'member_id');
 
-            if ($this->representing_patient === 'Other Individual/s' || ($this->representing_patient === 'Self and Other Individual/s' && $this->patient_count > 1)) {
-                $start = ($this->representing_patient === 'Self and Other Individual/s') ? 2 : 1;
+                Member::create([
+                    'member_id'   => $pMemberId,
+                    'account_id'  => $acctId,
+                    'member_type' => 'Patient',
+                    'first_name'  => $this->patients[1]['first_name'],
+                    'middle_name' => $this->patients[1]['middle_name'],
+                    'last_name'   => $this->patients[1]['last_name'],
+                    'suffix'      => $this->patients[1]['suffix'] === '' ? null : $this->patients[1]['suffix'],
+                    'full_name'   => Str::of("{$this->patients[1]['first_name']} " . ($this->patients[1]['middle_name'] ?? '') . " " . ($this->patients[1]['last_name'] ?? '') . " " . ($this->patients[1]['suffix'] ?? ''))->trim(),
+                ]);
 
-                for ($i = $start; $i <= $this->patient_count; $i++) {
-                    $pMemberId = $this->generateNextId('MEMBER', 'members', 'member_id');
-
-                    Member::create([
-                        'member_id'   => $pMemberId,
-                        'account_id'  => $acctId,
-                        'member_type' => 'Patient',
-                        'first_name'  => $this->patients[$i]['first_name'],
-                        'middle_name' => $this->patients[$i]['middle_name'],
-                        'last_name'   => $this->patients[$i]['last_name'],
-                        'suffix'      => $this->patients[$i]['suffix'] === '' ? null : $this->patients[$i]['suffix'],
-                        'full_name'   => Str::of("{$this->patients[$i]['first_name']} " . ($this->patients[$i]['middle_name'] ?? '') . " " . ($this->patients[$i]['last_name'] ?? '') . " " . ($this->patients[$i]['suffix'] ?? ''))->trim(),
-                    ]);
-
-                    Patient::create([
-                        'patient_id'   => $this->generateNextId('PATIENT', 'patients', 'patient_id'),
-                        'applicant_id' => $applicantId,
-                        'member_id'    => $pMemberId,
-                    ]);
-                }
+                Patient::create([
+                    'patient_id'   => $this->generateNextId('PATIENT', 'patients', 'patient_id'),
+                    'applicant_id' => $applicantId,
+                    'member_id'    => $pMemberId,
+                ]);
             }
         });
 
-        DB::commit();
         session()->flash('success', 'Applicant has been added successfully.');
         $this->reset();
-        return redirect()->route('profiles.applicants.list');
-    }
-
-    public function submitForm()
-    {
-        $this->save();
+        $this->redirectRoute('profiles.applicants.list');
     }
 
     public function render()

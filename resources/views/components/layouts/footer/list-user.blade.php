@@ -1,5 +1,5 @@
 <a type="button" id="addUserBtn" class="footer-btn" href="{{ route('profiles.users.create') }}">
-    <div class="nav-icon"><i class="fas fa-plus"></i></div>
+    <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
     <div class="nav-text">Add User</div>
 </a>
 
