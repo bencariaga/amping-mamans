@@ -22,6 +22,7 @@ class ExpenseRange extends Model
         'exp_range_min',
         'exp_range_max',
         'discount_percent',
+        'assist_amount'
     ];
 
     protected static function boot()

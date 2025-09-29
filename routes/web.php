@@ -59,13 +59,13 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('applications')->name('applications.')->group(function () {
-        Route::get('/', [SearchController::class, 'listApplications'])->name('list');
-        Route::get('/assistance-request', [ApplicationController::class, 'showAssistanceRequest'])->name('assistance-request');
-        Route::post('/store', [ApplicationController::class, 'store'])->name('store');
-        Route::post('/verify-phone', [ApplicationController::class, 'verifyPhoneNumber'])->name('verify-phone');
-        Route::get('/calculate-amount', [ApplicationController::class, 'calculateAssistanceAmount'])->name('calculate-amount');
-    });
+    // Route::prefix('applications')->name('applications.')->group(function () {
+    //     Route::get('/', [SearchController::class, 'listApplications'])->name('list');
+    //     Route::get('/assistance-request', [ApplicationController::class, 'showAssistanceRequest'])->name('assistance-request');
+    //     Route::post('/store', [ApplicationController::class, 'store'])->name('store');
+    //     Route::post('/verify-phone', [ApplicationController::class, 'verifyPhoneNumber'])->name('verify-phone');
+    //     Route::get('/calculate-amount', [ApplicationController::class, 'calculateAssistanceAmount'])->name('calculate-amount');
+    // });
 
     Route::prefix('/tariff-lists')->name('tariff-lists.')->group(function () {
         Route::get('/', [TariffListController::class, 'showTariffListVersions'])->name('rows.show');
@@ -93,6 +93,8 @@ Route::middleware('auth')->group(function () {
         Route::post('{application}/authorize', [GLController::class, 'authorizeApplication'])->name('authorize');
         Route::post('{application}/reject', [GLController::class, 'reject'])->name('reject');
         Route::get('{application}/guarantee-letter', [GLController::class, 'generatePDF'])->name('guarantee-letter.pdf');
+
+        Route::get('/search-applicant', [ApplicationController::class, 'searchApplicant'])->name('search-applicant');
     });
 
     Route::prefix('/roles')->name('roles.')->group(function () {

@@ -27,6 +27,7 @@ class Application extends Model
         'billed_amount',
         'applied_at',
         'reapply_at',
+        'assistance_amount',
     ];
 
     protected static function boot()
