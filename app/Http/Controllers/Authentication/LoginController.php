@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use App\Models\User\Member;
+use App\Models\Authentication\Account;
 
 class LoginController extends Controller
 {
@@ -27,8 +28,10 @@ class LoginController extends Controller
         $user = Member::with('staff')
             ->whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$credentials['username']])
             ->first();
+        
+        $account = $user ? Account::where('account_id', $user->account_id)->first() : null;
 
-        if ($user && $user->staff && Hash::check($credentials['password'], $user->staff->password)) {
+        if ($user && $user->staff && Hash::check($credentials['password'], $user->staff->password) && $account && $account->account_status === 'Active') {
             Auth::login($user);
             return redirect()->route('dashboard');
         }
