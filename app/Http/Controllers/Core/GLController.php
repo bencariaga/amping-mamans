@@ -213,7 +213,7 @@ class GLController extends Controller
             
             if ($applicant) {
                 $phone_number = $applicant->client->contacts->first()->phone_number ?? null;
-                $format_phone = preg_replace('/^-/', '', $phone_number);
+                $format_phone = str_replace("-", "", $phone_number);
                 $this->sendSMS($format_phone, "Your assistance request has been approved. You may now download your Guarantee Letter from the application portal.");
             }
 
@@ -370,22 +370,25 @@ class GLController extends Controller
     {
         try {
             $client = new Client();
-            $response = $client->post('https://api.semaphore.co/api/v4/messages', [
-                'form_params' => [
+            $payload = [
                     'apikey' => env('SEMAPHORE_API_KEY'),
                     'number' => $phoneNumber,
                     'message' => $message,
                     'sendername' => env('SEMAPHORE_SENDER_NAME'),
-                ],
+            ];
+            $response = $client->post('https://api.semaphore.co/api/v4/messages', [
+                'form_params' => $payload,
             ]);
 
             $statusCode = $response->getStatusCode();
             $body = json_decode($response->getBody(), true);
 
             if ($statusCode == 200 && isset($body['success']) && $body['success'] === true) {
+                Log::info('SMS sent successfully to ' . $phoneNumber);
                 return true;
             } else {
-                Log::error('Failed to send SMS: ' . ($body['message'] ?? 'Unknown error'));
+                Log::error('Payload:', $payload);
+                Log::error('Failed to send SMS: ', $body);
                 return false;
             }
         } catch (Exception $e) {
