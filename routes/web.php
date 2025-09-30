@@ -18,6 +18,8 @@ use App\Http\Controllers\Profile\UserProfileController;
 use App\Http\Controllers\Profile\ClientProfileController;
 use App\Http\Controllers\Registration\UserRegistrationController;
 use App\Http\Controllers\Registration\ClientRegistrationController;
+use App\Http\Controllers\Communication\MessageTemplateController;
+
 
 Route::get('/', fn() => view('welcome'))->name('home');
 Route::get('/about', fn() => view('about'))->name('about');
@@ -38,6 +40,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('/', [UserProfileController::class, 'destroy'])->name('user.profile.destroy');
     });
 
+    // SMS template
+    Route::prefix('message-templates')->group(function () {
+        Route::get('/', [MessageTemplateController::class, 'index'])->name('message-templates.index');
+        Route::get('/create', [MessageTemplateController::class, 'create'])->name('message-templates.create');
+        Route::post('/', [MessageTemplateController::class, 'store'])->name('message-templates.store');
+        Route::get('/{id}/edit', [MessageTemplateController::class, 'edit'])->name('message-templates.edit');
+        Route::put('/{id}', [MessageTemplateController::class, 'update'])->name('message-templates.update');
+        Route::delete('/{id}', [MessageTemplateController::class, 'destroy'])->name('message-templates.destroy');
+    });
+
     Route::prefix('profiles')->name('profiles.')->group(function () {
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [SearchController::class, 'listUsers'])->name('list');
@@ -46,6 +58,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [UserRegistrationController::class, 'store'])->name('store');
             Route::get('{user}', [UserProfileController::class, 'show'])->name('show');
             Route::put('{user}', [UserProfileController::class, 'update'])->name('update');
+            Route::put('{user}/deactivate', [UserProfileController::class, 'deactivate'])->name('deactivate');
             Route::delete('{user}', [UserProfileController::class, 'destroy'])->name('destroy');
         });
 
@@ -59,13 +72,13 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('applications')->name('applications.')->group(function () {
-        Route::get('/', [SearchController::class, 'listApplications'])->name('list');
-        Route::get('/assistance-request', [ApplicationController::class, 'showAssistanceRequest'])->name('assistance-request');
-        Route::post('/store', [ApplicationController::class, 'store'])->name('store');
-        Route::post('/verify-phone', [ApplicationController::class, 'verifyPhoneNumber'])->name('verify-phone');
-        Route::get('/calculate-amount', [ApplicationController::class, 'calculateAssistanceAmount'])->name('calculate-amount');
-    });
+    // Route::prefix('applications')->name('applications.')->group(function () {
+    //     Route::get('/', [SearchController::class, 'listApplications'])->name('list');
+    //     Route::get('/assistance-request', [ApplicationController::class, 'showAssistanceRequest'])->name('assistance-request');
+    //     Route::post('/store', [ApplicationController::class, 'store'])->name('store');
+    //     Route::post('/verify-phone', [ApplicationController::class, 'verifyPhoneNumber'])->name('verify-phone');
+    //     Route::get('/calculate-amount', [ApplicationController::class, 'calculateAssistanceAmount'])->name('calculate-amount');
+    // });
 
     Route::prefix('/tariff-lists')->name('tariff-lists.')->group(function () {
         Route::get('/', [TariffListController::class, 'showTariffListVersions'])->name('rows.show');
@@ -93,6 +106,8 @@ Route::middleware('auth')->group(function () {
         Route::post('{application}/authorize', [GLController::class, 'authorizeApplication'])->name('authorize');
         Route::post('{application}/reject', [GLController::class, 'reject'])->name('reject');
         Route::get('{application}/guarantee-letter', [GLController::class, 'generatePDF'])->name('guarantee-letter.pdf');
+
+        Route::get('/search-applicant', [ApplicationController::class, 'searchApplicant'])->name('search-applicant');
     });
 
     Route::prefix('/roles')->name('roles.')->group(function () {

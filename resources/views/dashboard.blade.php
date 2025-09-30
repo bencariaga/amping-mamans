@@ -71,25 +71,26 @@
             </div>
 
             <div class="dashboard-card">
-                <a class="text-decoration-none text-reset" href="{{ route('applications.list') }}">
-                    <h6 class="card-title">Approved Guarantee Letters:</h6>
-                    <div class="d-flex flex-column justify-content-between mt-2">
-                        <div>
-                            <div class="card-subtitle"><b>In {{ $currentYear }}:</b></div>
-                            <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
-                        </div>
-
-                        <div>
-                            <div class="card-subtitle"><b>Today:</b></div>
-                            <div id="card-subamount-today" class="card-subamount">{{ $glTodayCount }}</div>
-                        </div>
-
-                        <div>
-                            <div class="card-subtitle"><b>Pending:</b></div>
-                            <div id="card-subamount-pending" class="card-subamount">{{ $pendingCount }}</div>
-                        </div>
+                <h6 class="card-title">Approved Guarantee Letters:</h6>
+                <div class="d-flex flex-column justify-content-between mt-2">
+                    <div>
+                        <div class="card-subtitle"><b>In {{ $currentYear }}:</b></div>
+                        <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
                     </div>
-                </a>
+
+                    <div>
+                        <div class="card-subtitle"><b>Today:</b></div>
+                        <div id="card-subamount-today" class="card-subamount">{{ $glTodayCount }}</div>
+                    </div>
+
+                    <div>
+                        <div class="card-subtitle"><b>Pending:</b></div>
+                        <div id="card-subamount-pending" class="card-subamount">{{ $pendingCount }}</div>
+                    </div>
+                </div>
+                <div class="show-more" style="margin-bottom: -17px;">
+                    <a class="show-more-text" href="{{ route('applications.list') }}">View List</a>
+                </div>
             </div>
 
             <div class="trinity-card d-flex flex-column justify-content-between">
@@ -107,7 +108,7 @@
                     </div>
                 </a>
 
-                <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="">
+                <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="{{ route('message-templates.index') }}">
                     <div class="card-special d-flex align-items-center">
                         <i class="fas fa-comment-alt"></i>
                         <h6 class="trinity-text">SMS Templates</h6>

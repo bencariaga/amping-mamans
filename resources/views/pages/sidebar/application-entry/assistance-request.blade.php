@@ -4,10 +4,14 @@
 
 @push('styles')
     <link href="{{ asset('css/pages/sidebar/application-entry/assistance-request.css') }}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 @endpush
 
 @push('scripts')
     <script src="{{ asset('js/pages/sidebar/application-entry/assistance-request.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 @endpush
 
 @section('breadcrumbs')
@@ -26,18 +30,13 @@
             <div id="profileContainer">
                 <div class="row gx-3 gy-3">
                     <div class="form-group col-md-3">
-                        <label for="phoneNumber" class="form-label fw-bold">Phone Number <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="phoneNumber" placeholder="Example: 0912-345-6789">
-                        <small id="phoneVerificationMessage" class="form-text mt-1 d-none"></small>
+                        <label for="applicant" class="form-label fw-bold">Applicant<span class="required-asterisk">*</span></label>
+                        <select class="form-select form-select-lg" id="applicant" name="applicantId"></select>
+                        <small id="applicantVerificationMessage" class="form-text mt-1 d-none"></small>
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="label-hidden">Verify</label>
-                        <button class="btn btn-primary w-100 fw-bold" type="button" id="verifyBtn">VERIFY</button>
-                    </div>
-
-                    <div class="form-group col-md-3">
-                        <label for="applicantName" class="form-label fw-bold">Applicant Name <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="applicantName" placeholder="Verify the phone number first." readonly>
+                        <label class="label-hidden">Create New Applicant</label>
+                        <a class="btn btn-primary w-100 fw-bold" href="{{ route('profiles.applicants.create') }}">Create New Applicant</a>
                     </div>
 
                     <div class="form-group col-md-3">

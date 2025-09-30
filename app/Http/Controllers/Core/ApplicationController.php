@@ -26,6 +26,48 @@ class ApplicationController extends Controller
         $affiliate_partners = AffiliatePartner::orderBy('affiliate_partner_name')->get();
         return view('pages.sidebar.application-entry.assistance-request', ['services' => $services, 'affiliate_partners' => $affiliate_partners]);
     }
+    public function searchApplicant(Request $request){
+        $searchTerm = $request->input('q');
+
+        $applicants = Applicant::whereHas('client.member', function ($query) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('first_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $searchTerm . '%')
+                  ->orWhere(DB::raw("CONCAT(last_name, ', ', first_name)"), 'like', '%' . $searchTerm . '%');
+            });
+        })
+        ->with('client.member')
+        ->limit(10)
+        ->get();
+
+        $results = $applicants->map(function ($applicant) {
+            $member = $applicant->client->member;
+            $fullName = Str::of("{$member->first_name} {$member->middle_name} {$member->last_name} {$member->suffix}")->trim();
+            
+            $patients = $applicant->patients->map(function ($patient) use ($applicant) {
+                $pm = $patient->member ?? null;
+
+                return [
+                    'patient_id' => $patient->patient_id,
+                    'first_name' => $pm->first_name ?? '',
+                    'middle_name' => $pm->middle_name ?? '',
+                    'last_name' => $pm->last_name ?? '',
+                    'suffix' => $pm->suffix ?? '',
+                    'is_applicant' => ($pm && $pm->member_id === ($applicant->client->member_id ?? null)),
+                ];
+            });
+
+            return [
+                'id' => $applicant->applicant_id,
+                'text' => $fullName,
+                'patients' => $patients
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+
+    }
 
     public function verifyPhoneNumber(Request $request)
     {
@@ -218,6 +260,7 @@ class ApplicationController extends Controller
                 'applied_at' => $appliedAt,
                 'reapply_at' => $reapplyAt,
                 'patient_id' => $request->input('patient_id'),
+                'assistance_amount' => $assistanceAmountRaw
             ]);
 
             if ($application) {

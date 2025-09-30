@@ -11,9 +11,14 @@ use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\GuaranteeLetter;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Storage\Data;
+use App\Models\User\Applicant;
+use App\Models\Communication\MessageTemplate;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Exception;
+use Humans\Semaphore\Laravel\Facades\Semaphore;
+use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
 
 class GLController extends Controller
 {
@@ -153,6 +158,8 @@ class GLController extends Controller
             return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
         }
 
+        $applicant = Applicant::where('applicant_id', $application->applicant_id)->with(['client.contacts'])->first();
+
         $expenseRange = ExpenseRange::where('exp_range_id', $application->exp_range_id)->first();
         $assistAmount = $expenseRange->assist_amount ?? 0;
 
@@ -204,6 +211,14 @@ class GLController extends Controller
             ]);
 
             DB::commit();
+            
+            if ($applicant) {
+                $phone_number = $applicant->client->contacts->first()->phone_number ?? null;
+                $format_phone = str_replace("-", "", $phone_number);
+                $messageTemplate = MessageTemplate::where('msg_tmp_title', 'Approved SMS Template')->first();
+                $message = $messageTemplate ? $messageTemplate->msg_tmp_text : "Your assistance request has been approved. You may now claim your Guarantee Letter from the AMPING office.";
+                $this->sendSMS($format_phone, $message);
+            }
 
             return response()->json([
                 'success' => true,
@@ -352,5 +367,36 @@ class GLController extends Controller
             ->setPaper('letter', 'portrait');
 
         return $pdf->inline($gl->gl_id . '.pdf');
+    }
+
+    public function sendSMS($phoneNumber, $message)
+    {
+        try {
+            $client = new Client();
+            $payload = [
+                    'apikey' => env('SEMAPHORE_API_KEY'),
+                    'number' => $phoneNumber,
+                    'message' => $message,
+                    'sendername' => env('SEMAPHORE_SENDER_NAME'),
+            ];
+            $response = $client->post('https://api.semaphore.co/api/v4/messages', [
+                'form_params' => $payload,
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $body = json_decode($response->getBody(), true);
+
+            if ($statusCode == 200 && isset($body['success']) && $body['success'] === true) {
+                Log::info('SMS sent successfully to ' . $phoneNumber);
+                return true;
+            } else {
+                Log::error('Payload:', $payload);
+                Log::error('Failed to send SMS: ', $body);
+                return false;
+            }
+        } catch (Exception $e) {
+            Log::error('Exception while sending SMS: ' . $e->getMessage());
+            return false;
+        }
     }
 }
