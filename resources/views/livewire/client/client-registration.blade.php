@@ -1,5 +1,7 @@
 <div>
     <form wire:submit="save" class="profile-section" id="profileSection">
+        {{-- Step 1: Applicant's Name --}}
+        @if($step === 1)
         <div class="profile-container">
             <div class="row gx-3 gy-3 mb-3">
                 <legend class="form-legend">
@@ -41,7 +43,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        {{-- Step 2: Personal Information --}}
+        @if($step === 2)
         <div class="profile-container">
             <div class="row gx-3 gy-3 mb-3">
                 <legend class="form-legend">
@@ -90,7 +95,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        {{-- Step 3: Home Address --}}
+        @if($step === 3)
         <div class="profile-container">
             <div class="row gx-3 gy-3 mb-3">
                 <legend class="form-legend">
@@ -126,7 +134,7 @@
                     <input type="text" wire:model.live="subdivision" class="form-control" id="applicantSubdivisionInput" placeholder="Ex: Doña Soledad">
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="form-label">Barangay <span class="fw-normal">(if applicable)</span></label>
+                    <label class="form-label">Barangay <span class="required-asterisk">*</span></label>
                     <div class="dropdown">
                         <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="applicantBarangayDropdownBtn">
                             {{ $barangay ?: '— Select —' }}
@@ -172,7 +180,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        {{-- Step 4: Work Information --}}
+        @if($step === 4)
         <div class="profile-container">
             <div class="row gx-3 gy-3 mb-3">
                 <legend class="form-legend">
@@ -195,7 +206,7 @@
                     @error('job_status') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="form-label">Occupation <span class="fw-normal">(if applicable)</span></label>
+                    <label class="form-label">Occupation <span class="required-asterisk">*</span></label>
                     <div class="dropdown">
                         <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="applicantOccupationDropdownBtn" @if($custom_occupation) disabled @endif>
                             @if($occupation_id && $occupations->find($occupation_id))
@@ -230,7 +241,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        {{-- Step 5: Medical Information --}}
+        @if($step === 5)
         <div class="profile-container">
             <div class="row gx-3 gy-3 mb-3">
                 <legend class="form-legend">
@@ -347,6 +361,18 @@
                     </div>
                 @endif
             </div>
+        </div>
+        @endif
+
+        {{-- Navigation Buttons --}}
+        <div class="d-flex justify-content-between mt-4">
+            @if($step > 1)
+                <button type="button" class="btn btn-secondary" wire:click="prevStep">Previous</button>
+            @endif
+
+            @if($step < 5)
+                <button type="button" class="btn btn-primary" wire:click="nextStep">Next</button>
+            @endif
         </div>
         @include('components.layouts.footer.add-applicant')
     </form>

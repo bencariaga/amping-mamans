@@ -57,8 +57,8 @@ class ClientRegistration extends Component
         'sex' => 'required|string|in:Male,Female',
         'civil_status' => 'required|string|in:Single,Married,Widowed,Separated',
         'phone_number' => 'required|string|max:15|unique:contacts,phone_number',
-        'barangay' => 'nullable|string',
-        'occupation_id' => 'nullable|string|exists:occupations,occupation_id',
+        'barangay' => 'required|string',
+        'occupation_id' => 'required|string|exists:occupations,occupation_id',
         'custom_occupation' => 'nullable|string|max:30',
         'job_status' => 'required|string|in:Permanent,Contractual,Casual',
         'occupation_status' => 'nullable|string|in:Employed,Self-Employed,Job Order,Private Individual',
@@ -73,6 +73,61 @@ class ClientRegistration extends Component
         'patients.*.last_name' => 'required|string|max:20',
         'patients.*.suffix' => 'nullable|string|max:5',
     ];
+
+    public $step = 1;
+
+    public function nextStep()
+    {
+        $this->validateStep($this->step);
+        $this->step++;
+    }
+
+    public function prevStep()
+    {
+        $this->step--;
+    }
+
+    public function validateStep($step)
+    {
+        // Add validation rules per step
+        if ($step === 1) {
+            $this->validate([
+                'first_name' => 'required|string|max:20',
+                'middle_name' => 'nullable|string|max:20',
+                'last_name' => 'required|string|max:20',
+                'suffix' => 'nullable|string|in:Sr.,Jr.,II,III,IV,V'
+            ]);
+        } elseif ($step === 2) {
+            $this->validate([
+                'sex' => 'required|string',
+                'birth_date' => 'required|date',
+                'phone_number' => 'required|string|max:15|unique:contacts,phone_number',
+                'civil_status' => 'required|string|in:Single,Married,Widowed,Separated',
+            ]);
+        } elseif ($step === 3) {
+            $this->validate([
+                'house_occup_status' => 'required|string|in:Owner,Renter,House Sharer',
+                'lot_occup_status' => 'required|string|in:Owner,Renter,Lot'
+            ]);
+        } elseif ($step === 4) {
+            $this->validate([
+                'job_status' => 'required|string|in:Permanent,Contractual,Casual',
+                'occupation_id' => 'required|string|exists:occupations,occupation_id',
+                'custom_occupation' => 'nullable|string|max:30',
+                'monthly_income' => 'required|integer|min:0|max:9999999',
+            ]);
+        } elseif ($step === 5) {
+            $this->validate([
+                'representing_patient' => 'required|string|in:Self,Other Individual',
+                'phic_affiliation' => 'required|string|in:Affiliated,Unaffiliated',
+                'phic_category' => 'nullable|string|in:Self-Employed,Sponsored,Employed',
+                'patients.*.first_name' => 'required|string|max:20',
+                'patients.*.middle_name' => 'nullable|string|max:20',
+                'patients.*.last_name' => 'required|string|max:20',
+                'patients.*.suffix' => 'nullable|string|max:5',
+            ]);
+        }       
+    }
 
     private function generateNextId(string $prefix, string $table, string $primaryKey): string
     {
