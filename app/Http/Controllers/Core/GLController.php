@@ -12,6 +12,7 @@ use App\Models\Operation\GuaranteeLetter;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Storage\Data;
 use App\Models\User\Applicant;
+use App\Models\Communication\MessageTemplate;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -214,7 +215,9 @@ class GLController extends Controller
             if ($applicant) {
                 $phone_number = $applicant->client->contacts->first()->phone_number ?? null;
                 $format_phone = str_replace("-", "", $phone_number);
-                $this->sendSMS($format_phone, "Your assistance request has been approved. You may now download your Guarantee Letter from the application portal.");
+                $messageTemplate = MessageTemplate::first();
+                $message = $messageTemplate ? $messageTemplate->msg_tmp_text : "Your assistance request has been approved. You may now claim your Guarantee Letter from the AMPING office.";
+                $this->sendSMS($format_phone, $message);
             }
 
             return response()->json([
