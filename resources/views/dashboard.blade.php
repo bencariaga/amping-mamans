@@ -108,7 +108,7 @@
                     </div>
                 </a>
 
-                <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="">
+                <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="{{ route('message-templates.index') }}">
                     <div class="card-special d-flex align-items-center">
                         <i class="fas fa-comment-alt"></i>
                         <h6 class="trinity-text">SMS Templates</h6>

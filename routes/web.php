@@ -18,6 +18,8 @@ use App\Http\Controllers\Profile\UserProfileController;
 use App\Http\Controllers\Profile\ClientProfileController;
 use App\Http\Controllers\Registration\UserRegistrationController;
 use App\Http\Controllers\Registration\ClientRegistrationController;
+use App\Http\Controllers\Communication\MessageTemplateController;
+
 
 Route::get('/', fn() => view('welcome'))->name('home');
 Route::get('/about', fn() => view('about'))->name('about');
@@ -36,6 +38,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [UserProfileController::class, 'show'])->name('user.profile.show');
         Route::put('/', [UserProfileController::class, 'update'])->name('user.profile.update');
         Route::delete('/', [UserProfileController::class, 'destroy'])->name('user.profile.destroy');
+    });
+
+    // SMS template
+    Route::prefix('message-templates')->group(function () {
+        Route::get('/', [MessageTemplateController::class, 'index'])->name('message-templates.index');
+        Route::get('/create', [MessageTemplateController::class, 'create'])->name('message-templates.create');
+        Route::post('/', [MessageTemplateController::class, 'store'])->name('message-templates.store');
+        Route::get('/{id}/edit', [MessageTemplateController::class, 'edit'])->name('message-templates.edit');
+        Route::put('/{id}', [MessageTemplateController::class, 'update'])->name('message-templates.update');
+        Route::delete('/{id}', [MessageTemplateController::class, 'destroy'])->name('message-templates.destroy');
     });
 
     Route::prefix('profiles')->name('profiles.')->group(function () {

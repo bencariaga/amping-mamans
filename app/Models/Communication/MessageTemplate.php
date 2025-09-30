@@ -18,6 +18,7 @@ class MessageTemplate extends Model
         'msg_tmp_id',
         'data_id',
         'msg_tmp_text',
+        'msg_tmp_title',
     ];
 
     protected static function boot()
