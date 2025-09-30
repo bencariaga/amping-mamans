@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [UserRegistrationController::class, 'store'])->name('store');
             Route::get('{user}', [UserProfileController::class, 'show'])->name('show');
             Route::put('{user}', [UserProfileController::class, 'update'])->name('update');
+            Route::put('{user}/deactivate', [UserProfileController::class, 'deactivate'])->name('deactivate');
             Route::delete('{user}', [UserProfileController::class, 'destroy'])->name('destroy');
         });
 

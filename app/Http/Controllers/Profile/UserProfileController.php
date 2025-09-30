@@ -48,11 +48,11 @@ class UserProfileController extends Controller
         if ($request->input('action') === 'change_password') {
             $request->validate([
                 'username_confirmation_change' => ['required', 'string', function ($a, $v, $f) use ($target) {
-                    if ($v !== $target->full_name) {
+                    if ($v !== $target->first_name . ' ' . $target->last_name) {
                         $f('Your confirmation input does not match with the actual one. Please try again.');
                     }
                 }],
-                'new_password' => ['required', 'string', 'min:8|confirmed'],
+                'new_password' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
             ]);
 
             $staff = $target->staff;
@@ -130,6 +130,25 @@ class UserProfileController extends Controller
         $target->save();
 
         return back()->with('success', 'User profile has been updated.');
+    }
+
+    public function deactivate(Request $request, Member $user)
+    {
+        $auth = Auth::user();
+        $target = $user->member_id !== $auth->member_id ? $user : $auth;
+
+        $target->account->account_status = $target->account->account_status == 'Deactivated' ? 'Active' : 'Deactivated';
+        $target->account->last_deactivated_at = now();
+        $target->account->save();
+
+        if ($auth->member_id === $target->member_id) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
+        }
+
+        return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
     }
 
     public function destroy(Request $request, Member $user)

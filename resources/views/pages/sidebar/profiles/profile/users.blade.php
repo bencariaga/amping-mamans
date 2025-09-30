@@ -91,6 +91,15 @@
                         </div>
                     </div>
                     <div class="form-group button-container">
+                        <button type="button" class="btn btn-secondary" id="deactivateUser" data-member-id="{{ $user->member_id }}" data-status="{{ $user->account->account_status === 'Active' ? 'DEACTIVATE' : 'ACTIVATE' }}">
+                            @if($user->account->account_status === 'Active')
+                                DEACTIVATE USER
+                            @else
+                                ACTIVATE USER
+                            @endif
+                        </button>
+                    </div>
+                    <div class="form-group button-container d-none">
                         <button type="button" class="btn btn-danger" id="removeProfilePictureBtn">
                             REMOVE PICTURE
                         </button>
