@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(`/applications/calculate-amount?service_id=${encodeURIComponent(serviceId)}&billed_amount=${encodeURIComponent(billedAmount)}`);
             const data = await response.json();
-            console.log('assistance amount data', data);
             if (response.ok) {
                 assistanceAmountInput.value = `₱${Number(data.assistance_amount).toLocaleString()}`;
                 assistanceAmountRawInput.value = Number(data.assistance_amount);
@@ -160,8 +159,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             const result = await response.json();
-
             if (response.ok) {
+                const applicationId = result.application_id;
+                if(applicationId) {
+                    processApplication(applicationId, 'authorize');
+                }
                 alert(result.message || 'Saved');
                 if (result.redirect) {
                     window.location.href = result.redirect;
@@ -175,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
 
 $(document).ready(function() {
 
@@ -330,4 +331,25 @@ function normalizeInputPhoneCandidates(raw) {
     }
 
     return Array.from(candidates).filter(Boolean);
+}
+
+function processApplication(applicationId, action) {
+    const token = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : null;
+    fetch(`/applications/${applicationId}/${action}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Application processed:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error processing application:', error);
+    })
 }

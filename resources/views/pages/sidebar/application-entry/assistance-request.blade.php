@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label class="label-hidden">Create New Applicant</label>
-                        <a class="btn btn-primary w-100 fw-bold" href="/profiles/applicants/add">Create New Applicant</a>
+                        <a class="btn btn-primary w-100 fw-bold" href="{{ route('profiles.applicants.create') }}">Create New Applicant</a>
                     </div>
 
                     <div class="form-group col-md-3">
