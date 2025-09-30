@@ -215,7 +215,7 @@ class GLController extends Controller
             if ($applicant) {
                 $phone_number = $applicant->client->contacts->first()->phone_number ?? null;
                 $format_phone = str_replace("-", "", $phone_number);
-                $messageTemplate = MessageTemplate::first();
+                $messageTemplate = MessageTemplate::where('msg_tmp_title', 'Approved SMS Template')->first();
                 $message = $messageTemplate ? $messageTemplate->msg_tmp_text : "Your assistance request has been approved. You may now claim your Guarantee Letter from the AMPING office.";
                 $this->sendSMS($format_phone, $message);
             }
