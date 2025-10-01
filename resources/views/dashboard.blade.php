@@ -72,12 +72,8 @@
 
             <div class="dashboard-card">
                 <h6 class="card-title">Approved Guarantee Letters:</h6>
-                <div class="d-flex flex-column justify-content-between mt-2">
-                    <div>
-                        <div class="card-subtitle"><b>In {{ $currentYear }}:</b></div>
-                        <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
-                    </div>
 
+                <div class="d-grid my-2" style="grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, auto); gap: 8px;">
                     <div>
                         <div class="card-subtitle"><b>Today:</b></div>
                         <div id="card-subamount-today" class="card-subamount">{{ $glTodayCount }}</div>
@@ -86,6 +82,11 @@
                     <div>
                         <div class="card-subtitle"><b>Pending:</b></div>
                         <div id="card-subamount-pending" class="card-subamount">{{ $pendingCount }}</div>
+                    </div>
+
+                    <div>
+                        <div class="card-subtitle"><b>In {{ $currentYear }}:</b></div>
+                        <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
                     </div>
                 </div>
 
@@ -169,7 +170,7 @@
                 </tbody>
             </table>
 
-            <div class="show-more mb-2 pt-2">
+            <div class="show-more">
                 <a class="show-more-text" href="{{ route('tariff-lists.rows.show') }}">SHOW MORE...</a>
             </div>
         </div>
