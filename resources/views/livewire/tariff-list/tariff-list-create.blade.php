@@ -53,11 +53,11 @@
 
                     <div class="modal-footer justify-content-end pb-3">
                         <button type="button" class="btn btn-secondary action-buttons" wire:click="closeModal">
-                            <i class="fas fa-times me-3"></i><span class="fs-5">CANCEL</span>
+                            <i class="fas fa-times me-3"></i><span class="fs-5">Cancel</span>
                         </button>
 
                         <button type="submit" class="btn btn-primary action-buttons">
-                            <i class="fas fa-save me-3"></i><span class="fs-5">CREATE DRAFT</span>
+                            <i class="fas fa-save me-3"></i><span class="fs-5">Save Draft</span>
                         </button>
                     </div>
                 </form>

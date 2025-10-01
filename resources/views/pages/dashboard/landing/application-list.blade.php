@@ -140,7 +140,7 @@
                                         <span class="badge bg-warning text-black d-flex align-items-center justify-content-center px-2 py-2">Pending</span>
                                     @endif
                                 </td>
-                                <td class="px-3 py-2 text-center">₱ {{ number_format($application->expenseRange->assist_amount, 2) }}</td>
+                                <td class="px-3 py-2 text-center">₱ {{ number_format($application->assistance_amount, 2) }}</td>
 
                                 <td class="py-2 text-center action-buttons">
                                     <div class="d-flex gap-2 justify-content-center">

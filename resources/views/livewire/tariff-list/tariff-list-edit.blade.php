@@ -138,10 +138,10 @@
                     </div>
                     <div class="modal-footer justify-content-end pb-3" id="tariffEditModalFooter">
                         <button type="button" class="btn btn-secondary action-buttons" wire:click="closeModal">
-                            <i class="fas fa-times me-3"></i><span class="fs-5">CANCEL</span>
+                            <i class="fas fa-times me-3"></i><span class="fs-5">Cancel</span>
                         </button>
                         <button type="submit" class="btn btn-primary action-buttons">
-                            <i class="fas fa-check me-3"></i><span class="fs-5">CONFIRM CHANGES</span>
+                            <i class="fas fa-check me-3"></i><span class="fs-5">Save</span>
                         </button>
                     </div>
                 </form>

@@ -195,9 +195,12 @@ class ApplicationController extends Controller
             if (!$expenseRange) {
                 return response()->json(['error' => 'The expense ranges of this service type for this amount does not exist.'], 404);
             }
+            
+            $coverage = $expenseRange->coverage_percent / 100;
+            $assistAmount = $billedAmount * $coverage ?? 0;
 
             return response()->json([
-                'assistance_amount' => (float) $expenseRange->assist_amount,
+                'assistance_amount' => (float) $assistAmount,
                 'tariff_list_version' => $tariffList->tariff_list_id
             ]);
         } catch (ValidationException $e) {
@@ -298,7 +301,6 @@ class ApplicationController extends Controller
                 'm.first_name as client_first_name',
                 'm.middle_name as client_middle_name',
                 'm.last_name as client_last_name',
-                'er.assist_amount',
                 'er.exp_range_min',
                 'er.exp_range_max',
                 's.service_type',
@@ -328,7 +330,7 @@ class ApplicationController extends Controller
         $html .= '<div class="detail-value">' . Number::format($application->billed_amount, 2) . '</div>';
 
         $html .= '<div class="detail-label">Assistance Amount:</div>';
-        $html .= '<div class="detail-value">' . Number::format($application->assist_amount, 2) . '</div>';
+        $html .= '<div class="detail-value">' . Number::format($application->assistance_amount, 2) . '</div>';
 
         $html .= '<div class="detail-label">Affiliate Partner:</div>';
         $html .= '<div class="detail-value">' . e($application->affiliate_partner_name ?? 'N/A') . '</div>';

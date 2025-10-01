@@ -37,3 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+window.addEventListener('refresh-page', event => {
+    window.location.reload(false); // false for a soft reload
+});
+

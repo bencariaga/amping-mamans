@@ -68,11 +68,11 @@
                             <td class="px-3 py-3 text-center align-middle">
                                 <div class="d-flex justify-content-center action-button-group">
                                     <button type="button" onclick="openEditModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-primary btn-edit">
-                                        <i class="fas fa-edit me-2"></i>EDIT
+                                        <i class="fas fa-edit me-2"></i>View/Edit
                                     </button>
 
                                     <button type="button" onclick="openDeleteModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-danger btn-delete">
-                                        <i class="fas fa-trash me-2"></i>DELETE
+                                        <i class="fas fa-trash me-2"></i>Delete
                                     </button>
                                 </div>
                             </td>

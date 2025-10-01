@@ -25,11 +25,11 @@
 
             <div class="modal-footer justify-content-center border-top-0">
                 <button type="button" class="btn btn-secondary action-buttons px-4" wire:click="closeModal">
-                    <i class="fas fa-times me-3"></i><span class="fs-5">CANCEL</span>
+                    <i class="fas fa-times me-3"></i><span class="fs-5">Cancel</span>
                 </button>
 
                 <button type="button" class="btn btn-danger action-buttons px-4" wire:click="confirmDelete">
-                    <i class="fas fa-check me-3"></i><span class="fs-5">CONFIRM</span>
+                    <i class="fas fa-check me-3"></i><span class="fs-5">Confirm</span>
                 </button>
             </div>
         </div>

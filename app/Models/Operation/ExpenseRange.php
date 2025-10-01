@@ -21,8 +21,7 @@ class ExpenseRange extends Model
         'service_id',
         'exp_range_min',
         'exp_range_max',
-        'coverage_percent',
-        'assist_amount'
+        'coverage_percent'
     ];
 
     protected static function boot()
