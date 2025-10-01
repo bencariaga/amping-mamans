@@ -74,10 +74,6 @@
                                     <button type="button" onclick="openDeleteModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-danger btn-delete">
                                         <i class="fas fa-trash me-2"></i>DELETE
                                     </button>
-
-                                    <button type="button" onclick="openApplyModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-warning btn-apply">
-                                        <i class="fas fa-bolt me-2 text-dark"></i>APPLY
-                                    </button>
                                 </div>
                             </td>
                         </tr>

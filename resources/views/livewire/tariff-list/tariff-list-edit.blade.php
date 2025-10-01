@@ -45,6 +45,11 @@
                                     <i class="fas fa-exclamation-circle me-2"></i>{{ $message }}
                                 </div>
                             @enderror
+                            @if (session()->has('error'))
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                                </div>
+                            @endif
                         </div>
                         <div class="range-row my-5">
                             <div id="edit-tariffCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false" data-bs-touch="false">
@@ -67,7 +72,7 @@
                                                             <tr>
                                                                 <th id="tariff-list-table-header-6" class="py-2 fs-5">Minimum</th>
                                                                 <th id="tariff-list-table-header-7" class="py-2 fs-5">Maximum</th>
-                                                                <th id="tariff-list-table-header-8" class="py-2 fs-5">Discount (%)</th>
+                                                                <th id="tariff-list-table-header-8" class="py-2 fs-5">Coverage (%)</th>
                                                                 <th id="tariff-list-table-header-9" class="py-2 fs-5">Actions</th>
                                                             </tr>
                                                         </thead>
@@ -99,10 +104,10 @@
                                                                         </td>
                                                                         <td class="money-amount-cell">
                                                                             <div class="input-group px-3">
-                                                                                <input class="form-control form-control-sm tariff-input text-end" type="text" inputmode="numeric" wire:model.live="ranges.{{ $key }}.discount_percent" wire:key="discount-{{ $key }}-{{ $serviceIdForAttr }}" placeholder="0" maxlength="3">
+                                                                                <input class="form-control form-control-sm tariff-input text-end" type="text" inputmode="numeric" wire:model.live="ranges.{{ $key }}.coverage_percent" wire:key="coverage-{{ $key }}-{{ $serviceIdForAttr }}" placeholder="0" maxlength="3">
                                                                                 <span class="input-group-text fs-5 fw-bold m-0">%</span>
                                                                             </div>
-                                                                            @error("ranges.{$key}.discount_percent")
+                                                                            @error("ranges.{$key}.coverage_percent")
                                                                                 <div class="speech-wrapper justify-content-end">
                                                                                     <div class="speech-bubble speech-right error-bubble small">{{ $message }}</div>
                                                                                 </div>

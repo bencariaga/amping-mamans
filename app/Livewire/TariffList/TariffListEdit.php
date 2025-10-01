@@ -35,15 +35,16 @@ class TariffListEdit extends Component
     protected $rules = [
         'effectivity_date' => 'required|date',
         'selectedServices' => 'required|array|min:1',
-        'ranges.*.exp_range_min' => 'required|numeric|min:0',
+        'ranges.*.exp_range_min' => 'required|numeric|min:0|',
         'ranges.*.exp_range_max' => 'required|numeric|min:0|gte:ranges.*.exp_range_min',
-        'ranges.*.discount_percent' => 'required|numeric|min:0|max:100',
+        'ranges.*.coverage_percent' => 'required|numeric|min:0|max:100',
     ];
 
     protected $messages = [
         'ranges.*.exp_range_max.gte' => 'The maximum value must be greater than or equal to the minimum value.',
         'ranges.*.exp_range_min.numeric' => 'The value must be a number.',
         'ranges.*.exp_range_max.numeric' => 'The value must be a number.',
+        'ranges.*.coverage_percent.numeric' => 'The coverage percent must be a number between 0 and 100.',
     ];
 
     public function mount()
@@ -75,7 +76,7 @@ class TariffListEdit extends Component
                         'service_id' => $serviceRange->service_id,
                         'exp_range_min' => $this->formatNumber((string) $serviceRange->exp_range_min),
                         'exp_range_max' => $this->formatNumber((string) $serviceRange->exp_range_max),
-                        'discount_percent' => (string) $serviceRange->discount_percent,
+                        'coverage_percent' => (string) $serviceRange->coverage_percent,
                     ];
                 }
             }
@@ -140,7 +141,7 @@ class TariffListEdit extends Component
             $index = $parts[0];
             $field = $parts[1];
             $raw = $value;
-            if ($field === 'discount_percent') {
+            if ($field === 'coverage_percent') {
                 $san = Str::of((string) $raw)->replaceMatches('/\D/', '')->toString();
                 $san = $san === '' ? '0' : $san;
                 $this->ranges[$index][$field] = (string) (int) $san;
@@ -164,7 +165,7 @@ class TariffListEdit extends Component
             'service_id' => $serviceId,
             'exp_range_min' => '0',
             'exp_range_max' => '0',
-            'discount_percent' => '0',
+            'coverage_percent' => '0',
         ];
         $rangesCollection = collect($this->ranges);
         $rangesCollection->splice($index + 1, 0, [$newRange]);
@@ -193,13 +194,13 @@ class TariffListEdit extends Component
         foreach ($this->ranges as $i => $range) {
             $minRaw = $range['exp_range_min'] ?? '0';
             $maxRaw = $range['exp_range_max'] ?? '0';
-            $discountRaw = $range['discount_percent'] ?? '0';
+            $coverageRaw = $range['coverage_percent'] ?? '0';
             $minNum = (int) Str::of((string) $minRaw)->replace(',', '')->toString();
             $maxNum = (int) Str::of((string) $maxRaw)->replace(',', '')->toString();
-            $discountNum = (int) Str::of((string) $discountRaw)->replaceMatches('/\D/', '')->toString();
+            $coverageNum = (int) Str::of((string) $coverageRaw)->replaceMatches('/\D/', '')->toString();
             $this->ranges[$i]['exp_range_min'] = (string) $minNum;
             $this->ranges[$i]['exp_range_max'] = (string) $maxNum;
-            $this->ranges[$i]['discount_percent'] = (string) $discountNum;
+            $this->ranges[$i]['coverage_percent'] = (string) $coverageNum;
         }
     }
 
@@ -207,6 +208,54 @@ class TariffListEdit extends Component
     {
         $this->sanitizeRangesForValidation();
         $this->validate();
+
+        // Check for overlaps and duplicates
+        $rangesByService = [];
+        foreach ($this->ranges as $i => $range) {
+            if (!collect($this->selectedServices)->contains($range['service_id'])) {
+                continue;
+            }
+            $min = (int) Str::of((string) ($range['exp_range_min'] ?? '0'))->replace(',', '')->toString();
+            $max = (int) Str::of((string) ($range['exp_range_max'] ?? '0'))->replace(',', '')->toString();
+
+            // Group ranges by service
+            $rangesByService[$range['service_id']][] = [
+                'index' => $i,
+                'min' => $min,
+                'max' => $max,
+            ];
+        }
+
+        foreach ($rangesByService as $serviceId => $ranges) {
+            // Sort ranges by min value
+            usort($ranges, fn($a, $b) => $a['min'] <=> $b['min']);
+
+            $seen = [];
+            foreach ($ranges as $idx => $current) {
+                // Check for duplicate min/max
+                $key = "{$current['min']}-{$current['max']}";
+                if (in_array($key, $seen)) {
+                    session()->flash('error', "Duplicate range values found for service ID {$serviceId} (min: {$current['min']}, max: {$current['max']}).");
+                    Log::warning("Duplicate range values found", [
+                        'service_id' => $serviceId,
+                        'min' => $current['min'],
+                        'max' => $current['max'],
+                    ]);
+                    return;
+                }
+                $seen[] = $key;
+
+                // Check for overlap with previous range
+                if ($idx > 0) {
+                    $prev = $ranges[$idx - 1];
+                    if ($current['min'] <= $prev['max']) {
+                        session()->flash('error', "Overlapping ranges detected for service ID {$serviceId} between min: {$prev['min']}-max: {$prev['max']} and min: {$current['min']}-max: {$current['max']}.");
+                        return;
+                    }
+                }
+            }
+        }
+
         if (empty($this->tariffListId)) {
             session()->flash('warning', 'Tariff list not selected.');
             return;
@@ -223,14 +272,14 @@ class TariffListEdit extends Component
                     }
                     $min = (int) Str::of((string) ($range['exp_range_min'] ?? '0'))->replace(',', '')->toString();
                     $max = (int) Str::of((string) ($range['exp_range_max'] ?? '0'))->replace(',', '')->toString();
-                    $discount = (int) Str::of((string) ($range['discount_percent'] ?? '0'))->replaceMatches('/\D/', '')->toString();
+                    $coverage = (int) Str::of((string) ($range['coverage_percent'] ?? '0'))->replaceMatches('/\D/', '')->toString();
                     $expRangeId = $range['exp_range_id'] ?? null;
                     if ($expRangeId) {
                         $newRangeIds[] = $expRangeId;
                         ExpenseRange::where('exp_range_id', $expRangeId)->update([
                             'exp_range_min' => $min,
                             'exp_range_max' => $max,
-                            'discount_percent' => $discount,
+                            'coverage_percent' => $coverage,
                         ]);
                     } else {
                         $now = Carbon::now();
@@ -245,7 +294,7 @@ class TariffListEdit extends Component
                             'service_id' => $range['service_id'],
                             'exp_range_min' => $min,
                             'exp_range_max' => $max,
-                            'discount_percent' => $discount,
+                            'coverage_percent' => $coverage,
                         ]);
                         $newRangeIds[] = $created->exp_range_id;
                     }
@@ -258,6 +307,7 @@ class TariffListEdit extends Component
                 $tariffList->update([
                     'effectivity_date' => $this->effectivity_date,
                     'service_types_involved' => $servicesList,
+                    'effectivity_status' => 'Effective'
                 ]);
             });
             $this->dispatch('refreshTariffTable');

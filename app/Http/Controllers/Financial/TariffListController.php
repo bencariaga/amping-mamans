@@ -102,18 +102,18 @@ class TariffListController extends Controller
             foreach ($ranges as $r) {
                 $minRaw = isset($r['exp_range_min']) ? (string) $r['exp_range_min'] : '';
                 $maxRaw = isset($r['exp_range_max']) ? (string) $r['exp_range_max'] : '';
-                $discountRaw = isset($r['discount_percent']) ? (string) $r['discount_percent'] : '';
+                $coverageRaw = isset($r['coverage_percent']) ? (string) $r['coverage_percent'] : '';
                 $minSan = $this->normalizeNumberString($minRaw);
                 $maxSan = $this->normalizeNumberString($maxRaw);
-                $discountSan = Str::of($discountRaw)->replaceMatches('/\D/', '')->toString();
+                $coverageSan = Str::of($coverageRaw)->replaceMatches('/\D/', '')->toString();
                 $min = (float) $minSan;
                 $max = (float) $maxSan;
-                $discount = $discountSan === '' ? 0 : (int) $discountSan;
+                $coverage = $coverageSan === '' ? 0 : (int) $coverageSan;
                 if ($min > $max) {
                     throw new Exception("For service {$serviceId} a range has min greater than max.");
                 }
-                if ($discount < 0 || $discount > 100) {
-                    throw new Exception("For service {$serviceId} a range has discount percent out of bounds (0-100).");
+                if ($coverage < 0 || $coverage > 100) {
+                    throw new Exception("For service {$serviceId} a range has coverage percent out of bounds (0-100).");
                 }
                 $normalized[] = ['min' => $min, 'max' => $max];
             }
@@ -181,17 +181,17 @@ class TariffListController extends Controller
                             $newExpRangeId = $this->generateNextSequentialId(ExpenseRange::class, 'exp_range_id', $baseExp, 9);
                             $minRaw = isset($range['exp_range_min']) ? (string) $range['exp_range_min'] : '';
                             $maxRaw = isset($range['exp_range_max']) ? (string) $range['exp_range_max'] : '';
-                            $discountRaw = isset($range['discount_percent']) ? (string) $range['discount_percent'] : '';
+                            $coverageRaw = isset($range['coverage_percent']) ? (string) $range['coverage_percent'] : '';
                             $minSan = $this->normalizeNumberString($minRaw);
                             $maxSan = $this->normalizeNumberString($maxRaw);
-                            $discountSan = Str::of($discountRaw)->replaceMatches('/\D/', '')->toString();
+                            $coverageSan = Str::of($coverageRaw)->replaceMatches('/\D/', '')->toString();
                             ExpenseRange::create([
                                 'exp_range_id' => $newExpRangeId,
                                 'tariff_list_id' => $newTariffId,
                                 'service_id' => $serviceId,
                                 'exp_range_min' => Number::round((float) $minSan, 0),
                                 'exp_range_max' => Number::round((float) $maxSan, 0),
-                                'discount_percent' => $discountSan === '' ? 0 : (int) $discountSan
+                                'coverage_percent' => $coverageSan === '' ? 0 : (int) $coverageSan
                             ]);
                         }
                     }
@@ -205,7 +205,7 @@ class TariffListController extends Controller
                             'service_id' => $serviceId,
                             'exp_range_min' => 0,
                             'exp_range_max' => 0,
-                            'discount_percent' => 0
+                            'coverage_percent' => 0
                         ]);
                     }
                 }
@@ -253,20 +253,20 @@ class TariffListController extends Controller
                     foreach ($ranges as $range) {
                         $minRaw = isset($range['exp_range_min']) ? (string) $range['exp_range_min'] : '';
                         $maxRaw = isset($range['exp_range_max']) ? (string) $range['exp_range_max'] : '';
-                        $discountRaw = isset($range['discount_percent']) ? (string) $range['discount_percent'] : '';
+                        $coverageRaw = isset($range['coverage_percent']) ? (string) $range['coverage_percent'] : '';
                         $minSan = $this->normalizeNumberString($minRaw);
                         $maxSan = $this->normalizeNumberString($maxRaw);
-                        $discountSan = Str::of($discountRaw)->replaceMatches('/\D/', '')->toString();
+                        $coverageSan = Str::of($coverageRaw)->replaceMatches('/\D/', '')->toString();
                         $min = Number::round((float) $minSan, 0);
                         $max = Number::round((float) $maxSan, 0);
-                        $discount = $discountSan === '' ? 0 : (int) $discountSan;
+                        $coverage = $coverageSan === '' ? 0 : (int) $coverageSan;
                         $expRangeId = isset($range['exp_range_id']) ? $range['exp_range_id'] : null;
                         if ($expRangeId) {
                             $newRangeIds[] = $expRangeId;
                             ExpenseRange::where('exp_range_id', $expRangeId)->update([
                                 'exp_range_min' => $min,
                                 'exp_range_max' => $max,
-                                'discount_percent' => $discount
+                                'coverage_percent' => $coverage
                             ]);
                         } else {
                             $now = Carbon::now();
@@ -278,7 +278,7 @@ class TariffListController extends Controller
                                 'service_id' => $serviceId,
                                 'exp_range_min' => $min,
                                 'exp_range_max' => $max,
-                                'discount_percent' => $discount
+                                'coverage_percent' => $coverage
                             ]);
                             $newRangeIds[] = $created->exp_range_id;
                         }

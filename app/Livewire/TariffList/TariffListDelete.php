@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Storage\Data;
 use App\Models\Operation\TariffList;
 use App\Models\Operation\ExpenseRange;
-use Exception;
 
 class TariffListDelete extends Component
 {
@@ -45,6 +44,7 @@ class TariffListDelete extends Component
         $tariffList = TariffList::where('tariff_list_id', $this->tariffListId)->first();
         if (!$tariffList) {
             $this->closeModal();
+            $this->show = false;
             $this->dispatch('refreshTariffTable');
             session()->flash('warning', 'Tariff list was already deleted.');
             return;
@@ -64,8 +64,9 @@ class TariffListDelete extends Component
                     'versions_count' => $versionsCount
                 ]);
             });
-            $this->dispatch('refreshTariffTable');
             $this->closeModal();
+            $this->show = false;
+            $this->dispatch('refreshTariffTable');
             session()->flash('success', 'Tariff list version has been deleted successfully.');
         } catch (Exception $e) {
             Log::error("Failed to delete tariff list", [
@@ -73,8 +74,8 @@ class TariffListDelete extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            $this->dispatch('refreshTariffTable');
             $this->closeModal();
+            $this->dispatch('refreshTariffTable');
             if (Str::contains($e->getMessage(), ['not found', 'already been deleted'])) {
                 session()->flash('warning', 'Tariff list was already deleted by another user.');
             } else {

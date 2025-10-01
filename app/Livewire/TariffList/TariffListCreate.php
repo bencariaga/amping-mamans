@@ -92,7 +92,7 @@ class TariffListCreate extends Component
                 'service_id' => $serviceId,
                 'exp_range_min' => 0,
                 'exp_range_max' => 0,
-                'discount_percent' => 0
+                'coverage_percent' => 0
             ]);
         }
 

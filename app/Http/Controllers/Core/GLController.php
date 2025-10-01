@@ -161,7 +161,8 @@ class GLController extends Controller
         $applicant = Applicant::where('applicant_id', $application->applicant_id)->with(['client.contacts'])->first();
 
         $expenseRange = ExpenseRange::where('exp_range_id', $application->exp_range_id)->first();
-        $assistAmount = $expenseRange->assist_amount ?? 0;
+        $coverage = $expenseRange->coverage_percent / 100;
+        $assistAmount = $application->billed_amount * $coverage ?? 0;
 
         DB::beginTransaction();
 
@@ -283,7 +284,8 @@ class GLController extends Controller
         }
 
         $expenseRange = ExpenseRange::where('exp_range_id', $application->exp_range_id)->first();
-        $assistAmount = $expenseRange->assist_amount ?? 0;
+        $coverage = $expenseRange->coverage_percent / 100;
+        $assistAmount = $application->billed_amount * $coverage ?? 0;
 
         $mayor = DB::table('signers')
             ->join('members', 'signers.member_id', '=', 'members.member_id')
