@@ -1,0 +1,265 @@
+:root {
+    --primary-border-color: #000;
+    --secondary-border-color: transparent;
+    --item-bg: #fff;
+    --item-shadow: rgba(0, 0, 0, 0.3);
+    --item-hover-shadow: rgba(0, 0, 0, 0.3);
+    --input-bg: #eee;
+    --input-bg-focus: #fff;
+    --input-text: #000;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-hover-bg: #5a6268;
+    --btn-secondary-hover-border: #545b62;
+    --danger-color: hsl(0, 70%, 50%);
+    --success-color: hsl(140, 50%, 45%);
+    --dark-mode-invert: 0;
+    --dropdown-border: #ced4da;
+    --arrow-color: #000;
+    --bg-color: #fff;
+}
+
+[data-theme="dark"] {
+    --primary-border-color: #666;
+    --secondary-border-color: #80cbc4;
+    --item-bg: #222;
+    --item-shadow: rgba(255, 255, 255, 0.3);
+    --item-hover-shadow: rgba(255, 255, 255, 0.3);
+    --input-bg: #333;
+    --input-bg-focus: #333;
+    --input-text: #fff;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-hover-bg: #5a6268;
+    --btn-secondary-hover-border: #545b62;
+    --danger-color: hsl(0, 75%, 58%);
+    --success-color: hsl(140, 60%, 50%);
+    --dark-mode-invert: 1;
+    --dropdown-border: #495057;
+    --arrow-color: #fff;
+    --bg-color: #222;
+}
+
+.date-year-dropdown .dropdown-menu,
+.date-month-dropdown .dropdown-menu,
+.date-day-dropdown .dropdown-menu {
+    min-width: 0;
+}
+
+#dateYearDropdownBtn,
+#dateMonthDropdownBtn,
+#dateDayDropdownBtn {
+    height: 40px;
+    font-size: 1rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#dateYearDropdownBtn,
+.date-year-dropdown .dropdown-menu {
+    width: 100px;
+}
+
+#dateMonthDropdownBtn,
+.date-month-dropdown .dropdown-menu {
+    width: 150px;
+}
+
+#dateDayDropdownBtn {
+    width: 80px;
+}
+
+.custom-dropdown-btn {
+    position: relative;
+    height: 40px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+    transition: all 0.1s ease;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.custom-dropdown-btn:hover,
+.custom-dropdown-btn:focus {
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+}
+
+.custom-dropdown-btn::after {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--arrow-color);
+}
+
+.dropdown-menu,
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.dropdown-toggle::after {
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.dropdown-toggle.rotated::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.date-day-dropdown {
+    position: relative;
+}
+
+.date-day-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--input-bg-focus);
+    padding: 0.25rem;
+    border: 1px solid var(--dropdown-border);
+    border-radius: 0.25rem;
+}
+
+.date-day-dropdown .dropdown-menu.show {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 0.25rem;
+}
+
+.date-day-dropdown .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+}
+
+.date-month-dropdown .dropdown-menu,
+.date-year-dropdown .dropdown-menu {
+    max-height: 176px;
+    overflow-y: auto;
+}
+
+.date-month-dropdown .dropdown-menu {
+    width: 150px;
+}
+
+.date-year-dropdown .dropdown-menu {
+    width: 100px;
+}
+
+.date-month-dropdown .dropdown-menu.show,
+.date-year-dropdown .dropdown-menu.show {
+    scrollbar-width: thin;
+    scrollbar-color: #fff;
+}
+
+.date-month-dropdown .dropdown-menu.show::-webkit-scrollbar,
+.date-year-dropdown .dropdown-menu.show::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-track,
+.date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb,
+.date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0.8);
+}
+
+.date-month-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb:hover,
+.date-year-dropdown .dropdown-menu.show::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc;
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-track,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--bg-color);
+}
+
+[data-theme="dark"]
+    .date-month-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"]
+    .date-year-dropdown
+    .dropdown-menu.show::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#dateDayDropdownBtn:hover,
+#dateMonthDropdownBtn:hover,
+#dateYearDropdownBtn:hover,
+#dateDayDropdownBtn:focus,
+#dateMonthDropdownBtn:focus,
+#dateYearDropdownBtn:focus,
+#dateDayDropdownBtn:active,
+#dateMonthDropdownBtn:active,
+#dateYearDropdownBtn:active,
+#dateDayDropdownBtn[aria-expanded="true"],
+#dateMonthDropdownBtn[aria-expanded="true"],
+#dateYearDropdownBtn[aria-expanded="true"] {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid var(--primary-border-color);
+}
+
+[data-theme="dark"] #dateDayDropdownBtn:hover,
+[data-theme="dark"] #dateMonthDropdownBtn:hover,
+[data-theme="dark"] #dateYearDropdownBtn:hover,
+[data-theme="dark"] #dateDayDropdownBtn:focus,
+[data-theme="dark"] #dateMonthDropdownBtn:focus,
+[data-theme="dark"] #dateYearDropdownBtn:focus,
+[data-theme="dark"] #dateDayDropdownBtn:active,
+[data-theme="dark"] #dateMonthDropdownBtn:active,
+[data-theme="dark"] #dateYearDropdownBtn:active,
+[data-theme="dark"] #dateDayDropdownBtn[aria-expanded="true"],
+[data-theme="dark"] #dateMonthDropdownBtn[aria-expanded="true"],
+[data-theme="dark"] #dateYearDropdownBtn[aria-expanded="true"] {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid var(--primary-border-color);
+}
+
+[data-theme="dark"] #dateDayDropdownBtn,
+[data-theme="dark"] #dateMonthDropdownBtn,
+[data-theme="dark"] #dateYearDropdownBtn {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}

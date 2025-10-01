@@ -1,0 +1,394 @@
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"],
+.dropdown-toggle[id^="editing-sponsor-suffix-"] {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.sponsor-info-text,
+.organization-name {
+    color: var(--input-text) !important;
+}
+
+.organization-name {
+    font-weight: bold;
+}
+
+#sponsor-type-dropdown {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    font-weight: normal;
+    transition: none;
+    font-size: 16px;
+    height: 50px;
+}
+
+#sponsor-first-name:hover,
+#sponsor-first-name:focus,
+#sponsor-middle-name:hover,
+#sponsor-middle-name:focus,
+#sponsor-last-name:hover,
+#sponsor-last-name:focus,
+.form-control[id^="editing-sponsor-first-name-"]:hover,
+.form-control[id^="editing-sponsor-first-name-"]:focus,
+.form-control[id^="editing-sponsor-middle-name-"]:hover,
+.form-control[id^="editing-sponsor-middle-name-"]:focus,
+.form-control[id^="editing-sponsor-last-name-"]:hover,
+.form-control[id^="editing-sponsor-last-name-"]:focus {
+    background-color: #fff;
+    border-color: #888;
+    color: #000;
+}
+
+#designation:hover,
+#designation:focus,
+#sponsor-type-dropdown:hover,
+#sponsor-type-dropdown:focus,
+#sponsor-suffix-dropdown:hover,
+#sponsor-suffix-dropdown:focus,
+#organization-name:hover,
+#organization-name:focus,
+#editing-organization-name:hover,
+#editing-organization-name:focus,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"]:hover,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"]:focus,
+.dropdown-toggle[id^="editing-sponsor-suffix-dropdown-"]:hover,
+.dropdown-toggle[id^="editing-sponsor-suffix-dropdown-"]:focus,
+.editing-designation:hover,
+.editing-designation:focus,
+input[id^="editing-designation"]:hover,
+input[id^="editing-designation"]:focus,
+input[id^="editing-organization-name"]:hover,
+input[id^="editing-organization-name"]:focus {
+    background-color: #fff;
+    border-color: #888;
+    color: #000;
+}
+
+[data-theme="dark"] #sponsor-first-name:hover,
+[data-theme="dark"] #sponsor-first-name:focus,
+[data-theme="dark"] #sponsor-middle-name:hover,
+[data-theme="dark"] #sponsor-middle-name:focus,
+[data-theme="dark"] #sponsor-last-name:hover,
+[data-theme="dark"] #sponsor-last-name:focus,
+[data-theme="dark"] .form-control[id^="editing-sponsor-first-name-"]:hover,
+[data-theme="dark"] .form-control[id^="editing-sponsor-first-name-"]:focus,
+[data-theme="dark"] .form-control[id^="editing-sponsor-middle-name-"]:hover,
+[data-theme="dark"] .form-control[id^="editing-sponsor-middle-name-"]:focus,
+[data-theme="dark"] .form-control[id^="editing-sponsor-last-name-"]:hover,
+[data-theme="dark"] .form-control[id^="editing-sponsor-last-name-"]:focus {
+    background-color: #000;
+    border-color: #444;
+    color: #fff;
+}
+
+[data-theme="dark"] #designation:hover,
+[data-theme="dark"] #designation:focus,
+[data-theme="dark"] #sponsor-type-dropdown:hover,
+[data-theme="dark"] #sponsor-type-dropdown:focus,
+[data-theme="dark"] #sponsor-suffix-dropdown:hover,
+[data-theme="dark"] #sponsor-suffix-dropdown:focus,
+[data-theme="dark"] #organization-name:hover,
+[data-theme="dark"] #organization-name:focus,
+[data-theme="dark"] #editing-organization-name:hover,
+[data-theme="dark"] #editing-organization-name:focus,
+[data-theme="dark"]
+    .dropdown-toggle[id^="editing-sponsor-type-dropdown-"]:hover,
+[data-theme="dark"]
+    .dropdown-toggle[id^="editing-sponsor-type-dropdown-"]:focus,
+[data-theme="dark"]
+    .dropdown-toggle[id^="editing-sponsor-suffix-dropdown-"]:hover,
+[data-theme="dark"]
+    .dropdown-toggle[id^="editing-sponsor-suffix-dropdown-"]:focus,
+[data-theme="dark"] .editing-designation:hover,
+[data-theme="dark"] .editing-designation:focus,
+[data-theme="dark"] input[id^="editing-designation"]:hover,
+[data-theme="dark"] input[id^="editing-designation"]:focus,
+[data-theme="dark"] input[id^="editing-organization-name"]:hover,
+[data-theme="dark"] input[id^="editing-organization-name"]:focus {
+    background-color: #000;
+    border-color: #444;
+    color: #fff;
+}
+
+#sponsor-name {
+    pointer-events: none;
+}
+
+.sponsors-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sponsor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+        box-shadow 0.15s ease;
+    box-sizing: border-box;
+    gap: 1rem;
+}
+
+.list-section li {
+    flex-direction: row;
+}
+
+.sponsor-item:last-child,
+.list-section li:last-child {
+    margin-bottom: 0;
+}
+
+.sponsor-details {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sponsor-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sponsor-type,
+.sponsor-designation,
+.organization-name {
+    font-size: 16px;
+    color: var(--secondary-color);
+}
+
+.sponsor-actions,
+.sponsor-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 1rem;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.item {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.06);
+}
+
+[data-theme="dark"] .item {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.08);
+}
+
+.edited-item {
+    border-color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.08);
+}
+
+[data-theme="dark"] .edited-item {
+    border-color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.12);
+}
+
+#sponsor-suffix-dropdown,
+.dropdown-toggle[id^="editing-sponsor-suffix-"],
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"],
+.dropdown-toggle[id^="editing-sponsor-person-check-dropdown-btn-"],
+.editing-sponsor-type-dropdown,
+.editing-sponsor-suffix-dropdown,
+.editing-sponsor-person-check-dropdown-btn {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    transition: all 50ms ease;
+    text-align: left;
+    padding-left: 1rem;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.editing-designation,
+#editing-organization-name,
+input[id^="editing-designation"],
+input[id^="editing-organization-name"] {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    transition: all 50ms ease;
+    text-align: left;
+    padding-left: 1rem;
+    width: 100%;
+    height: 50px;
+    display: block;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+
+#sponsor-type-dropdown::after,
+#sponsor-suffix-dropdown::after,
+.dropdown-toggle[id^="editing-sponsor-suffix-"]::after,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"]::after,
+.dropdown-toggle[id^="editing-sponsor-person-check-dropdown-btn-"]::after,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"]::after,
+.editing-sponsor-type-dropdown::after,
+.editing-sponsor-suffix-dropdown::after {
+    position: static;
+    margin-left: auto;
+    font-size: 1.5rem;
+    color: var(--arrow-color);
+    transform: none;
+}
+
+#sponsor-type-dropdown.rotated::after,
+#sponsor-suffix-dropdown.rotated::after,
+.dropdown-toggle[id^="editing-sponsor-suffix-"].rotated::after,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"].rotated::after,
+.dropdown-toggle[id^="editing-sponsor-person-check-dropdown-btn-"].rotated::after,
+.dropdown-toggle[id^="editing-sponsor-type-dropdown-"].rotated::after,
+.editing-sponsor-type-dropdown.rotated::after,
+.editing-sponsor-suffix-dropdown.rotated::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu,
+.dropdown-menu .dropdown-item.active,
+.editing-form .dropdown-menu,
+.editing-form .dropdown-item.active {
+    overflow-y: auto;
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg);
+}
+
+.dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.editing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.editing-form .dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.editing-form .dropdown-item:hover,
+.editing-form .dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.sponsor-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+
+.sponsor-item .sponsor-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sponsor-item .sponsor-action-buttons,
+.sponsor-item .sponsor-action-buttons button,
+.sponsor-action-buttons button {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sponsor-item {
+    color: var(--secondary-color);
+    font-size: 16px;
+    margin-top: 4px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .sponsor-item {
+    color: #ced4da;
+}
+
+[data-theme="dark"] #form-section,
+[data-theme="dark"] .list-section,
+[data-theme="dark"] .sponsor-item[id^="sponsor-item-"] {
+    border-color: #444;
+}
+
+#form-section,
+.list-section,
+.sponsor-item[id^="sponsor-item-"] {
+    border-color: #888;
+}
+
+#add-sponsor,
+#cancel-sponsors-changes,
+#confirm-sponsors-changes,
+#sponsor-type-dropdown,
+#sponsor-suffix-dropdown {
+    font-size: 16px;
+}
+
+.btn {
+    font-size: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}

@@ -1,0 +1,203 @@
+#supplementary-budget-modal-container {
+    width: 700px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.1rem rgba(0, 0, 255, 0.12);
+}
+
+[data-theme="dark"] .form-control:focus {
+    box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, 0.06);
+}
+
+.form-control::-webkit-outer-spin-button,
+.form-control::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    margin: 0;
+    background: transparent;
+}
+
+[data-theme="dark"] .form-control::-webkit-outer-spin-button,
+[data-theme="dark"] .form-control::-webkit-inner-spin-button {
+    filter: invert(1) brightness(1.6);
+}
+
+.modal-container .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+        color 0.2s ease;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.modal-container .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+
+.modal-container .btn-primary:hover {
+    background-color: var(--primary-color-hover);
+    border-color: var(--primary-color-hover);
+}
+
+.modal-container .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.modal-container .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.modal-container .error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.modal-container .dropdown {
+    position: relative;
+}
+
+.modal-container .dropdown-toggle {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    transition: all 50ms ease;
+    text-align: left;
+    padding-left: 1rem;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.modal-container .dropdown-toggle::after {
+    position: static;
+    margin-left: auto;
+    font-size: 1.5rem;
+    color: var(--arrow-color);
+    transform: none;
+}
+
+.modal-container .dropdown-toggle.rotated::after {
+    transform: rotate(180deg);
+}
+
+.modal-container .dropdown-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 6px);
+    min-width: 100%;
+    z-index: 1100;
+    padding: 0.25rem 0;
+    margin: 0;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background-color: var(--input-bg-focus);
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.modal-container .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 1rem;
+    color: var(--input-text);
+    text-decoration: none;
+    cursor: pointer;
+    height: 32px;
+}
+
+.modal-container .dropdown-menu .dropdown-item:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+[data-theme="dark"] .modal-container .dropdown-menu,
+[data-theme="dark"] .modal-container .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg);
+}
+
+.dropdown-menu.disabled-menu .dropdown-item {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.form-control:disabled:hover,
+.dropdown-toggle:disabled:hover,
+.form-control:disabled:focus,
+.dropdown-toggle:disabled:focus {
+    background-color: #fff !important;
+    color: #000 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.form-control::placeholder,
+.modal-container .dropdown-toggle::placeholder {
+    color: #666;
+}
+
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] .modal-container .dropdown-toggle::placeholder {
+    color: #aaa;
+}
+
+.form-control:hover,
+.modal-container .dropdown-toggle:hover,
+.form-control:focus,
+.modal-container .dropdown-toggle:focus {
+    background-color: #fff;
+    color: #000;
+}
+
+[data-theme="dark"] .form-control:hover,
+[data-theme="dark"] .modal-container .dropdown-toggle:hover,
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .modal-container .dropdown-toggle:focus {
+    background-color: #000;
+    color: #fff;
+}

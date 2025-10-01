@@ -1,0 +1,17 @@
+.theme-toggle {
+    background-color: var(--nav-link-bg);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background-color: var(--nav-link-hover-bg);
+}
+
+.theme-toggle i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+#personal-pages-nav-icon {
+    margin-left: 6px;
+}

@@ -1,0 +1,213 @@
+:root {
+    --card-bg: rgba(255, 255, 255, 1);
+    --info-section-bg: #fff;
+    --tools-section-bg: #bfdbfe;
+    --tools-header-color: #000;
+    --tool-box-bg: #fff;
+    --tool-box-shadow: rgba(0, 0, 0, 0.3);
+    --tool-box-hover-shadow: rgba(0, 0, 0, 0.3);
+    --tool-box-color: #000;
+}
+
+[data-theme="dark"] {
+    --card-bg: rgba(30, 30, 30, 1);
+    --info-section-bg: rgba(30, 30, 30, 1);
+    --tools-section-bg: #4a76d0;
+    --tools-header-color: #f0f0f0;
+    --tool-box-bg: rgba(30, 30, 30, 1);
+    --tool-box-shadow: rgba(255, 255, 255, 0.2);
+    --tool-box-hover-shadow: rgba(255, 255, 255, 0.3);
+    --tool-box-color: #f0f0f0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-repeat: no-repeat;
+}
+
+.amping-container {
+    max-width: 85rem;
+    width: 100%;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+    justify-content: center;
+}
+
+.about-page-layout {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1rem;
+    padding: 1rem;
+    width: 100%;
+}
+
+.info-section {
+    background-color: var(--info-section-bg);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px var(--section-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-color);
+    height: 600px;
+}
+
+.info-text {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tools-section {
+    background-color: var(--tools-section-bg);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px var(--section-shadow);
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}
+
+.tools-header {
+    text-align: center;
+    color: var(--tools-header-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    place-items: center;
+}
+
+.tool-box {
+    background-color: var(--tool-box-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px var(--tool-box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    color: var(--tool-box-color);
+    font-size: 14px;
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 160px;
+    width: 120px;
+}
+
+.tool-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--tool-box-hover-shadow);
+    color: var(--tool-box-color);
+}
+
+.tool-box img {
+    height: 70px;
+    width: 70px;
+    object-fit: contain;
+    margin-top: 8px;
+}
+
+.tool-box img.node-js,
+.tool-box img.bootstrap,
+.tool-box img.composer,
+.tool-box img.mysql,
+.tool-box img.phpmyadmin {
+    width: 80px;
+    height: 80px;
+}
+
+.tool-box img.bootstrap {
+    margin-top: 4px;
+}
+
+.tool-box img.laravel {
+    margin-top: 12px;
+}
+
+.tool-box img.mysql {
+    margin-top: 7px;
+}
+
+.tool-box.font-awesome-box {
+    font-size: 13px;
+    margin-top: 3px;
+}
+
+.tool-name {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.github {
+    filter: invert(0%);
+}
+
+[data-theme="dark"] .github {
+    filter: invert(100%);
+}
+
+#back-button-container {
+    width: 100%;
+}
+
+#back-button {
+    padding: 12px;
+    border-radius: 10px;
+    background-color: var(--primary-color);
+    border: none;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+    color: #fff;
+    width: 80%;
+}
+
+#back-button:hover {
+    background-color: var(--primary-color-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+@media (max-width: 992px) {
+    .amping-container {
+        width: 100%;
+    }
+
+    .about-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .info-section,
+    .tools-section {
+        width: 100%;
+        height: auto;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+    }
+
+    #back-button {
+        width: 100%;
+    }
+}

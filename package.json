@@ -1,0 +1,20 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "axios": "^1.12.2",
+        "bootstrap": "^5.3.8",
+        "concurrently": "^9.2.1",
+        "laravel-vite-plugin": "^2.0.1",
+        "vite": "^7.1.7"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^7.0.1",
+        "@popperjs/core": "^2.11.8"
+    }
+}
