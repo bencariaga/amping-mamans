@@ -4,7 +4,7 @@
             <table class="tariff-list-table mb-0" id="tariffVersionsTable">
                 <thead>
                     <tr>
-                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-1">ID Name</th>
+                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-1">Tariff List ID</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-2">Service Type/s Involved</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-3">Effectivity Status</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-4">Effectivity Date</th>
@@ -38,13 +38,13 @@
                         @endphp
 
                         <tr>
-                            <td class="px-3 py-3 text-center align-middle tariff-list-id-text fw-semibold">{{ $tariffModel->tariff_list_id }}</td>
+                            <td class="px-2 py-3 text-center align-middle tariff-list-id-text fs-5 fw-semibold">{{ $tariffModel->tariff_list_id }}</td>
 
                             <td class="py-4 text-center align-middle">
                                 @if($servicesList->isNotEmpty())
                                     <div class="d-flex flex-wrap justify-content-center gap-3">
                                         @foreach($servicesList as $service)
-                                            <span id="serviceBadge" class="badge text-dark px-3 py-2">{{ $service }}</span>
+                                            <span id="serviceBadge" class="badge text-dark py-2">{{ $service }}</span>
                                         @endforeach
                                     </div>
                                 @else
@@ -67,16 +67,8 @@
 
                             <td class="px-3 py-3 text-center align-middle">
                                 <div class="d-flex justify-content-center action-button-group">
-                                    <button type="button" onclick="openEditModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-primary btn-edit">
-                                        <i class="fas fa-edit me-2"></i>EDIT
-                                    </button>
-
                                     <button type="button" onclick="openDeleteModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-danger btn-delete">
                                         <i class="fas fa-trash me-2"></i>DELETE
-                                    </button>
-
-                                    <button type="button" onclick="openApplyModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-warning btn-apply">
-                                        <i class="fas fa-bolt me-2 text-dark"></i>APPLY
                                     </button>
                                 </div>
                             </td>

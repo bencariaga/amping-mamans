@@ -167,12 +167,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background-color: var(--even-row-bg) !important;
 }
 
+.effectivity-date,
 .tariff-list-id-text {
-    font-size: 14px;
-    color: var(--text-color);
-}
-
-.effectivity-date {
     color: var(--text-color);
 }
 
