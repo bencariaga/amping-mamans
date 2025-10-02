@@ -90,7 +90,7 @@
                     </div>
                 </div>
 
-                <div class="show-more pb-0 pt-2">
+                <div class="show-more pt-2" style="margin-bottom: -12px;">
                     <a class="show-more-text" href="{{ route('applications.list') }}">VIEW LIST</a>
                 </div>
             </div>
@@ -170,7 +170,7 @@
                 </tbody>
             </table>
 
-            <div class="show-more">
+            <div class="show-more mb-2 pt-2">
                 <a class="show-more-text" href="{{ route('tariff-lists.rows.show') }}">SHOW MORE...</a>
             </div>
         </div>

@@ -233,30 +233,49 @@ input[type="number"]::-webkit-outer-spin-button {
 .footer-btn {
     display: flex;
     align-items: center;
-    text-align: center;
     height: 4rem;
-    width: 15%;
-    padding: 0.9rem 1.2rem;
+    width: 200px;
+    padding: 0.5rem 1.5rem;
     color: var(--sidebar-text);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
     text-decoration: none;
-    border-radius: 0.5rem;
-    background-color: var(--nav-link-bg);
+    border-radius: 2rem;
+
+    background: linear-gradient(
+        135deg,
+        var(--nav-link-bg),
+        var(--nav-link-hover-bg)
+    );
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     position: relative;
     margin-top: 4px;
+    cursor: pointer;
 }
 
 .footer-btn:hover {
-    background-color: var(--nav-link-hover-bg);
+    background: linear-gradient(
+        135deg,
+        var(--nav-link-hover-bg),
+        var(--nav-link-bg)
+    );
+
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
 .footer-btn i {
-    font-size: 2rem;
+    font-size: 28px;
+    margin-left: 8px;
+    margin-right: 6px;
 }
 
 .footer-btn .nav-icon {
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 .website-title {
@@ -370,8 +389,9 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .nav-text {
     flex-grow: 1;
-    margin-left: 1rem;
     color: var(--sidebar-text);
+    margin-left: 1.5rem;
+    text-align: center;
     font-weight: bold;
     font-size: 15px;
 }
