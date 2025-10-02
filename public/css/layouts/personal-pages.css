@@ -276,6 +276,15 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
     display: flex;
     align-items: center;
+    text-align: center;
+}
+
+.nav-link .nav-text {
+    text-align: left;
+}
+
+.footer-btn .nav-text {
+    text-align: center;
 }
 
 .website-title {
@@ -318,7 +327,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .nav-link {
     display: flex;
     align-items: center;
-    text-align: left;
+    text-align: center;
     height: 45px;
     width: 240px;
     padding: 0.9rem 1.2rem;
@@ -349,8 +358,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .nav-icon {
     width: 28px;
-    text-align: center;
-    margin-right: 10px;
     font-size: 1.2rem;
     color: var(--sidebar-text);
     transition: color 0.3s ease;
@@ -391,7 +398,6 @@ input[type="number"]::-webkit-outer-spin-button {
     flex-grow: 1;
     color: var(--sidebar-text);
     margin-left: 1.5rem;
-    text-align: center;
     font-weight: bold;
     font-size: 15px;
 }
