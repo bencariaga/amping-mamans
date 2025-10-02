@@ -88,8 +88,9 @@
                         <div id="card-subamount-pending" class="card-subamount">{{ $pendingCount }}</div>
                     </div>
                 </div>
-                <div class="show-more" style="margin-bottom: -17px;">
-                    <a class="show-more-text" href="{{ route('applications.list') }}">View List</a>
+
+                <div class="show-more pb-0 pt-2">
+                    <a class="show-more-text" href="{{ route('applications.list') }}">VIEW LIST</a>
                 </div>
             </div>
 
@@ -168,7 +169,7 @@
                 </tbody>
             </table>
 
-            <div class="show-more">
+            <div class="show-more mb-2 pt-2">
                 <a class="show-more-text" href="{{ route('tariff-lists.rows.show') }}">SHOW MORE...</a>
             </div>
         </div>
