@@ -22,6 +22,8 @@ class TariffList extends Model
         'service_types_involved',
         'effectivity_status',
         'effectivity_date',
+        'created_at',
+        'updated_at'
     ];
 
     protected static function boot()
@@ -39,6 +41,13 @@ class TariffList extends Model
                 $next = $last + 1;
                 $tl->tariff_list_id = "{$base}-{$next}";
             }
+            if (empty($tl->created_at)) {
+                $tl->created_at = Carbon::now();
+            }
+        });
+
+        static::updating(function ($tl) {
+            $tl->updated_at = Carbon::now();
         });
     }
 

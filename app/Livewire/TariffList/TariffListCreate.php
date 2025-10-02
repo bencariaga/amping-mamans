@@ -81,7 +81,7 @@ class TariffListCreate extends Component
             'tariff_list_id' => $newTariffListId,
             'data_id' => $newDataId,
             'service_types_involved' => $serviceNames,
-            'effectivity_status' => 'Draft',
+            'effectivity_status' => 'Inactive',
             'effectivity_date' => $this->effectivity_date
         ]);
 

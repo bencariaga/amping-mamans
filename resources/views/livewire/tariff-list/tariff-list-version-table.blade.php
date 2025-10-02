@@ -6,9 +6,10 @@
                     <tr>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-1">ID Name</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-2">Service Type/s Involved</th>
-                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-3">Effectivity Status</th>
+                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-3">Status</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-4">Effectivity Date</th>
-                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-5">Actions</th>
+                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-5">Date Created</th>
+                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-6">Actions</th>
                     </tr>
                 </thead>
 
@@ -17,11 +18,12 @@
                         @php
                             $servicesList = $groupedTariffs[$data_id] ?? collect();
                             $effDate = \Carbon\Carbon::parse($tariffModel->effectivity_date);
+                            $createdDate = \Carbon\Carbon::parse($tariffModel->created_at);
                             $status = $tariffModel->effectivity_status;
                             $textColorClass = 'white';
                             $badgeClass = 'secondary';
 
-                            if ($status === 'Effective') {
+                            if ($status === 'Active') {
                                 $badgeClass = 'success';
                             } elseif ($status === 'Scheduled') {
                                 if ($effDate->isFuture()) {
@@ -31,7 +33,7 @@
                                 }
                             } elseif ($status === 'Unused') {
                                 $badgeClass = 'secondary';
-                            } elseif ($status === 'Draft') {
+                            } elseif ($status === 'Inactive') {
                                 $textColorClass = 'black';
                                 $badgeClass = 'warning';
                             }
@@ -62,6 +64,12 @@
                                 <div class="d-flex flex-column">
                                     <small class="effectivity-date fw-semibold">{{ $effDate->format('M. d, Y') }}</small>
                                     <h6 class="muted-text mt-2">{{ $effDate->diffForHumans() }}</h6>
+                                </div>
+                            </td>
+                            <td class="px-3 py-3 text-center align-middle">
+                                <div class="d-flex flex-column">
+                                    <small class="created-date fw-semibold">{{ $createdDate->format('M. d, Y') }}</small>
+                                    <h6 class="muted-text mt-2">{{ $createdDate->diffForHumans() }}</h6>
                                 </div>
                             </td>
 

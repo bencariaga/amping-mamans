@@ -166,7 +166,7 @@ class TariffListController extends Controller
                     'data_id' => $newDataId,
                     'effectivity_date' => $request->effectivity_date,
                     'service_types_involved' => $servicesList,
-                    'effectivity_status' => ($request->effectivity_date === Carbon::now()->toDateString()) ? 'Effective' : 'Draft'
+                    'effectivity_status' => ($request->effectivity_date === Carbon::now()->toDateString()) ? 'Active' : 'Inactive'
                 ]);
                 $rangesInput = $request->input('ranges', []);
                 $rangesByService = [];

@@ -23,7 +23,7 @@ class TariffListApply extends Component
     public function applyVersion()
     {
         $tariffList = TariffList::where('tariff_list_id', $this->tariffListId)->firstOrFail();
-        $tariffList->update(['effectivity_status' => 'Effective']);
+        $tariffList->update(['effectivity_status' => 'Active']);
         $this->dispatch('refreshTariffTable');
         $this->show = false;
         $this->tariffListId = null;

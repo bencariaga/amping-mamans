@@ -219,11 +219,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #tariff-list-table-header-5 {
-    width: calc(300% / 100);
+    width: calc(600% / 100);
 }
 
 #tariff-list-table-header-6 {
-    width: 210px;
+    width: calc(300% / 100);
 }
 
 #tariff-list-table-header-7 {

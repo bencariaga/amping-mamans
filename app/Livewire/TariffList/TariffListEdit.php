@@ -62,7 +62,7 @@ class TariffListEdit extends Component
         $this->tariffListId = $tariffListId;
         $this->tariffModel = TariffList::where('tariff_list_id', $tariffListId)->firstOrFail();
         $this->effectivity_date = Carbon::parse($this->tariffModel->effectivity_date)->toDateString();
-        $this->isEffective = $this->tariffModel->effectivity_status === 'Effective';
+        $this->isEffective = $this->tariffModel->effectivity_status === 'Active';
         $existingRanges = ExpenseRange::where('tariff_list_id', $tariffListId)->orderBy('exp_range_id')->get();
         $this->ranges = [];
         $this->selectedServices = [];
@@ -307,7 +307,7 @@ class TariffListEdit extends Component
                 $tariffList->update([
                     'effectivity_date' => $this->effectivity_date,
                     'service_types_involved' => $servicesList,
-                    'effectivity_status' => 'Effective'
+                    'effectivity_status' => 'Active'
                 ]);
             });
             $this->dispatch('refreshTariffTable');
