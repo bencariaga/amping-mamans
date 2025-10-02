@@ -262,8 +262,7 @@ input[type="number"]::-webkit-outer-spin-button {
         var(--nav-link-bg)
     );
 
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .footer-btn i {
@@ -274,6 +273,17 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .footer-btn .nav-icon {
     margin: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.nav-link .nav-text {
+    text-align: left;
+}
+
+.footer-btn .nav-text {
+    text-align: center;
 }
 
 .website-title {
@@ -386,6 +396,8 @@ input[type="number"]::-webkit-outer-spin-button {
 .nav-text {
     flex-grow: 1;
     color: var(--sidebar-text);
+    margin-left: 1.5rem;
+    text-align: center;
     font-weight: bold;
     font-size: 15px;
 }

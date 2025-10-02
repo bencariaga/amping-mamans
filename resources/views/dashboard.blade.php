@@ -89,7 +89,7 @@
                         <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
                     </div>
                 </div>
-                <div class="show-more" style="margin-bottom: -17px;">
+                <div class="show-more" style="margin-bottom: -12px;">
                     <a class="show-more-text" href="{{ route('applications.list') }}">View List</a>
                 </div>
             </div>
@@ -169,8 +169,8 @@
                 </tbody>
             </table>
 
-            <div class="show-more mb-2 pt-2">
-                <a class="show-more-text" href="{{ route('tariff-lists.rows.show') }}">SHOW MORE...</a>
+            <div class="show-more">
+                <a class="show-more-text" href="{{ route('tariff-lists.rows.show') }}">Show More...</a>
             </div>
         </div>
     </div>
