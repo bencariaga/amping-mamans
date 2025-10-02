@@ -143,7 +143,7 @@
                 <h6 class="mb-2">Logs</h6>
             </a>
 
-            <a class="action-card" href="">
+            <a class="action-card" href="{{ route('reports.assistance-requests') }}">
                 <i class="mt-2 fas fa-chart-line"></i>
                 <h6 class="mb-2">Reports</h6>
             </a>

@@ -19,6 +19,7 @@ use App\Http\Controllers\Profile\ClientProfileController;
 use App\Http\Controllers\Registration\UserRegistrationController;
 use App\Http\Controllers\Registration\ClientRegistrationController;
 use App\Http\Controllers\Communication\MessageTemplateController;
+use App\Http\Controllers\Core\ReportController;
 
 
 Route::get('/', fn() => view('welcome'))->name('home');
@@ -136,5 +137,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [SponsorController::class, 'destroy'])->name('destroy');
         Route::post('/contributions/update', [SponsorController::class, 'updateContributions'])->name('contributions.update');
         Route::delete('/contributions/{id}', [BudgetUpdateController::class, 'destroy'])->name('contributions.destroy');
+    });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/assistance-requests', [ReportController::class, 'assistanceRequests'])->name('assistance-requests');
+        Route::get('/assistance-requests/pdf', [ReportController::class, 'assistanceRequestsPdf'])->name('assistance-requests.pdf');
     });
 });
