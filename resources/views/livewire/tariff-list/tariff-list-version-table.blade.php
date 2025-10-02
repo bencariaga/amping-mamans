@@ -5,7 +5,6 @@
                 <thead>
                     <tr>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-1">Tariff List ID</th>
-                        <th class="text-center tariff-list-table-header" id="tariff-list-table-header-2">Service Type/s Involved</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-3">Effectivity Status</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-4">Effectivity Date</th>
                         <th class="text-center tariff-list-table-header" id="tariff-list-table-header-5">Actions</th>
@@ -40,18 +39,6 @@
                         <tr>
                             <td class="px-2 py-3 text-center align-middle tariff-list-id-text fs-5 fw-semibold">{{ $tariffModel->tariff_list_id }}</td>
 
-                            <td class="py-4 text-center align-middle">
-                                @if($servicesList->isNotEmpty())
-                                    <div class="d-flex flex-wrap justify-content-center gap-3">
-                                        @foreach($servicesList as $service)
-                                            <span id="serviceBadge" class="badge text-dark py-2">{{ $service }}</span>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <span class="muted-text">No services included yet.</span>
-                                @endif
-                            </td>
-
                             <td class="px-3 py-3 text-center align-middle">
                                 <span id="statusBadge" class="badge bg-{{ $badgeClass }} text-{{ $textColorClass }} text-capitalize d-inline-flex align-items-center justify-content-center px-3 py-2">
                                     <i class="fas fa-circle me-3" style="font-size: 0.5rem;"></i> {{ $status }}
@@ -67,8 +54,12 @@
 
                             <td class="px-3 py-3 text-center align-middle">
                                 <div class="d-flex justify-content-center action-button-group">
+                                    <button type="button" onclick="openEditModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-primary btn-edit">
+                                        <i class="fas fa-eye me-2"></i>View
+                                    </button>
+
                                     <button type="button" onclick="openDeleteModal('{{ $tariffModel->tariff_list_id }}')" class="btn btn-danger btn-delete">
-                                        <i class="fas fa-trash me-2"></i>DELETE
+                                        <i class="fas fa-trash me-2"></i>Delete
                                     </button>
                                 </div>
                             </td>
