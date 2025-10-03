@@ -138,7 +138,7 @@
                 <h6 class="mb-2">Archives</h6>
             </a>
 
-            <a class="action-card" href="">
+            <a class="action-card" href="{{ route('logs.index') }}">
                 <i class="mt-2 fas fa-file-alt"></i>
                 <h6 class="mb-2">Logs</h6>
             </a>

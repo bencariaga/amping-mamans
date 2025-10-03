@@ -22,6 +22,10 @@ class Log extends Model
         'happened_at',
     ];
 
+    protected $casts = [
+        'happened_at' => 'datetime',
+    ];
+
     protected static function boot()
     {
         parent::boot();

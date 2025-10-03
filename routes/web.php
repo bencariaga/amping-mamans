@@ -20,6 +20,7 @@ use App\Http\Controllers\Registration\UserRegistrationController;
 use App\Http\Controllers\Registration\ClientRegistrationController;
 use App\Http\Controllers\Communication\MessageTemplateController;
 use App\Http\Controllers\Core\ReportController;
+use App\Http\Controllers\Core\LogController;
 
 
 Route::get('/', fn() => view('welcome'))->name('home');
@@ -142,5 +143,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/assistance-requests', [ReportController::class, 'assistanceRequests'])->name('assistance-requests');
         Route::get('/assistance-requests/pdf', [ReportController::class, 'assistanceRequestsPdf'])->name('assistance-requests.pdf');
+    });
+
+    Route::prefix('logs')->name('logs.')->group(function () {
+        Route::get('/', [LogController::class, 'index'])->name('index');
     });
 });
