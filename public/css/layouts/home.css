@@ -75,8 +75,8 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 body {
-    font-family: "Arial", sans-serif;
     background-color: var(--bg-color);
+    font-family: "Roboto", sans-serif;
     color: var(--text-color);
     min-height: 100vh;
     display: flex;
@@ -86,8 +86,8 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    margin: 0;
     padding: 20px;
+    margin: 0;
 }
 
 .amping-container {

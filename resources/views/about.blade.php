@@ -11,20 +11,28 @@
 @section('content')
     <div class="about-page-layout">
         <div class="info-section">
-            <p class="info-text fw-bold">Developed by us, Angel Kate P. Hinoctan, Benhur L. Cariaga,
-                and Aimee Laurence Cando, the AMPING Medical Assistance Monitoring and Notification System
-                (AMPING-MAMANS) is a web-based computer system for the program of the City Mayor’s Office
-                of General Santos, called the “Auxiliaries and Medical Program for Individuals and Needy Generals”
-                (AMPING), within its office. The system intends to automate the program’s medical assistance
-                application process and digitize the data of the program’s employees and clients by
-                implementing into the system the following features: data management, system reporting,
-                role-based access control (RBAC), and short message service (SMS) notifications.
-                It is designed to help reduce the dependence on searching and retrieving physical documents
-                on the side of the employees, the administrative program head and non-administrative
-                staff members, and to help deliver information by means of text messages to the clients.
-                Working under the principles of e-government and and e-governance, the system covers
-                AMPING-related matters, such as medical-assistance-type application processes and
-                program funding status updates.<br><br>© 2025 AMPING-MAMANS Developers. All rights reserved.</p>
+            <p class="info-text fw-bold">The AMPING Medical Assistance Monitoring and Notification System
+                (AMPING-MAMANS) is developed by Aimee Laurence Cando, Benhur L. Cariaga,
+                and Angel Kate P. Hinoctan. It is a specialized web-based system designed for the
+                Auxiliaries and Medical Program for Individuals and Needy Generals (AMPING),
+                a medical and funeral assistance program under the City Mayor's Office of General Santos.
+
+                The system's primary goal is to modernize the program's operations
+                by automating its medical assistance application process and digitizing
+                records for both employees and clients. The system incorporates key features
+                such as centralized data management, automated system reporting,
+                role-based access control (RBAC) for secure staff operations, and
+                short message service (SMS) notifications for communicating with applicants.
+
+                The system is designed to significantly reduce the time staff spend on
+                searching for and retrieving information. It also helps prevent budget
+                overspending through improved monitoring of fund usage and guarantee
+                letter releases. Furthermore, the SMS feature ensures applicants
+                receive timely updates, including their reapplication dates, minimizing
+                unnecessary visits to the office. The AMPING-MAMANS seeks to improve
+                the transparency and efficiency of the program's services.<br><br>
+
+                © 2025 AMPING-MAMANS Developers. All rights reserved.</p>
             <div id="back-button-container" class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3 mb-3 gap-3">
                 <a href="{{ route('home') }}" id="back-button" class="btn btn-primary btn-action fw-bold">BACK TO HOME</a>
             </div>
