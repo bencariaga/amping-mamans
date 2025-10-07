@@ -47,7 +47,9 @@ class SearchController extends Controller
         $sortBy = $request->input('sort_by', 'latest');
         $perPage = $request->input('per_page', 5);
 
-        $baseQuery = Client::with(['member', 'occupation', 'contacts', 'applicant'])->whereHas('applicant');
+        $baseQuery = Client::with(['member', 'occupation', 'contacts', 'applicant'])->whereHas('applicant', function($q){
+            $q->where('is_archived', false);
+        });
 
         if ($search) {
             $term = "%{$search}%";
@@ -133,7 +135,7 @@ class SearchController extends Controller
             'applicant.client.member',
             'affiliatePartner',
             'expenseRange.service'
-        ]);
+        ])->where('is_archived', false);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -184,5 +186,25 @@ class SearchController extends Controller
         $applications = $perPage === 'all' ? $query->get() : $query->paginate($perPage);
 
         return view('pages.dashboard.landing.application-list', ['applications' => $applications]);
+    }
+
+    public function archive(Request $request, $model)
+    {
+        $ids = $request->input('ids', []);
+        $modelClass = [
+            'users' => \App\Models\User\Member::class,
+            'clients' => \App\Models\User\Client::class,
+            'sponsors' => \App\Models\User\Sponsor::class,
+            'applications' => \App\Models\Operation\Application::class,
+            'applicants' => \App\Models\User\Applicant::class,
+        ][$model] ?? null;
+
+        if (!$modelClass) {
+            return redirect()->back()->with('error', 'Invalid model.');
+        }
+
+        $modelClass::whereIn($modelClass::getPrimaryKey(), $ids)->update(['is_archived' => true]);
+
+        return redirect()->back()->with('success', 'Selected records have been archived.');
     }
 }

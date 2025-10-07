@@ -686,3 +686,7 @@ a.phpdebugbar-restore-btn {
     right: 0 !important;
     top: 0 !important;
 }
+
+.hide {
+    display: none !important;
+}

@@ -24,7 +24,7 @@ class ArchiveController extends Controller
 
     public function applicants()
     {
-        $applicants = Applicant::where('is_archived', 1)->with('client.member')->get();
+        $applicants = Applicant::where('is_archived', 1)->with('client.member')->with('client.contacts')->get();
         return view('pages.dashboard.archive.applicants-index', compact('applicants'));
     }
 

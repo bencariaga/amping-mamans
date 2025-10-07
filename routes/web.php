@@ -157,4 +157,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/budget-updates', [ArchiveController::class, 'budgetUpdates'])->name('budget-updates');
         Route::post('/{model}/bulk-unarchive', [ArchiveController::class, 'bulkUnarchive'])->name('bulk-unarchive');
     });
+
+    // archiver
+    Route::post('/search/{model}/archive', [\App\Http\Controllers\Core\SearchController::class, 'archive'])->name('search.archive');
 });

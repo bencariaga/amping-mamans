@@ -11,7 +11,6 @@
                     <th><input type="checkbox" id="checkAllApplicants"></th>
                     <th>Applicant ID</th>
                     <th>Name</th>
-                    <th>Email</th>
                     <th>Contact</th>
                 </tr>
             </thead>
@@ -21,8 +20,7 @@
                         <td><input type="checkbox" name="ids[]" value="{{ $applicant->applicant_id }}"></td>
                         <td>{{ $applicant->applicant_id }}</td>
                         <td>{{ $applicant->client->member->full_name }}</td>
-                        <td>{{ $applicant->email ?? 'N/A' }}</td>
-                        <td>{{ $applicant->contact_number ?? 'N/A' }}</td>
+                        <td>{{ $applicant->client->contacts[0]->phone_number ?? 'N/A' }}</td>
                     </tr>
                 @endforeach
             </tbody>
