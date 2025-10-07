@@ -28,6 +28,7 @@ class Application extends Model
         'applied_at',
         'reapply_at',
         'assistance_amount',
+        'is_archived',
     ];
 
     protected static function boot()

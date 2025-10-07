@@ -28,6 +28,7 @@ class BudgetUpdate extends Model
         'amount_spent',
         'direction',
         'reason',
+        'is_archived',
     ];
 
     protected static function boot()

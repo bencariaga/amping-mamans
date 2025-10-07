@@ -36,6 +36,7 @@ class Applicant extends Model
         'lot_occup_status',
         'phic_affiliation',
         'phic_category',
+        'is_archived',
     ];
 
     protected $casts = [

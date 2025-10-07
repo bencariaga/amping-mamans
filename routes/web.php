@@ -21,6 +21,7 @@ use App\Http\Controllers\Registration\ClientRegistrationController;
 use App\Http\Controllers\Communication\MessageTemplateController;
 use App\Http\Controllers\Core\ReportController;
 use App\Http\Controllers\Core\LogController;
+use App\Http\Controllers\Core\ArchiveController;
 
 
 Route::get('/', fn() => view('welcome'))->name('home');
@@ -147,5 +148,13 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('logs')->name('logs.')->group(function () {
         Route::get('/', [LogController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('archive')->name('archive.')->group(function () {
+        Route::get('/', [ArchiveController::class, 'index'])->name('index');
+        Route::get('/applications', [ArchiveController::class, 'applications'])->name('applications');
+        Route::get('/applicants', [ArchiveController::class, 'applicants'])->name('applicants');
+        Route::get('/budget-updates', [ArchiveController::class, 'budgetUpdates'])->name('budget-updates');
+        Route::post('/{model}/bulk-unarchive', [ArchiveController::class, 'bulkUnarchive'])->name('bulk-unarchive');
     });
 });

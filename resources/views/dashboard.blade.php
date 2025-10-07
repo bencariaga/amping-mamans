@@ -133,7 +133,7 @@
                 <h6 class="mb-2">Tariff Lists</h6>
             </a>
 
-            <a class="action-card" href="">
+            <a class="action-card" href="{{ route('archive.index') }}">
                 <i class="mt-2 fas fa-archive"></i>
                 <h6 class="mb-2">Archives</h6>
             </a>
