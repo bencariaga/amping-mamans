@@ -8,34 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const firstNameInput = document.querySelector('input[name="first_name"]');
     const middleNameInput = document.querySelector('input[name="middle_name"]');
     const lastNameInput = document.querySelector('input[name="last_name"]');
-    const deactivateUserBtn = document.getElementById('deactivateUser');
-    
-    if (deactivateUserBtn) {
-        deactivateUserBtn.addEventListener('click', async function (e) {
-            e.preventDefault();
-            const status = this.getAttribute('data-status');
-            if (confirm(`Are you sure you want to ${status} this user?`)) {
-                const memberId = this.getAttribute('data-member-id');
-                const response = await fetch(`/profiles/users/${memberId}/deactivate`, {
-                    method: 'PUT',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while trying to deactivate the user.');
-                });
-                if (response.ok) {
-                    window.location.reload();
-                }
-                else {
-                    alert('Failed to deactivate user.');
-                }
-            }
-        });
-    }
 
     if (removeProfilePictureBtn) {
         removeProfilePictureBtn.addEventListener('click', function () {

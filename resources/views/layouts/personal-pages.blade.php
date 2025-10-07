@@ -151,7 +151,7 @@
                         <div class="profile-left">
                             @if($authProfileImage)
                                 <a href="{{ route('user.profile.show') }}">
-                                    <img alt="User Avatar" class="profile-picture px-0 py-0 border border-white border-2" src="{{ asset('storage/' . $authProfileImage) }}" loading="eager" decoding="sync">
+                                    <img alt="User Avatar" class="profile-picture px-0 py-0 border border-white" src="{{ asset('storage/' . $authProfileImage) }}" loading="eager" decoding="sync">
                                 </a>
                             @else
                                 <a href="{{ route('user.profile.show') }}" class="profile-picture-placeholder rounded-circle bg-primary text-white d-flex align-items-center justify-content-center text-decoration-none">
