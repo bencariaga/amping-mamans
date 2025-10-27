@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Models\Authentication\Account;
+use App\Models\Storage\Data;
+use App\Models\User\Applicant;
+use App\Models\User\Client;
+use App\Models\User\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
-use App\Models\User\Member;
-use App\Models\User\Client;
-use App\Models\User\Applicant;
-use App\Models\Authentication\Account;
 
 class ClientProfileController extends Controller
 {
@@ -21,11 +21,12 @@ class ClientProfileController extends Controller
 
     public function destroy(Request $request, Applicant $applicant)
     {
-        $fullName = (string) Str::of("{$applicant->client->member->first_name} {$applicant->client->member->middle_name} {$applicant->client->member->last_name} {$applicant->client->member->suffix}")->trim();
+        $fullName = (string) Str::of("{$applicant->client->member->first_name} {$applicant->client->member->last_name}")->trim();
         $entered = Str::of($request->input('deleteConfirmationText', ''))->trim();
 
         if (strcasecmp($entered, $fullName) !== 0) {
             session()->flash('error', 'Confirmation text does not match.');
+
             return back()->withInput();
         }
 
@@ -66,6 +67,7 @@ class ClientProfileController extends Controller
         });
 
         session()->flash('success', 'Applicant and all associated data have been successfully deleted.');
+
         return redirect()->route('profiles.applicants.list');
     }
 }

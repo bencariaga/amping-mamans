@@ -3,17 +3,55 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
+use App\Models\Operation\BudgetUpdate;
+use App\Models\Storage\Data;
+use App\Models\User\Sponsor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use App\Models\Operation\BudgetUpdate;
-use Illuminate\Support\Carbon;
-use App\Models\Storage\Data;
-use Illuminate\Http\Request;
-use App\Models\User\Sponsor;
 
 class BudgetUpdateController extends Controller
 {
+    public function createForApplication($application, $assistanceAmount)
+    {
+        $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')->orderBy('data.created_at', 'desc')->select('budget_updates.*')->first();
+
+        $prevAmountAccum = $prevBudget->amount_accum ?? 0;
+        $prevAmountRecent = $prevBudget->amount_recent ?? 0;
+        $prevAmountSpent = $prevBudget->amount_spent ?? 0;
+
+        $amount_before = $prevAmountRecent;
+        $amount_change = $assistanceAmount;
+        $amount_recent = $amount_before - $amount_change;
+        $amount_spent = $prevAmountSpent + $amount_change;
+        $amount_accum = $prevAmountAccum;
+
+        $budgetData = Data::create([
+            'data_id' => 'DATA-'.Carbon::now()->year.'-'.Str::padLeft(Data::count() + 1, 9, '0'),
+            'data_status' => 'Unarchived',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $budgetUpdate = BudgetUpdate::create([
+            'budget_update_id' => 'BDG-UPD-'.Carbon::now()->year.'-'.Str::padLeft(BudgetUpdate::count() + 1, 9, '0'),
+            'data_id' => $budgetData->data_id,
+            'sponsor_id' => null,
+            'possessor' => 'AMPING',
+            'amount_accum' => $amount_accum,
+            'amount_recent' => $amount_recent,
+            'amount_before' => $amount_before,
+            'amount_change' => $amount_change,
+            'amount_spent' => $amount_spent,
+            'direction' => 'Decrease',
+            'reason' => 'GL Release',
+        ]);
+
+        return $budgetUpdate;
+    }
+
     public function getLatestBudget()
     {
         $increases = BudgetUpdate::where('direction', 'Increase')->sum('amount_change');
@@ -27,7 +65,7 @@ class BudgetUpdateController extends Controller
             'amount_accum' => (float) $allocated,
             'amount_change' => (float) $decreases_expenses,
             'amount_recent' => (float) $remaining,
-            'has_supplementary_budget' => $hasSupplementaryBudget
+            'has_supplementary_budget' => $hasSupplementaryBudget,
         ]);
     }
 
@@ -68,7 +106,7 @@ class BudgetUpdateController extends Controller
             Data::create([
                 'data_id' => $dataId,
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
 
             BudgetUpdate::create([
@@ -84,18 +122,21 @@ class BudgetUpdateController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json(['success' => true, 'budget_update_id' => $budgetUpdateId]);
         } catch (ValidationException $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'error' => $e->errors()
+                'error' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -123,7 +164,7 @@ class BudgetUpdateController extends Controller
                 'data_id' => $dataId,
                 'data_status' => 'Unarchived',
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
 
             $amountChange = (float) $validated['amount_change'];
@@ -142,9 +183,11 @@ class BudgetUpdateController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json(['success' => true, 'budget_update_id' => $budgetUpdateId]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -159,7 +202,7 @@ class BudgetUpdateController extends Controller
             'sponsor_id' => 'nullable|string',
             'amount_before' => 'nullable|numeric',
             'amount_recent' => 'nullable|numeric',
-            'amount_accum' => 'nullable|numeric'
+            'amount_accum' => 'nullable|numeric',
         ]);
 
         try {
@@ -172,7 +215,7 @@ class BudgetUpdateController extends Controller
                 'data_id' => $dataId,
                 'data_status' => 'Unarchived',
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
 
             $amountSpent = 0.00;
@@ -199,16 +242,18 @@ class BudgetUpdateController extends Controller
                 'reason' => $validated['reason'],
             ];
 
-            if ($validated['possessor'] === 'Sponsor' && !empty($validated['sponsor_id'])) {
+            if ($validated['possessor'] === 'Sponsor' && ! empty($validated['sponsor_id'])) {
                 $payload['sponsor_id'] = $validated['sponsor_id'];
             }
 
             BudgetUpdate::create($payload);
 
             DB::commit();
+
             return response()->json(['success' => true, 'budget_update_id' => $budgetUpdateId]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -232,15 +277,17 @@ class BudgetUpdateController extends Controller
 
                 if ($field === 'amount_change' && is_numeric($value)) {
                     $budgetUpdate->update(['amount_change' => $value]);
-                } else if ($field === 'reason') {
+                } elseif ($field === 'reason') {
                     $budgetUpdate->update(['reason' => $value]);
                 }
             }
 
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -283,9 +330,11 @@ class BudgetUpdateController extends Controller
             }
 
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -294,7 +343,7 @@ class BudgetUpdateController extends Controller
     {
         $sponsor = Sponsor::with(['member.account.data'])->find($id);
 
-        if (!$sponsor) {
+        if (! $sponsor) {
             abort(404);
         }
 
@@ -323,7 +372,7 @@ class BudgetUpdateController extends Controller
         return view('pages.sidebar.contribution.contribution-tables', [
             'contributions' => $contributions,
             'id' => $id,
-            'sponsors' => collect([$sponsor])
+            'sponsors' => collect([$sponsor]),
         ]);
     }
 
@@ -333,7 +382,7 @@ class BudgetUpdateController extends Controller
             DB::beginTransaction();
             $budgetUpdate = BudgetUpdate::find($id);
 
-            if (!$budgetUpdate) {
+            if (! $budgetUpdate) {
                 return response()->json(['success' => false, 'error' => 'Contribution not found.'], 404);
             }
 
@@ -341,9 +390,11 @@ class BudgetUpdateController extends Controller
             $budgetUpdate->delete();
             Data::where('data_id', $dataId)->delete();
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -382,7 +433,8 @@ class BudgetUpdateController extends Controller
         $base = "DATA-{$year}";
         $last = Data::where('data_id', 'like', "{$base}-%")->latest('data_id')->value('data_id');
         $seq = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 
     private function generateBudgetUpdateId(): string
@@ -391,6 +443,7 @@ class BudgetUpdateController extends Controller
         $base = "BDG-UPD-{$year}";
         $last = BudgetUpdate::where('budget_update_id', 'like', "{$base}-%")->latest('budget_update_id')->value('budget_update_id');
         $seq = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 }

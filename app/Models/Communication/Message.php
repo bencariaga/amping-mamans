@@ -2,20 +2,25 @@
 
 namespace App\Models\Communication;
 
+use App\Models\Operation\Application;
+use App\Models\User\Contact;
+use App\Models\User\Staff;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Communication\MessageTemplate;
-use App\Models\User\Staff;
-use App\Models\User\Contact;
 
 class Message extends Model
 {
     protected $table = 'messages';
+
     protected $primaryKey = 'message_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'message_id',
         'msg_tmp_id',
@@ -59,5 +64,10 @@ class Message extends Model
     public function contact()
     {
         return $this->belongsTo(Contact::class, 'contact_id');
+    }
+
+    public function application()
+    {
+        return $this->hasOne(Application::class, 'message_id');
     }
 }

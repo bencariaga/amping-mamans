@@ -11,7 +11,7 @@
     "require": {
         "php": "^8.4.13",
         "barryvdh/laravel-snappy": "^1.0.4",
-        "guzzlehttp/guzzle": "^7.10.0",
+        "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^12.32.2",
         "laravel/scout": "^10.19.0",
         "laravel/tinker": "^2.10.1",

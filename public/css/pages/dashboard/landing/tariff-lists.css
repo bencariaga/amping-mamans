@@ -1,5 +1,4 @@
 :root {
-    --primary-color: #0000bb;
     --primary-border-color: #888;
     --secondary-border-color: #a2a9af;
     --item-shadow: rgba(0, 0, 0, 0.3);
@@ -25,6 +24,8 @@
     --disabled-color: #3a3a3a;
     --disabled-border: #b8bdc1;
     --disabled-stripe: rgba(255, 255, 255, 0.06);
+    --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    --gradient-success: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
     --modal-bg: #fff;
     --modal-border: #333;
     --date-picker-icon: invert(0%);
@@ -33,14 +34,9 @@
     --dark-mode-invert: 0;
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     --transition-speed: 0.3s;
-    --border-radius: 12px;
-    --accent-color: #4361ee;
-    --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
-    --gradient-success: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
 }
 
 [data-theme="dark"] {
-    --primary-color: #4a76d0;
     --primary-border-color: #444;
     --secondary-border-color: #555;
     --item-shadow: rgba(0, 0, 0, 0.3);
@@ -74,8 +70,8 @@
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.form-control {
-    color: var(--text-color) !important;
+.main-content-body {
+    padding-top: 30px;
 }
 
 input[type="date"] {
@@ -91,72 +87,181 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
 
-#application-list-page {
-    padding: 1.5rem;
+input[id^="service_modal_"] {
+    cursor: pointer;
 }
 
-#tariffListCarousel {
-    width: 48rem;
+#filter-search {
+    border-color: var(--primary-border-color);
+    background-color: var(--input-bg);
+    color: var(--input-text-secondary);
+    height: 40px;
 }
 
-.select-service,
-.effectivity-date,
-#effectivity-date-modal {
-    color: var(--text-color);
+#filter-search::placeholder {
+    color: var(--input-text-primary);
 }
 
-.container-fluid {
-    font-family: "Inter", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.2s ease;
+.input-group .form-control #filter-search::placeholder {
+    color: var(--input-text-primary);
 }
 
-.card {
-    background-color: var(--card-bg);
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    transition: transform var(--transition-speed),
-        box-shadow var(--transition-speed);
+[data-theme="dark"] #filter-search::placeholder {
+    color: var(--input-text-primary);
 }
 
-.card-header {
-    background: var(--gradient-primary);
-    border-bottom: 1px solid var(--border-color);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    color: var(--header-text);
-    padding: 1.25rem 1.5rem;
-    font-weight: 600;
-    font-size: 1.2rem;
+.filter-sort-dropdown .dropdown-menu,
+.filter-per-page-dropdown .dropdown-menu {
+    min-width: 0;
+    width: 100%;
+}
+
+#perPageDropdownBtn,
+#sortDropdownBtn {
+    color: var(--input-text-secondary);
+    background-color: var(--input-bg);
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+    font-size: 16px;
+    height: 40px;
+}
+
+#perPageDropdownBtn,
+.filter-per-page-dropdown .dropdown-menu {
+    width: 90px;
+}
+
+#sortDropdownBtn,
+.filter-sort-dropdown .dropdown-menu {
+    width: 120px;
+}
+
+.filter-sort-dropdown .dropdown-menu,
+.filter-per-page-dropdown .dropdown-menu {
+    background-color: var(--input-bg-focus);
+    border-color: var(--primary-border-color);
+}
+
+#searchBtn:hover {
+    border-radius: 8px;
+}
+
+#perPageDropdownBtn:hover,
+#sortDropdownBtn:hover {
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+}
+
+#searchBtn .btn,
+.filter-sort-dropdown .btn {
+    font-size: 16px;
+    height: 40px;
+}
+
+.filter-sort-dropdown .btn,
+.filter-per-page-dropdown .btn {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 1rem;
+}
+
+#sortDropdownBtn:hover,
+#perPageDropdownBtn:hover {
+    background-color: var(--input-bg-hover);
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+.input-group .form-control,
+.input-group .btn {
+    border: 1px solid var(--primary-border-color);
+}
+
+.input-group .btn {
+    background-color: var(--primary-color);
+}
+
+#tariff-pagination-controls a {
+    border-color: #666;
+}
+
+#tariff-pagination-controls .btn {
+    border: 1px solid var(--primary-border-color);
+    border-width: 1.5px;
+    font-size: 16px;
+    height: 40px;
+}
+
+.common-pagination-info-buttons .btn-outline-secondary {
+    border-color: var(--primary-border-color);
+    color: var(--primary-border-color);
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.common-pagination-info-buttons .btn-outline-secondary:hover,
+.common-pagination-info-buttons .btn-outline-secondary.active {
+    border-color: var(--primary-color);
+    background-color: var(--light-blue-color);
+    color: #fff;
 }
 
 .data-table-container {
-    margin-top: 24px;
-    border-radius: var(--border-radius);
+    margin-top: 1rem;
+    border: 1px solid var(--secondary-border-color);
+}
+
+.tariff-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
     overflow: hidden;
-    box-shadow: var(--card-shadow);
+    border: none;
 }
 
 .tariff-list-table thead tr {
-    background: var(--gradient-primary);
+    background-color: var(--table-header-bg);
     color: var(--header-text);
+}
+
+.tariff-list-table thead tr:hover {
+    background-color: var(--table-header-bg);
 }
 
 .tariff-list-table th,
 .tariff-list-table td {
-    padding: 12px;
-    border: none;
+    padding: 12px 15px;
     vertical-align: middle;
+    border: 1px solid var(--secondary-border-color);
+}
+
+.tariff-list-table th:first-child,
+.tariff-list-table td:first-child {
+    border-left: none;
+}
+
+.tariff-list-table th:last-child,
+.tariff-list-table td:last-child {
+    border-right: none;
+}
+
+.tariff-list-table tr {
+    border-left: 1px solid var(--secondary-border-color);
+    border-right: 1px solid var(--secondary-border-color);
+}
+
+.tariff-list-table tbody tr:last-of-type {
     border-bottom: 1px solid var(--secondary-border-color);
 }
 
-.tariff-list-table td {
-    min-height: 5rem;
-}
-
-.tariff-list-table tbody tr:last-child td {
-    border-bottom: none;
+.tariff-list-table-header {
+    font-weight: 600;
+    font-size: 20px;
 }
 
 .tariff-list-table tbody tr:nth-of-type(odd) {
@@ -167,76 +272,89 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background-color: var(--even-row-bg) !important;
 }
 
-.effectivity-date,
-.tariff-list-id-text {
-    color: var(--text-color);
+.tariff-list-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
 }
 
-.muted-text {
-    color: #666;
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }
 
-[data-theme="dark"] .muted-text {
-    color: #aaa;
-}
-
-.tariff-list-table-header,
-#tariff-list-table-header-1,
-#tariff-list-table-header-2,
-#tariff-list-table-header-3,
-#tariff-list-table-header-4,
-#tariff-list-table-header-5,
-#tariff-list-table-header-6,
-#tariff-list-table-header-7,
-#tariff-list-table-header-8,
-#tariff-list-table-header-9 {
-    background-color: var(--table-header-bg);
-    text-align: center;
-    font-weight: bold;
+.custom-dropdown-btn {
     position: relative;
-    font-size: 1rem;
+    height: 40px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+    transition: all 0.1s ease;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.custom-dropdown-btn:hover,
+.custom-dropdown-btn:focus {
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+}
+
+.custom-dropdown-btn::after {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--arrow-color);
+}
+
+.dropdown-menu,
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--input-text);
+    height: 2rem;
+    cursor: pointer;
+    margin: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
     color: #fff;
 }
 
-#tariff-list-table-header-1 {
-    width: calc(400% / 100);
+.dropdown-toggle::after {
+    transition: transform 0.3s ease;
+    transform-origin: center;
 }
 
-#tariff-list-table-header-2 {
-    width: calc(1600% / 100);
+.dropdown-toggle.rotated::after {
+    transform: translateY(-50%) rotate(180deg);
 }
 
-#tariff-list-table-header-3 {
-    width: calc(100% / 100);
+.tariff-list-id-text {
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
 }
 
-#tariff-list-table-header-4 {
-    width: calc(600% / 100);
+.effectivity-date {
+    color: var(--text-color);
+    font-size: 1rem;
 }
 
-#tariff-list-table-header-5 {
-    width: calc(300% / 100);
+.select-service {
+    color: var(--text-color);
 }
 
-#tariff-list-table-header-6 {
-    width: 210px;
-}
-
-#tariff-list-table-header-7 {
-    width: 210px;
-}
-
-#tariff-list-table-header-8 {
-    width: 170px;
-}
-
-#tariff-list-table-header-9 {
-    width: 130px;
-}
-
-.table-container {
-    border: 1.5px solid var(--secondary-border-color);
-    border-radius: 8px;
+.btn,
+.badge {
+    height: 3rem;
+    font-size: 1rem;
 }
 
 .badge {
@@ -244,25 +362,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: 600;
     letter-spacing: 0.5px;
     padding: 0.5rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.table-bordered {
-    border: 1px solid var(--border-color);
-}
-
-#serviceBadge {
-    width: 10rem;
-    font-size: 12px;
-    background-color: #f5f5dc;
-}
-
-#statusBadge {
-    font-size: 1rem;
-    width: 120px;
+    display: inline-block;
+    max-width: fit-content;
 }
 
 .action-button-group {
@@ -314,14 +415,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: white;
 }
 
-.btn-apply {
-    color: #000;
+.data-text {
+    font-size: 18px;
+}
+
+.muted-text {
+    color: #666;
+    font-size: 17px;
+}
+
+[data-theme="dark"] .muted-text {
+    color: #aaa;
 }
 
 .modal-content {
     border-radius: var(--border-radius);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    border-radius: 8px 8px 0 0;
     overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
 }
 
 .modal-header {
@@ -382,14 +493,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     gap: 0.5rem;
 }
 
-.date-input {
+#effectivity-date-input {
+    cursor: pointer;
+}
+
+.date-input,
+.date-input-container input {
     border-radius: 8px;
     padding: 12px 16px !important;
     width: 12rem !important;
     color: var(--text-color);
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
-    transition: all var(--transition-speed);
 }
 
 .date-input:focus {
@@ -428,39 +543,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: 500;
 }
 
-.tariff-section {
-    border: 1px solid var(--input-border);
-    border-radius: var(--border-radius);
-    background-color: var(--container-color);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-    font-size: 28px;
-    margin-top: 0;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    position: relative;
-    color: var(--primary-color);
-    font-weight: 700;
-}
-
 .money-amount-container {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     position: relative;
     gap: 0.5rem;
-}
-
-#tariffListInput {
-    font-size: 1rem;
-    padding: 4px 12px 4px 4px;
 }
 
 .percent-container input,
@@ -499,12 +587,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-radius: 8px;
     transition: all var(--transition-speed);
     color: var(--text-color);
-}
-
-.money-amount-row:hover .row-add-btn,
-.money-amount-row:hover .row-remove-btn {
-    opacity: 1;
-    visibility: visible;
 }
 
 .row-remove-btn {
@@ -547,6 +629,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+#toggleViewEditModeButton,
+#toggleViewEditModeButton:hover {
+    width: 180px;
+    height: 3rem;
+    color: #fff;
+}
+
 .carousel-control-prev {
     left: 40px;
 }
@@ -566,7 +655,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .modal-message {
     width: 100%;
-    padding: 1rem;
     text-align: center;
     font-size: 1.1rem;
     line-height: 1.6;
@@ -646,6 +734,56 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 [data-theme="dark"] .speech-bubble {
     filter: none;
+}
+
+@media (max-width: 992px) {
+    .controls-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-search-box {
+        grid-column: 1 / 3;
+    }
+
+    .filter-sort-wrapper {
+        grid-column: 1 / 2;
+    }
+
+    .filter-per-page-wrapper {
+        grid-column: 2 / 3;
+    }
+
+    #tariff-pagination-controls {
+        grid-column: 1 / 3;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-search-box,
+    .filter-sort-wrapper,
+    .filter-per-page-wrapper,
+    #tariff-pagination-controls {
+        grid-column: 1 / 2;
+        width: 100%;
+        justify-self: stretch;
+    }
+
+    .filter-sort-wrapper .dropdown,
+    .filter-per-page-wrapper .dropdown {
+        width: 100%;
+    }
+
+    #tariff-pagination-controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
 }
 
 @media (max-width: 576px) {

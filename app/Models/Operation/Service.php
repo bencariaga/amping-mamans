@@ -2,19 +2,23 @@
 
 namespace App\Models\Operation;
 
+use App\Models\Storage\Data;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
-use App\Models\Operation\TariffList;
 
 class Service extends Model
 {
     protected $table = 'services';
+
     protected $primaryKey = 'service_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'service_id',
         'data_id',

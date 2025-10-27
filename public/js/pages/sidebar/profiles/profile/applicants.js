@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     function setupDropdownArrowRotation(buttonId) {
         const btn = document.getElementById(buttonId);
+
         if (btn) {
             btn.addEventListener('show.bs.dropdown', () => {
                 btn.classList.add('rotated');
             });
+
             btn.addEventListener('hide.bs.dropdown', () => {
                 btn.classList.remove('rotated');
             });
@@ -22,103 +24,74 @@ document.addEventListener('DOMContentLoaded', () => {
         'applicantJobStatusDropdownBtn',
         'applicantHouseStatusDropdownBtn',
         'applicantLotStatusDropdownBtn',
-        'applicantRepresentingPatientDropdownBtn',
-        'applicantPatientCountDropdownBtn',
-        'patientSuffixDropdownBtn-1',
-        'patientSuffixDropdownBtn-2',
-        'patientSuffixDropdownBtn-3',
-        'occupationDropdownBtn',
-        'customOccupationInput',
-        'phicAffiliationDropdownBtn',
-        'phicCategoryDropdownBtn'
     ].forEach(setupDropdownArrowRotation);
+
+    function setupDynamicDropdownsRotation(prefix) {
+        document.querySelectorAll(`[id^="${prefix}"]`).forEach(btn => {
+            btn.addEventListener('show.bs.dropdown', () => {
+                btn.classList.add('rotated');
+            });
+
+            btn.addEventListener('hide.bs.dropdown', () => {
+                btn.classList.remove('rotated');
+            });
+        });
+    }
+
+    [
+        'patientSuffixDropdownBtn-',
+        'patientSexDropdownBtn-',
+        'patientCategoryDropdownBtn-',
+    ].forEach(setupDynamicDropdownsRotation);
 
     Livewire.on('scrollToElement', elementId => {
         const element = document.getElementById(elementId);
+
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            element.focus();
+            const scrollTarget = element.closest('.form-group') || element;
+            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+                element.focus();
+            } else if (element.classList.contains('dropdown-toggle')) {
+                element.focus();
+            }
         }
     });
 
     const monthlyIncomeDisplayInput = document.getElementById('monthlyIncomeDisplayInput');
     const monthlyIncomeHiddenInput = document.getElementById('monthlyIncomeHiddenInput');
 
-    function sanitizeNumericInput(raw) {
-        if (raw === null || raw === undefined) return '';
-        let s = String(raw);
-        s = s.replace(/,/g, '');
-        s = s.replace(/\D/g, '');
-        s = s.replace(/^0+(?=\d)/, '');
-        return s;
-    }
-
-    function formatForDisplay(sanitized) {
-        if (sanitized === '' || sanitized === null || sanitized === undefined) return '';
-        const n = parseInt(sanitized, 10);
-        if (isNaN(n)) return '';
-        return n.toLocaleString();
-    }
-
     function setHiddenValueAndNotify(value) {
-        if (!monthlyIncomeHiddenInput) return;
         monthlyIncomeHiddenInput.value = value;
         const ev = new Event('input', { bubbles: true });
         monthlyIncomeHiddenInput.dispatchEvent(ev);
     }
 
-    function updateDisplayFromHidden() {
-        if (!monthlyIncomeDisplayInput || !monthlyIncomeHiddenInput) return;
-        const sanitized = sanitizeNumericInput(monthlyIncomeHiddenInput.value);
-        monthlyIncomeDisplayInput.value = formatForDisplay(sanitized);
-    }
-
     if (monthlyIncomeDisplayInput && monthlyIncomeHiddenInput) {
         monthlyIncomeDisplayInput.addEventListener('input', (event) => {
-            const raw = event.target.value;
-            const sanitized = sanitizeNumericInput(raw);
-            setHiddenValueAndNotify(sanitized === '' ? '' : sanitized);
-            event.target.value = formatForDisplay(sanitized);
-            try {
-                event.target.selectionStart = event.target.selectionEnd = event.target.value.length;
-            } catch (e) { }
+            let value = event.target.value.replace(/[^0-9]/g, '');
+            setHiddenValueAndNotify(value);
+            event.target.value = value === '' ? '' : Number(value).toLocaleString();
         });
 
         monthlyIncomeDisplayInput.addEventListener('paste', (event) => {
             event.preventDefault();
-            const paste = (event.clipboardData || window.clipboardData).getData('text');
-            const sanitized = sanitizeNumericInput(paste);
-            setHiddenValueAndNotify(sanitized === '' ? '' : sanitized);
-            monthlyIncomeDisplayInput.value = formatForDisplay(sanitized);
-            try {
-                monthlyIncomeDisplayInput.selectionStart = monthlyIncomeDisplayInput.selectionEnd = monthlyIncomeDisplayInput.value.length;
-            } catch (e) { }
+            const paste = event.clipboardData.getData('text');
+            const cleanPaste = paste.replace(/[^0-9]/g, '');
+            setHiddenValueAndNotify(cleanPaste);
+            monthlyIncomeDisplayInput.value = cleanPaste === '' ? '' : Number(cleanPaste).toLocaleString();
         });
 
-        monthlyIncomeDisplayInput.addEventListener('focus', (event) => {
-            const sanitized = sanitizeNumericInput(monthlyIncomeHiddenInput.value);
-            event.target.value = formatForDisplay(sanitized);
-            try {
-                event.target.selectionStart = event.target.selectionEnd = event.target.value.length;
-            } catch (e) { }
-        });
+        if (monthlyIncomeHiddenInput.value !== '') {
+            const val = monthlyIncomeHiddenInput.value.toString().replace(/[^0-9]/g, '');
+            monthlyIncomeDisplayInput.value = val === '' ? '' : Number(val).toLocaleString();
+        }
 
-        monthlyIncomeDisplayInput.addEventListener('blur', () => {
-            updateDisplayFromHidden();
-        });
-
-        updateDisplayFromHidden();
-
-        if (window.Livewire) {
+        if (window.Livewire && typeof Livewire.hook === 'function') {
             Livewire.hook('message.processed', () => {
-                updateDisplayFromHidden();
-            });
-            document.addEventListener('livewire:init', () => {
-                updateDisplayFromHidden();
-            });
-        } else {
-            document.addEventListener('livewire:init', () => {
-                updateDisplayFromHidden();
+                const val = monthlyIncomeHiddenInput.value.toString().replace(/[^0-9]/g, '');
+                monthlyIncomeDisplayInput.value = val === '' ? '' : Number(val).toLocaleString();
             });
         }
     }
@@ -129,10 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!raw) return '';
         let s = raw.toString().trim();
         s = s.replace(/[^\d+]/g, '');
+
         if (s.startsWith('+')) {
             s = s.slice(1);
         }
+
         s = s.replace(/[^\d]/g, '');
+
         if (s.startsWith('63')) {
             s = '0' + s.slice(2);
         } else if (s.startsWith('9')) {
@@ -140,17 +116,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (!s.startsWith('0')) {
             s = '0' + s;
         }
+
         const parts = [];
+
         if (s.length <= 4) {
             return s;
         }
+
         parts.push(s.slice(0, 4));
+
         if (s.length > 4) {
             parts.push(s.slice(4, Math.min(7, s.length)));
         }
+
         if (s.length > 7) {
             parts.push(s.slice(7, Math.min(11, s.length)));
         }
+
         return parts.join('-');
     }
 
@@ -167,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const raw = e.target.value;
             const formatted = formatPhoneForDisplay(raw);
             e.target.value = formatted;
-            dispatchInputEvent(e.target);
+
             if (document.activeElement === e.target) {
                 try {
                     e.target.selectionStart = e.target.selectionEnd = formatted.length;
@@ -177,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         phoneInput.addEventListener('paste', (e) => {
             e.preventDefault();
-            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const paste = e.clipboardData.getData('text');
             const formatted = formatPhoneForDisplay(paste);
             phoneInput.value = formatted;
             dispatchInputEvent(phoneInput);
@@ -192,36 +174,135 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleUpdateUIElements() {
-        const occupationDropdownBtn = document.getElementById('applicantOccupationDropdownBtn') || document.getElementById('occupationDropdownBtn');
-        const customOccupationInput = document.getElementById('applicantCustomOccupationInput') || document.getElementById('customOccupationInput');
+    const applicantBirthdateInput = document.getElementById('applicantBirthdateInput');
+    const applicantAgeInput = document.getElementById('applicantAgeInput');
+    const applicantAgeHidden = document.getElementById('applicantAgeHidden');
 
-        if (customOccupationInput && occupationDropdownBtn) {
-            if (customOccupationInput.value.trim() !== '') {
-                occupationDropdownBtn.disabled = true;
-            } else {
-                occupationDropdownBtn.disabled = false;
-            }
+    function calculateAge(birthDate) {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
 
-            customOccupationInput.readOnly = (occupationDropdownBtn.textContent.trim() !== '— Select —' && occupationDropdownBtn.textContent.trim() !== '');
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
         }
 
-        const phicAffiliationDropdownBtn = document.getElementById('applicantPhicAffiliationDropdownBtn') || document.getElementById('phicAffiliationDropdownBtn');
-        const phicCategoryDropdownBtn = document.getElementById('applicantPhicCategoryDropdownBtn') || document.getElementById('phicCategoryDropdownBtn');
+        return age;
+    }
 
-        if (phicAffiliationDropdownBtn && phicCategoryDropdownBtn) {
-            if (phicAffiliationDropdownBtn.textContent.trim() === 'Unaffiliated' || phicAffiliationDropdownBtn.textContent.trim() === '— Select —') {
-                phicCategoryDropdownBtn.disabled = true;
-                phicCategoryDropdownBtn.textContent = '— Select —';
-            } else {
-                phicCategoryDropdownBtn.disabled = false;
+    function updateApplicantAge() {
+        if (applicantBirthdateInput.value) {
+            const age = calculateAge(applicantBirthdateInput.value);
+            applicantAgeInput.value = age;
+            applicantAgeHidden.value = age;
+
+            const event = new Event('input', { bubbles: true });
+            applicantAgeHidden.dispatchEvent(event);
+
+            if (checkbox.checked) {
+                copyApplicantToPatient1();
             }
+        } else {
+            applicantAgeInput.value = '';
+            applicantAgeHidden.value = '';
         }
     }
 
-    window.addEventListener('update-ui-elements', handleUpdateUIElements);
-});
+    if (applicantBirthdateInput && applicantAgeInput && applicantAgeHidden) {
+        applicantBirthdateInput.addEventListener('change', updateApplicantAge);
+        applicantBirthdateInput.addEventListener('input', updateApplicantAge);
 
-document.addEventListener('livewire:load', function () {
-    window.dispatchEvent(new CustomEvent('update-ui-elements'));
+        if (applicantBirthdateInput.value) {
+            updateApplicantAge();
+        }
+    }
+
+    const checkbox = document.getElementById('checkbox');
+    const patientNumberInput = document.getElementById('patientNumberInput');
+
+    function copyApplicantToPatient1() {
+        const applicantLastName = document.getElementById('applicantLastNameInput').value;
+        const applicantFirstName = document.getElementById('applicantFirstNameInput').value;
+        const applicantMiddleName = document.getElementById('applicantMiddleNameInput').value;
+        const applicantSuffix = document.getElementById('applicantSuffixDropdownBtn').textContent.trim();
+        const applicantSex = document.getElementById('applicantSexDropdownBtn').textContent.trim();
+        const applicantAge = document.getElementById('applicantAgeInput').value;
+
+        document.getElementById('patientLastNameInput-1').value = applicantLastName;
+        document.getElementById('patientFirstNameInput-1').value = applicantFirstName;
+        document.getElementById('patientMiddleNameInput-1').value = applicantMiddleName;
+        document.getElementById('patientSuffixDropdownBtn-1').textContent = applicantSuffix;
+        document.getElementById('patientSexDropdownBtn-1').textContent = applicantSex;
+        document.getElementById('patientAgeInput-1').value = applicantAge;
+
+        document.querySelectorAll('#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1').forEach(field => {
+            field.disabled = true;
+        });
+
+        document.querySelectorAll('#patientSuffixDropdownBtn-1, #patientSexDropdownBtn-1').forEach(btn => {
+            btn.disabled = true;
+        });
+    }
+
+    function clearPatient1() {
+        document.getElementById('patientLastNameInput-1').value = '';
+        document.getElementById('patientFirstNameInput-1').value = '';
+        document.getElementById('patientMiddleNameInput-1').value = '';
+        document.getElementById('patientSuffixDropdownBtn-1').textContent = '— Select —';
+        document.getElementById('patientSexDropdownBtn-1').textContent = '— Select —';
+        document.getElementById('patientAgeInput-1').value = '';
+
+        document.querySelectorAll('#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1').forEach(field => {
+            field.disabled = false;
+        });
+
+        document.querySelectorAll('#patientSuffixDropdownBtn-1, #patientSexDropdownBtn-1').forEach(btn => {
+            btn.disabled = false;
+        });
+    }
+
+    function handleCheckboxChange() {
+        if (checkbox.checked) {
+            copyApplicantToPatient1();
+        } else {
+            clearPatient1();
+        }
+    }
+
+    function handleApplicantFieldChange() {
+        if (checkbox.checked) {
+            copyApplicantToPatient1();
+        }
+    }
+
+    if (checkbox && patientNumberInput) {
+        checkbox.addEventListener('change', handleCheckboxChange);
+
+        document.getElementById('applicantLastNameInput').addEventListener('input', handleApplicantFieldChange);
+        document.getElementById('applicantFirstNameInput').addEventListener('input', handleApplicantFieldChange);
+        document.getElementById('applicantMiddleNameInput').addEventListener('input', handleApplicantFieldChange);
+
+        document.querySelectorAll('#applicantSuffixDropdownBtn + .dropdown-menu a').forEach(item => {
+            item.addEventListener('click', handleApplicantFieldChange);
+        });
+
+        document.querySelectorAll('#applicantSexDropdownBtn + .dropdown-menu a').forEach(item => {
+            item.addEventListener('click', handleApplicantFieldChange);
+        });
+
+        patientNumberInput.addEventListener('input', function () {
+            if (this.value > 10) {
+                this.value = 10;
+            }
+        });
+    }
+
+    document.querySelectorAll('.patient-age-input').forEach(input => {
+        input.addEventListener('input', function () {
+            if (this.value > 200) {
+                this.value = 200;
+            }
+        });
+    });
 });

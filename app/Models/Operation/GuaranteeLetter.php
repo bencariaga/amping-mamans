@@ -5,22 +5,23 @@ namespace App\Models\Operation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Operation\Application;
-use App\Models\Operation\BudgetUpdate;
 
 class GuaranteeLetter extends Model
 {
     protected $table = 'guarantee_letters';
+
     protected $primaryKey = 'gl_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'gl_id',
         'application_id',
         'budget_update_id',
-        'gl_status',
-        'signers',
     ];
 
     protected static function boot()

@@ -2,19 +2,24 @@
 
 namespace App\Models\User;
 
+use App\Models\Authentication\Account;
+use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Authentication\Account;
-use App\Models\Operation\Application;
 
 class AffiliatePartner extends Model
 {
     protected $table = 'affiliate_partners';
+
     protected $primaryKey = 'affiliate_partner_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'affiliate_partner_id',
         'account_id',

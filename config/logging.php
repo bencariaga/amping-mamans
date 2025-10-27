@@ -52,6 +52,18 @@ return [
 
     'channels' => [
 
+        'sms' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/sms_notifications.log'),
+            'level' => 'info',
+        ],
+
+        'system' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/system.log'),
+            'level' => 'debug',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),

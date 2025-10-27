@@ -177,5 +177,6 @@
 @endsection
 
 @section('footer')
-    @include('components.layouts.footer.profile-buttons-1')
+    @include('components.layouts.footer.edit-user')
+    @include('components.layouts.footer.profile-buttons-2')
 @endsection

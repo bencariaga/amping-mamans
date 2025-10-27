@@ -2,20 +2,23 @@
 
 namespace App\Models\User;
 
+use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\Client;
-use App\Models\User\Patient;
-use App\Models\Operation\Application;
 
 class Applicant extends Model
 {
     protected $table = 'applicants';
+
     protected $primaryKey = 'applicant_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'applicant_id',
         'client_id',
@@ -31,9 +34,10 @@ class Applicant extends Model
         'block_number',
         'house_number',
         'job_status',
-        'representing_patient',
         'house_occup_status',
         'lot_occup_status',
+        'is_also_patient',
+        'patient_number',
         'phic_affiliation',
         'phic_category',
     ];

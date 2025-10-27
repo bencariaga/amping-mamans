@@ -435,11 +435,16 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .navbar-bottom {
-    bottom: 0;
     height: var(--navbar-bottom-height);
+    bottom: 0;
+}
+
+#navbar-bottom {
+    gap: 20px;
+    width: 1240px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: 20px;
+    height: var(--navbar-bottom-height);
 }
 
 .dashboard-title {

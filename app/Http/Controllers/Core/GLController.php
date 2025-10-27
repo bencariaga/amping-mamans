@@ -3,92 +3,86 @@
 namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use App\Models\Operation\Application;
-use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\GuaranteeLetter;
-use App\Models\Operation\BudgetUpdate;
-use App\Models\Storage\Data;
-use App\Models\User\Applicant;
-use App\Models\Communication\MessageTemplate;
-use Illuminate\Support\Str;
+use App\Support\Number;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Support\Carbon;
-use Exception;
-use Humans\Semaphore\Laravel\Facades\Semaphore;
-use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GLController extends Controller
 {
-    private function generateNextId(string $prefix, string $table, string $primaryKey): string
+    public function createForApplication($application, $budgetUpdate)
     {
-        $year = Carbon::now()->year;
-        $base = "{$prefix}-{$year}";
-        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
-        $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
+        $guaranteeLetter = GuaranteeLetter::create([
+            'gl_id' => 'GL-'.Carbon::now()->year.'-'.Str::padLeft(GuaranteeLetter::count() + 1, 9, '0'),
+            'application_id' => $application->application_id,
+            'budget_update_id' => $budgetUpdate->budget_update_id,
+        ]);
 
-        return $base . '-' . Str::padLeft($lastNum + 1, 9, '0');
+        return $guaranteeLetter;
     }
 
     private function numberToWords($number)
     {
-        $hyphen      = '-';
+        $hyphen = '-';
         $conjunction = ' and ';
-        $separator   = ', ';
-        $negative    = 'negative ';
-        $decimal     = ' point ';
-        $dictionary  = array(
-            0                   => 'zero',
-            1                   => 'one',
-            2                   => 'two',
-            3                   => 'three',
-            4                   => 'four',
-            5                   => 'five',
-            6                   => 'six',
-            7                   => 'seven',
-            8                   => 'eight',
-            9                   => 'nine',
-            10                  => 'ten',
-            11                  => 'eleven',
-            12                  => 'twelve',
-            13                  => 'thirteen',
-            14                  => 'fourteen',
-            15                  => 'fifteen',
-            16                  => 'sixteen',
-            17                  => 'seventeen',
-            18                  => 'eighteen',
-            19                  => 'nineteen',
-            20                  => 'twenty',
-            30                  => 'thirty',
-            40                  => 'forty',
-            50                  => 'fifty',
-            60                  => 'sixty',
-            70                  => 'seventy',
-            80                  => 'eighty',
-            90                  => 'ninety',
-            100                 => 'hundred',
-            1000                => 'thousand',
-            1000000             => 'million',
-            1000000000          => 'billion',
-            1000000000000       => 'trillion',
-            1000000000000000    => 'quadrillion',
-            1000000000000000000 => 'quintillion'
-        );
+        $separator = ', ';
+        $negative = 'negative ';
+        $decimal = ' point ';
+        $dictionary = [
+            0 => 'zero',
+            1 => 'one',
+            2 => 'two',
+            3 => 'three',
+            4 => 'four',
+            5 => 'five',
+            6 => 'six',
+            7 => 'seven',
+            8 => 'eight',
+            9 => 'nine',
+            10 => 'ten',
+            11 => 'eleven',
+            12 => 'twelve',
+            13 => 'thirteen',
+            14 => 'fourteen',
+            15 => 'fifteen',
+            16 => 'sixteen',
+            17 => 'seventeen',
+            18 => 'eighteen',
+            19 => 'nineteen',
+            20 => 'twenty',
+            30 => 'thirty',
+            40 => 'forty',
+            50 => 'fifty',
+            60 => 'sixty',
+            70 => 'seventy',
+            80 => 'eighty',
+            90 => 'ninety',
+            100 => 'hundred',
+            1000 => 'thousand',
+            1000000 => 'million',
+            1000000000 => 'billion',
+            1000000000000 => 'trillion',
+            1000000000000000 => 'quadrillion',
+            1000000000000000000 => 'quintillion',
+        ];
 
-        if (!is_numeric($number)) {
+        if (! is_numeric($number)) {
             return '';
         }
 
         if ($number < 0) {
-            return $negative . $this->numberToWords(\abs($number));
+            return $negative.$this->numberToWords(Number::abs($number));
         }
 
         $string = $fraction = null;
+        $numberString = (string) $number;
 
-        if (\strpos((string)$number, '.') !== false) {
-            list($number, $fraction) = \explode('.', (string)$number);
+        if (Str::contains((string) $number, '.') !== false) {
+            $number = Str::beforeLast($numberString, '.');
+            $fraction = Str::afterLast($numberString, '.');
         }
 
         $number = (int) $number;
@@ -98,40 +92,48 @@ class GLController extends Controller
                 $string = $dictionary[$number];
                 break;
             case $number < 100:
-                $tens   = ((int) ($number / 10)) * 10;
-                $units  = $number % 10;
+                $tens = ((int) ($number / 10)) * 10;
+                $units = $number % 10;
                 $string = $dictionary[$tens];
+
                 if ($units) {
-                    $string .= $hyphen . $dictionary[$units];
+                    $string .= $hyphen.$dictionary[$units];
                 }
+
                 break;
             case $number < 1000:
-                $hundreds  = (int) ($number / 100);
+                $hundreds = (int) ($number / 100);
                 $remainder = $number % 100;
-                $string = $dictionary[$hundreds] . ' ' . $dictionary[100];
+                $string = $dictionary[$hundreds].' '.$dictionary[100];
+
                 if ($remainder) {
-                    $string .= $conjunction . $this->numberToWords($remainder);
+                    $string .= $conjunction.$this->numberToWords($remainder);
                 }
+
                 break;
             default:
-                $baseUnit = \pow(1000, \floor(\log($number, 1000)));
+                $baseUnit = Number::pow(1000, Number::floor(Number::log($number, 1000)));
                 $numBaseUnits = (int) ($number / $baseUnit);
                 $remainder = $number % $baseUnit;
-                $string = $this->numberToWords($numBaseUnits) . ' ' . $dictionary[$baseUnit];
+                $string = $this->numberToWords($numBaseUnits).' '.$dictionary[$baseUnit];
+
                 if ($remainder) {
                     $string .= $remainder < 100 ? $conjunction : $separator;
                     $string .= $this->numberToWords($remainder);
                 }
+
                 break;
         }
 
         if ($fraction !== null && is_numeric($fraction)) {
             $string .= $decimal;
-            $words = array();
-            foreach (\str_split((string) $fraction) as $numberDigit) {
-                $words[] = $dictionary[(int)$numberDigit];
+            $words = [];
+
+            foreach (Str::of((string) $fraction)->split(1) as $numberDigit) {
+                $words[] = $dictionary[(int) $numberDigit];
             }
-            $string .= \implode(' ', $words);
+
+            $string .= collect($words)->join(' ');
         }
 
         return $string;
@@ -139,151 +141,35 @@ class GLController extends Controller
 
     private function aliasId(string $id, string $prefix): string
     {
-        $withoutPrefix = Str::after($id, $prefix . '-');
-        if (\strpos($withoutPrefix, '-') !== false) {
-            [$year, $num] = \explode('-', $withoutPrefix, 2);
+        $withoutPrefix = Str::after($id, $prefix.'-');
+
+        if (Str::contains($withoutPrefix, '-') !== false) {
+            [$year, $num] = Str::of($withoutPrefix)->explode('-', 2)->all();
         } else {
-            $year = \substr($withoutPrefix, 0, 4);
-            $num = \substr($withoutPrefix, 4);
-        }
-        $numLast5 = \substr($num, -5);
-        return $year . '-' . $numLast5;
-    }
-
-    public function authorizeApplication(Request $request, $application)
-    {
-        $application = Application::where('application_id', $application)->first();
-
-        if (!$application) {
-            return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
+            $year = Str::substr($withoutPrefix, 0, 4);
+            $num = Str::substr($withoutPrefix, 4);
         }
 
-        $applicant = Applicant::where('applicant_id', $application->applicant_id)->with(['client.contacts'])->first();
+        $numLast5 = Str::substr($num, -5);
 
-        $expenseRange = ExpenseRange::where('exp_range_id', $application->exp_range_id)->first();
-        $assistAmount = $expenseRange->assist_amount ?? 0;
-
-        DB::beginTransaction();
-
-        try {
-            $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')
-                ->orderBy('data.created_at', 'desc')
-                ->select('budget_updates.*')
-                ->first();
-
-            $prevAmountAccum = $prevBudget->amount_accum ?? 0;
-            $prevAmountRecent = $prevBudget->amount_recent ?? 0;
-            $prevAmountSpent = $prevBudget->amount_spent ?? 0;
-
-            $amount_before = $prevAmountRecent;
-            $amount_change = (float) $assistAmount;
-            $amount_recent = $amount_before - $amount_change;
-            $amount_spent = $prevAmountSpent + $amount_change;
-            $amount_accum = $prevAmountAccum;
-
-            $budgetData = Data::create([
-                'data_status' => 'Unarchived',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ]);
-
-            $budgetUpdate = BudgetUpdate::create([
-                'data_id' => $budgetData->data_id,
-                'sponsor_id' => null,
-                'possessor' => 'AMPING',
-                'amount_accum' => $amount_accum,
-                'amount_recent' => $amount_recent,
-                'amount_before' => $amount_before,
-                'amount_change' => $amount_change,
-                'amount_spent' => $amount_spent,
-                'direction' => 'Decrease',
-                'reason' => 'GL Release'
-            ]);
-
-            $glId = $this->generateNextId('GL', 'guarantee_letters', 'gl_id');
-
-            GuaranteeLetter::create([
-                'gl_id' => $glId,
-                'application_id' => $application->application_id,
-                'budget_update_id' => $budgetUpdate->budget_update_id,
-                'gl_status' => 'Approved',
-                'signers' => null
-            ]);
-
-            DB::commit();
-            
-            if ($applicant) {
-                $phone_number = $applicant->client->contacts->first()->phone_number ?? null;
-                $format_phone = str_replace("-", "", $phone_number);
-                $messageTemplate = MessageTemplate::where('msg_tmp_title', 'Approved SMS Template')->first();
-                $message = $messageTemplate ? $messageTemplate->msg_tmp_text : "Your assistance request has been approved. You may now claim your Guarantee Letter from the AMPING office.";
-                $this->sendSMS($format_phone, $message);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Assistance request has been approved.',
-                'status' => 'Approved',
-                'disableButtons' => ['authorize', 'reject'],
-                'previewEnabled' => true,
-                'previewUrl' => url("/applications/{$application->application_id}/guarantee-letter")
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Failed to authorize request: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function reject(Request $request, $application)
-    {
-        $application = Application::where('application_id', $application)->first();
-
-        if (!$application) {
-            return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
-        }
-
-        try {
-            $glId = $this->generateNextId('GL', 'guarantee_letters', 'gl_id');
-
-            GuaranteeLetter::create([
-                'gl_id' => $glId,
-                'application_id' => $application->application_id,
-                'budget_update_id' => null,
-                'gl_status' => 'Rejected',
-                'signers' => null
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Assistance request has been rejected.',
-                'status' => 'Rejected',
-                'disableButtons' => ['authorize', 'reject'],
-                'previewEnabled' => false,
-                'previewUrl' => null
-            ]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Failed to reject request: ' . $e->getMessage()], 500);
-        }
+        return $year.'-'.$numLast5;
     }
 
     public function generatePDF($application)
     {
         $application = Application::where('application_id', $application)->first();
 
-        if (!$application) {
+        if (! $application) {
             abort(404);
         }
 
-        $gl = GuaranteeLetter::where('application_id', $application->application_id)
-            ->orderBy('gl_id', 'desc')
-            ->first();
+        $gl = GuaranteeLetter::where('application_id', $application->application_id)->orderBy('gl_id', 'desc')->first();
 
-        if (!$gl || $gl->gl_status !== 'Approved') {
+        if (! $gl) {
             abort(404);
         }
 
-        $expenseRange = ExpenseRange::where('exp_range_id', $application->exp_range_id)->first();
-        $assistAmount = $expenseRange->assist_amount ?? 0;
+        $assistanceAmount = $application->assistance_amount ?? 0;
 
         $mayor = DB::table('signers')
             ->join('members', 'signers.member_id', '=', 'members.member_id')
@@ -320,30 +206,33 @@ class GLController extends Controller
             ->first();
 
         $applicantFullName = '';
+
         if ($applicantMember) {
-            $applicantFullName = \trim(($applicantMember->last_name ?? '') . ', ' . ($applicantMember->first_name ?? '') . ' ' . (isset($applicantMember->middle_name) && $applicantMember->middle_name ? \substr($applicantMember->middle_name, 0, 1) . '.' : ''));
+            $middleInitial = (isset($applicantMember->middle_name) && $applicantMember->middle_name) ? Str::substr($applicantMember->middle_name, 0, 1).'.' : '';
+            $applicantFullName = Str::of(($applicantMember->last_name ?? '').', '.($applicantMember->first_name ?? '').' '.$middleInitial)->trim()->toString();
         }
 
         $patientFullName = '';
         if ($patientMember) {
-            $patientFullName = \trim(($patientMember->last_name ?? '') . ', ' . ($patientMember->first_name ?? '') . ' ' . (isset($patientMember->middle_name) && $patientMember->middle_name ? \substr($patientMember->middle_name, 0, 1) . '.' : ''));
+            $middleInitial = (isset($patientMember->middle_name) && $patientMember->middle_name) ? Str::substr($patientMember->middle_name, 0, 1).'.' : '';
+            $patientFullName = Str::of(($patientMember->last_name ?? '').', '.($patientMember->first_name ?? '').' '.$middleInitial)->trim()->toString();
         }
 
         $applicationAlias = $this->aliasId($application->application_id, 'APPLICATION');
         $glAlias = $this->aliasId($gl->gl_id, 'GL');
 
-        $amountInteger = (int) \floor($assistAmount);
-        $amountInWords = \strtoupper(\trim($this->numberToWords($amountInteger))) . ' PESOS ONLY';
+        $amountInteger = (int) Number::floor($assistanceAmount);
+        $amountInWords = Str::upper(Str::of($this->numberToWords($amountInteger))->trim()->toString()).' PESOS ONLY';
 
-        $assistAmountFormatted = \number_format($assistAmount, 2);
-        $billedAmountFormatted = \number_format($application->billed_amount ?? 0, 2);
+        $assistanceAmountFormatted = Number::format($assistanceAmount, 0);
+        $billedAmountFormatted = Number::format($application->billed_amount ?? 0, 0);
 
         $appliedAtFormatted = $application->applied_at ? Carbon::parse($application->applied_at)->format('F j, Y') : Carbon::now()->format('F j, Y');
 
         $data = [
             'application' => $application,
-            'assist_amount' => $assistAmount,
-            'assist_amount_formatted' => $assistAmountFormatted,
+            'assistance_amount' => $assistanceAmount,
+            'assistance_amount_formatted' => $assistanceAmountFormatted,
             'amount_in_words' => $amountInWords,
             'gl_id' => $gl->gl_id,
             'gl_alias' => $glAlias,
@@ -357,7 +246,7 @@ class GLController extends Controller
             'barangay' => $barangay,
             'applicant_full_name' => $applicantFullName,
             'patient_full_name' => $patientFullName,
-            'billed_amount_formatted' => $billedAmountFormatted
+            'billed_amount_formatted' => $billedAmountFormatted,
         ];
 
         $pdf = PDF::loadView('pages.sidebar.application-entry.guarantee-letter', $data)
@@ -366,37 +255,6 @@ class GLController extends Controller
             ->setOption('dpi', 300)
             ->setPaper('letter', 'portrait');
 
-        return $pdf->inline($gl->gl_id . '.pdf');
-    }
-
-    public function sendSMS($phoneNumber, $message)
-    {
-        try {
-            $client = new Client();
-            $payload = [
-                    'apikey' => env('SEMAPHORE_API_KEY'),
-                    'number' => $phoneNumber,
-                    'message' => $message,
-                    'sendername' => env('SEMAPHORE_SENDER_NAME'),
-            ];
-            $response = $client->post('https://api.semaphore.co/api/v4/messages', [
-                'form_params' => $payload,
-            ]);
-
-            $statusCode = $response->getStatusCode();
-            $body = json_decode($response->getBody(), true);
-
-            if ($statusCode == 200 && isset($body['success']) && $body['success'] === true) {
-                Log::info('SMS sent successfully to ' . $phoneNumber);
-                return true;
-            } else {
-                Log::error('Payload:', $payload);
-                Log::error('Failed to send SMS: ', $body);
-                return false;
-            }
-        } catch (Exception $e) {
-            Log::error('Exception while sending SMS: ' . $e->getMessage());
-            return false;
-        }
+        return $pdf->inline($gl->gl_id.'.pdf');
     }
 }

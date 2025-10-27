@@ -18,6 +18,6 @@
 
 @section('content')
     <div class="container-fluid mt-4">
-        <livewire:client.client-profile :applicantId="$applicantId">
+        <livewire:client.client-profile :applicantId="$applicantId" />
     </div>
 @endsection

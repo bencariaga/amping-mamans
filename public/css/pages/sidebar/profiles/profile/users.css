@@ -183,7 +183,7 @@
 
 .form-label,
 .modal-label {
-    font-weight: bold !important;
+    font-weight: 500 !important;
     color: var(--input-text);
     margin-bottom: 0.5rem;
 }

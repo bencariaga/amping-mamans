@@ -2,24 +2,27 @@
 
 namespace App\Models\Storage;
 
+use App\Models\Audit\Report;
+use App\Models\Operation\Application;
+use App\Models\User\Member;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
-use App\Models\User\Member;
-use App\Models\Operation\Application;
-use App\Models\Audit\Report;
 
 class File extends Model
 {
     use HasFactory;
 
-    protected $table        = 'files';
-    protected $primaryKey   = 'file_id';
-    public    $incrementing = false;
-    protected $keyType      = 'string';
-    public    $timestamps   = false;
+    protected $table = 'files';
+
+    protected $primaryKey = 'file_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'file_id',
@@ -42,8 +45,8 @@ class File extends Model
                 $year = Carbon::now()->year;
                 $base = "FILE-{$year}";
                 $last = static::where('file_id', 'like', "{$base}-%")->latest('file_id')->value('file_id');
-                $seq  = $last ? (int) Str::substr($last, -9) : 0;
-                $file->file_id = "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+                $seq = $last ? (int) Str::substr($last, -9) : 0;
+                $file->file_id = "{$base}-".Str::padLeft($seq + 1, 9, '0');
             }
 
             if (empty($file->data_id)) {

@@ -181,10 +181,12 @@
                     @yield('content')
                 </div>
 
-                <footer class="d-flex justify-content-evenly align-items-center px-4 py-3 navbar-bottom" id="navbar-bottom" style="position: sticky; bottom: 0;">
-                    @yield('footer')
+                <footer class="navbar-bottom" style="position: sticky; bottom: 0;">
+                    <div class="d-flex justify-content-evenly align-items-center px-4 py-3" id="navbar-bottom">
+                        @yield('footer')
 
-                    @include('components.buttons.theme-toggler.theme-toggler-personal-pages')
+                        @include('components.buttons.theme-toggler.theme-toggler-personal-pages')
+                    </div>
                 </footer>
             </main>
         </div>

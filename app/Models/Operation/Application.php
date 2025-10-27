@@ -2,32 +2,37 @@
 
 namespace App\Models\Operation;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use App\Models\Operation\GuaranteeLetter;
-use App\Models\Operation\ExpenseRange;
+use App\Models\Communication\Message;
 use App\Models\User\AffiliatePartner;
 use App\Models\User\Applicant;
 use App\Models\User\Patient;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Application extends Model
 {
     protected $table = 'applications';
+
     protected $primaryKey = 'application_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'application_id',
         'applicant_id',
         'patient_id',
         'affiliate_partner_id',
         'exp_range_id',
+        'message_id',
         'billed_amount',
+        'assistance_amount',
         'applied_at',
         'reapply_at',
-        'assistance_amount',
     ];
 
     protected static function boot()
@@ -74,5 +79,10 @@ class Application extends Model
     public function guaranteeLetter()
     {
         return $this->hasOne(GuaranteeLetter::class, 'application_id');
+    }
+
+    public function message()
+    {
+        return $this->belongsTo(Message::class, 'message_id');
     }
 }

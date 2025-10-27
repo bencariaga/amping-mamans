@@ -66,8 +66,10 @@
                                 {{ optional($roles->firstWhere('role_id', old('role_id')))->role ?: 'Select a role.' }}
                             </button>
                             <ul class="dropdown-menu w-100" aria-labelledby="roleDropdownBtn">
+                                <li><a class="dropdown-item {{ old('suffix') == '' ? 'active' : '' }}" href="#" data-value="">Select a role.</a></li>
+                                <li><a class="dropdown-item {{ old('suffix') == '' ? 'active' : '' }}" href="#" data-value="">Other</a></li>
                                 @foreach($roles as $role)
-                                <li><a class="dropdown-item {{ old('role_id') === $role->role_id ? 'active' : '' }}" href="#" data-value="{{ $role->role_id }}">{{ $role->role }}</a></li>
+                                    <li><a class="dropdown-item {{ old('role_id') === $role->role_id ? 'active' : '' }}" href="#" data-value="{{ $role->role_id }}">{{ $role->role }}</a></li>
                                 @endforeach
                             </ul>
                             <input type="hidden" name="role_id" id="roleInput" value="{{ old('role_id') }}" required>
@@ -75,7 +77,7 @@
                     </div>
 
                     <div class="form-group col-md-3">
-                        <label class="form-label">Role <span class="fw-normal">(if other, please specify)</span></label>
+                        <label class="form-label">Role <span class="fw-normal">(if "Other", please specify)</span></label>
                         <input id="customRoleInput" class="form-control" type="text" name="custom_role" value="{{ old('custom_role') }}" placeholder="Type to add a new role.">
                     </div>
                     <div class="form-group col-md-3">
@@ -144,7 +146,6 @@
                 </div>
             </div>
         </div>
-
         <div class="mt-2"><span class="file-name-display"></span></div>
     </div>
 @endsection

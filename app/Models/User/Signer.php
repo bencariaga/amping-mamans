@@ -5,14 +5,17 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\Member;
 
 class Signer extends Model
 {
     protected $table = 'signers';
+
     protected $primaryKey = 'signer_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [

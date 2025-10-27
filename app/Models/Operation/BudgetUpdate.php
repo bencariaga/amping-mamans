@@ -2,20 +2,24 @@
 
 namespace App\Models\Operation;
 
+use App\Models\Storage\Data;
+use App\Models\User\Sponsor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
-use App\Models\Operation\GuaranteeLetter;
-use App\Models\User\Sponsor;
 
 class BudgetUpdate extends Model
 {
     protected $table = 'budget_updates';
+
     protected $primaryKey = 'budget_update_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'budget_update_id',
         'data_id',

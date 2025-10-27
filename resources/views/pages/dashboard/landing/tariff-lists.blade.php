@@ -8,20 +8,21 @@
 
 @push('scripts')
     <script src="{{ asset('js/pages/dashboard/landing/tariff-lists.js') }}" defer></script>
+    <script src="{{ asset('js/pages/tariff-list/tariff-list-create.js') }}" defer></script>
+    <script src="{{ asset('js/pages/tariff-list/tariff-list-delete.js') }}" defer></script>
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">></span>&nbsp;&nbsp;</span>
-    <a href="{{ route('tariff-lists.rows.show') }}" class="text-decoration-none text-reset">Tariff List Versions</a>
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('tariff-lists') }}" class="text-decoration-none text-white">Tariff List Versions</a>
 @endsection
 
 @section('content')
-    <div id="application-list-page" class="container px-0 pt-0 pb-5 mb-5">
-        <livewire:tariff-list.tariff-list-version-table>
-        <livewire:tariff-list.tariff-list-create>
-        <livewire:tariff-list.tariff-list-edit>
-        <livewire:tariff-list.tariff-list-delete>
-        <livewire:tariff-list.tariff-list-apply>
+    <div class="container">
+        @include('pages.tariff-list.tariff-list-filter-controls')
+        @include('pages.tariff-list.tariff-list-version-table')
+        @include('pages.tariff-list.tariff-list-create')
+        @include('pages.tariff-list.tariff-list-delete')
     </div>
 @endsection
 

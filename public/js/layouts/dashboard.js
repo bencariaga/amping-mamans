@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     updateClock();
     setInterval(updateClock, 1000);
 
+    const disabledButtons = document.querySelectorAll('#disabled-ui-component');
+
+    disabledButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+        });
+    });
+
     fetch('/api/latest-budget', { credentials: 'same-origin' }).then(response => {
         return response.json();
     }).then(data => {
@@ -34,10 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return new Intl.NumberFormat('en-PH', {
                 style: 'currency',
                 currency: 'PHP',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
             }).format(value);
         };
+
         if (data && Object.keys(data).length) {
             document.getElementById('allocated-budget-amount').innerText = formatCurrency(data.amount_accum);
             document.getElementById('budget-used-amount').innerText = formatCurrency(data.amount_change);

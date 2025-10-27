@@ -2,29 +2,32 @@
 
 namespace App\Models\Storage;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use App\Models\Audit\Log;
 use App\Models\Authentication\Account;
-use App\Models\Authentication\Role;
 use App\Models\Authentication\Occupation;
+use App\Models\Authentication\Role;
 use App\Models\Communication\MessageTemplate;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\Service;
 use App\Models\Operation\TariffList;
-use App\Models\Storage\File;
-use App\Models\Audit\Log;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Data extends Model
 {
     use HasFactory;
 
-    protected $table        = 'data';
-    protected $primaryKey   = 'data_id';
-    public    $incrementing = false;
-    protected $keyType      = 'string';
-    public    $timestamps   = true;
+    protected $table = 'data';
+
+    protected $primaryKey = 'data_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = true;
 
     protected $fillable = [
         'data_id',
@@ -43,8 +46,8 @@ class Data extends Model
                 $year = Carbon::now()->year;
                 $base = "DATA-{$year}";
                 $last = static::where('data_id', 'like', "{$base}-%")->latest('data_id')->value('data_id');
-                $seq  = $last ? (int) Str::substr($last, -9) : 0;
-                $d->data_id = "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+                $seq = $last ? (int) Str::substr($last, -9) : 0;
+                $d->data_id = "{$base}-".Str::padLeft($seq + 1, 9, '0');
             }
             if (empty($d->created_at)) {
                 $d->created_at = Carbon::now();

@@ -2,24 +2,28 @@
 
 namespace App\Models\User;
 
+use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Operation\Application;
-use App\Models\User\Member;
-use App\Models\User\Applicant;
 
 class Patient extends Model
 {
     protected $table = 'patients';
+
     protected $primaryKey = 'patient_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'patient_id',
+        'client_id',
         'applicant_id',
-        'member_id',
+        'patient_category',
     ];
 
     protected static function boot()
@@ -43,9 +47,9 @@ class Patient extends Model
         return (new static)->getKeyName();
     }
 
-    public function member()
+    public function client()
     {
-        return $this->belongsTo(Member::class, 'member_id');
+        return $this->belongsTo(Client::class, 'client_id', 'client_id');
     }
 
     public function applicant()
