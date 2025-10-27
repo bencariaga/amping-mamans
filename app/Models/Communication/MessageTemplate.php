@@ -2,18 +2,23 @@
 
 namespace App\Models\Communication;
 
+use App\Models\Storage\Data;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
 
 class MessageTemplate extends Model
 {
     protected $table = 'message_templates';
+
     protected $primaryKey = 'msg_tmp_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'msg_tmp_id',
         'data_id',

@@ -2,23 +2,26 @@
 
 namespace App\Models\User;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\User\Member;
-use App\Models\Authentication\Role;
-use App\Models\Communication\Message;
 use App\Models\Audit\Log;
 use App\Models\Audit\Report;
+use App\Models\Authentication\Role;
+use App\Models\Communication\Message;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Staff extends Model
 {
     use HasFactory;
 
-    protected $table        = 'staff';
-    protected $primaryKey   = 'staff_id';
-    public    $incrementing = false;
-    protected $keyType      = 'string';
-    public    $timestamps   = false;
+    protected $table = 'staff';
+
+    protected $primaryKey = 'staff_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'staff_id',

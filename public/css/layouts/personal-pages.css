@@ -262,8 +262,7 @@ input[type="number"]::-webkit-outer-spin-button {
         var(--nav-link-bg)
     );
 
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .footer-btn i {
@@ -398,6 +397,7 @@ input[type="number"]::-webkit-outer-spin-button {
     flex-grow: 1;
     color: var(--sidebar-text);
     margin-left: 1.5rem;
+    text-align: center;
     font-weight: bold;
     font-size: 15px;
 }
@@ -435,11 +435,16 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .navbar-bottom {
-    bottom: 0;
     height: var(--navbar-bottom-height);
+    bottom: 0;
+}
+
+#navbar-bottom {
+    gap: 20px;
+    width: 1240px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: 20px;
+    height: var(--navbar-bottom-height);
 }
 
 .dashboard-title {

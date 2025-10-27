@@ -303,15 +303,6 @@
     transform: translateY(-50%) rotate(180deg);
 }
 
-.copy-word {
-    font-family: "Roboto", sans-serif;
-    font-weight: 600;
-}
-
-.copy-symbol {
-    color: white;
-}
-
 @media (max-width: 992px) {
     .controls-grid {
         grid-template-columns: 1fr 1fr;

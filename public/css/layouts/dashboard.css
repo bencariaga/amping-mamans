@@ -7,6 +7,12 @@ body {
     color: var(--text-color);
 }
 
+#top-section,
+#bottom-section {
+    display: flex;
+    justify-content: center;
+}
+
 .card-special i,
 .card-section i {
     font-size: 2rem;
@@ -14,6 +20,11 @@ body {
 
 .card-special i {
     margin-left: 6px;
+}
+
+.dashboard-grid,
+.datetime-section {
+    width: calc(200rem / 3);
 }
 
 .datetime-section {
@@ -33,7 +44,7 @@ body {
 .datetime {
     color: var(--text-color);
     font-weight: bold;
-    margin-left: 10px;
+    margin-left: 8px;
     font-size: 22px;
 }
 
@@ -46,7 +57,7 @@ body {
 
 .card-section {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 20px;
     flex: 1;
@@ -59,6 +70,7 @@ body {
     border-radius: 8px;
     padding: 1rem;
     height: 8rem;
+    width: 8rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,7 +83,7 @@ body {
 
 .trinity-text {
     color: #fff !important;
-    margin-left: 32px !important;
+    margin-left: 24px !important;
 }
 
 .trinity-card {
@@ -90,7 +102,7 @@ body {
 }
 
 #trinityBtns {
-    padding: 12px 24px;
+    padding: 12px 16px;
 }
 
 .action-card h6,
@@ -126,11 +138,11 @@ body {
 
 .service-table {
     width: 400px;
-    background-color: var(--card-bg);
-    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 5px var(--box-shadow);
+    border-radius: 8px;
     align-self: flex-start;
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 5px var(--box-shadow);
 }
 
 .service-table table {
@@ -148,21 +160,14 @@ body {
 .tariff-header,
 .service-header {
     color: #fff;
-}
-
-.tariff-header {
-    background-color: var(--primary-color);
-}
-
-.service-header {
     background-color: var(--primary-color);
 }
 
 .service-table td {
-    padding: 12px 15px;
     border-bottom: 1px solid var(--input-border);
-    font-size: 14px;
     color: var(--text-color);
+    padding: 12px 15px;
+    font-size: 14px;
 }
 
 .service-table tr:last-child td {
@@ -170,6 +175,8 @@ body {
 }
 
 .show-more {
+    padding-top: 8px;
+    padding-bottom: 8px;
     text-align: center;
     background-color: var(--nav-link-bg);
     border-top: 1px solid var(--input-border);
@@ -189,13 +196,13 @@ body {
 }
 
 .dashboard-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--input-border);
     width: 14rem;
     padding: 12px;
     border-radius: 8px;
-    box-shadow: 0 1px 2px var(--box-shadow);
     transition: all 0.3s;
+    background-color: var(--card-bg);
+    border: 1px solid var(--input-border);
+    box-shadow: 0 1px 2px var(--box-shadow);
 }
 
 .dashboard-card:hover {
@@ -205,18 +212,15 @@ body {
 
 .dashboard-card h6 {
     font-size: 15px;
-    color: var(--text-color);
-    margin-bottom: 10px;
     font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--text-color);
 }
 
-.card-subamount {
-    font-size: 17px;
-}
-
+.card-subamount,
 .show-more-text,
 .dashboard-card .amount {
-    font-size: 18px;
+    font-size: 20px !important;
 }
 
 .show-more-text,
@@ -258,10 +262,10 @@ body {
 }
 
 .card-subtitle {
-    font-size: 13px;
-    color: var(--text-color);
-    margin-top: 4px;
     opacity: 0.8;
+    font-size: 1rem;
+    margin-top: 4px;
+    color: var(--text-color);
 }
 
 @media (max-width: 992px) {

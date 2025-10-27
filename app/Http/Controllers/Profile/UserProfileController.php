@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use App\Models\Storage\Data;
 use App\Models\Storage\File;
 use App\Models\User\Member;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Throwable;
 
 class UserProfileController extends Controller
 {
@@ -25,12 +26,13 @@ class UserProfileController extends Controller
         $maxId = DB::table($table)->where($primaryKey, 'like', "{$base}%")->max($primaryKey);
         $lastNum = $maxId ? (int) Str::substr(Str::replace('-', '', $maxId), -9) : 0;
         $next = Str::padLeft($lastNum + 1, 9, '0');
-        return $base . '-' . $next;
+
+        return $base.'-'.$next;
     }
 
     public function show(?Member $user = null)
     {
-        if (!$user || Auth::id() === $user->member_id) {
+        if (! $user || Auth::id() === $user->member_id) {
             $user = Auth::user();
             $view = 'pages.sidebar.profiles.profile.self';
         } else {
@@ -38,6 +40,7 @@ class UserProfileController extends Controller
         }
 
         $user->load(['files', 'staff.role', 'account.data']);
+
         return view($view)->with('user', $user);
     }
 
@@ -47,8 +50,8 @@ class UserProfileController extends Controller
 
         if ($request->input('action') === 'change_password') {
             $request->validate([
-                'username_confirmation_change' => ['required', 'string', function ($a, $v, $f) use ($target) {
-                    if ($v !== $target->first_name . ' ' . $target->last_name) {
+                'username_confirmation_change' => ['required', 'string', function ($v, $f) use ($target) {
+                    if ($v !== $target->first_name.' '.$target->last_name) {
                         $f('Your confirmation input does not match with the actual one. Please try again.');
                     }
                 }],
@@ -63,21 +66,33 @@ class UserProfileController extends Controller
         }
 
         $val = $request->validate([
-            'first_name'                 => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ]+$/',
-                Rule::unique('members')->where(fn ($q) =>
-                    $q->where('member_type', 'Staff')->where('first_name', $request->first_name)->where('middle_name', $request->middle_name)->where('last_name', $request->last_name)->where('suffix', $request->suffix)->where('member_id', '!=', $target->member_id)
-                )
+            'first_name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[A-Za-z ]+$/',
+                Rule::unique('members')->where(
+                    fn ($q) => $q->where('member_type', 'Staff')->where('first_name', $request->first_name)->where('middle_name', $request->middle_name)->where('last_name', $request->last_name)->where('suffix', $request->suffix)->where('member_id', '!=', $target->member_id)
+                ),
             ],
-            'middle_name'                => ['nullable', 'string', 'max:255', 'regex:/^[A-Za-z ]*$/'],
-            'last_name'                  => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ]+$/'],
-            'suffix'                     => ['nullable', 'string', Rule::in(['Sr.', 'Jr.', 'II', 'III', 'IV', 'V'])],
-            'profile_picture'            => ['nullable', 'image', 'max:8192', 'mimes:jpg,jpeg,jfif,png,webp'],
+            'middle_name' => ['nullable', 'string', 'max:255', 'regex:/^[A-Za-z ]*$/'],
+            'last_name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ]+$/'],
+            'suffix' => ['nullable', 'string', Rule::in(['Sr.', 'Jr.', 'II', 'III', 'IV', 'V'])],
+            'profile_picture' => ['nullable', 'image', 'max:8192', 'mimes:jpg,jpeg,jfif,png,webp'],
             'remove_profile_picture_flag' => ['boolean'],
         ], [
             'first_name.unique' => 'This user account already exists with the same name.',
         ]);
 
+        $fullName = collect([
+            $request->first_name,
+            $request->middle_name,
+            $request->last_name,
+            $request->suffix,
+        ])->filter()->implode(' ');
+
         $target->fill($val);
+        $target->full_name = $fullName;
 
         if ($request->boolean('remove_profile_picture_flag')) {
             $picture = $target->files()->where('file_type', 'Image')->first();
@@ -111,18 +126,18 @@ class UserProfileController extends Controller
             $fileId = $this->generateNextId('FILE', 'files', 'file_id');
 
             Data::create([
-                'data_id'     => $fileDataId,
+                'data_id' => $fileDataId,
                 'data_status' => 'Unarchived',
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             File::create([
-                'file_id'        => $fileId,
-                'data_id'        => $fileDataId,
-                'member_id'      => $target->member_id,
-                'file_type'      => 'Image',
-                'filename'       => $path,
+                'file_id' => $fileId,
+                'data_id' => $fileDataId,
+                'member_id' => $target->member_id,
+                'file_type' => 'Image',
+                'filename' => $path,
                 'file_extension' => $ext,
             ]);
         }
@@ -145,6 +160,7 @@ class UserProfileController extends Controller
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
             return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
         }
 
@@ -157,8 +173,8 @@ class UserProfileController extends Controller
         $target = $user->member_id !== $auth->member_id ? $user : $auth;
 
         $request->validate([
-            'username_confirmation_delete' => ['required', 'string', function ($a, $v, $f) use ($target) {
-                $expectedRaw = Str::of($target->first_name . ' ' . $target->last_name)->trim();
+            'username_confirmation_delete' => ['required', 'string', function ($v, $f) use ($target) {
+                $expectedRaw = Str::of($target->first_name.' '.$target->last_name)->trim();
 
                 $normalize = function (string $s): string {
                     return Str::of($s)->trim()->replace('/\s+/', ' ')->lower();
@@ -198,13 +214,15 @@ class UserProfileController extends Controller
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
+
                 return redirect('/')->with('success', 'Your account has been deleted successfully.');
             }
 
             return redirect()->route('profiles.users.list')->with('success', 'User account has been deleted successfully.');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Failed to delete user account: ' . $e->getMessage());
+
+            return back()->with('error', 'Failed to delete user account: '.$e->getMessage());
         }
     }
 }

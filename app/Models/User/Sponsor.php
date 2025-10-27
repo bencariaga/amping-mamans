@@ -2,28 +2,33 @@
 
 namespace App\Models\User;
 
+use App\Models\Operation\BudgetUpdate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\Member;
-use App\Models\Operation\BudgetUpdate;
 
 class Sponsor extends Model
 {
     protected $table = 'sponsors';
+
     protected $primaryKey = 'sponsor_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'sponsor_id',
         'member_id',
         'sponsor_type',
         'designation',
-        'organization_name'
+        'organization_name',
     ];
 
     protected $appends = ['sponsor_name'];
+
     protected $with = ['member'];
 
     protected static function boot()

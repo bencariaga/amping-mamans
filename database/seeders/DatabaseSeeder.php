@@ -9,10 +9,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            DataTableSeeder::class,
-            AccountsTableSeeder::class,
-            MembersTableSeeder::class,
-            ClientsTableSeeder::class,
+            // ModelTableSeeder::class,
         ]);
     }
 }

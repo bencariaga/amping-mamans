@@ -237,8 +237,8 @@
             <div class="body-text">
                 <p>
                     The Local Government Unit (LGU) of General Santos City under the <span style="letter-spacing: 1px; margin-left: 9px; margin-right: 9px;"><b>AMPING</b></span> guarantees to pay the amount not to exceed
-                    <b><u><span style="margin-left: 2px; margin-right: 8px;">{{ $amount_in_words ?? '' }}</span> <span style="margin-left: 8px; margin-right: 2px;">(PHP {{ $assist_amount_formatted ?? number_format($assist_amount ?? 0, 2) }})</span></u></b>
-                    per billed amount of PHP {{ $billed_amount_formatted ?? number_format($application->billed_amount ?? 0, 2) }} requested by applicant <b><u><span style="margin-left: 2px; margin-right: 1px;">{{ $applicant_full_name ?? '' }}</span></u></b>
+                    <b><u><span style="margin-left: 2px; margin-right: 8px;">{{ $amount_in_words ?? '' }}</span> <span style="margin-left: 8px; margin-right: 2px;">(PHP {{ $assistance_amount_formatted ?? number_format($assistance_amount ?? 0) }})</span></u></b>
+                    per billed amount of PHP {{ $billed_amount_formatted ?? number_format($application->billed_amount ?? 0) }} requested by applicant <b><u><span style="margin-left: 2px; margin-right: 1px;">{{ $applicant_full_name ?? '' }}</span></u></b>
                     intended for the <b><u>{{ $service_type ?? '[SERVICE TYPE]' }}</u></b>
                     to be provided to the beneficiary / patient <b><u><span style="margin-left: 2px; margin-right: 1px;">{{ $patient_full_name ?? '' }}</span></u></b>
                     of <b><u>{{ strtoupper($barangay ?? '') }}, GENERAL SANTOS CITY.</u></b>

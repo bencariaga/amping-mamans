@@ -5,15 +5,19 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\Client;
 
 class Household extends Model
 {
     protected $table = 'households';
+
     protected $primaryKey = 'household_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'household_id',
         'client_id',

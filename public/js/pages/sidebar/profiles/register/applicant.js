@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     function setupDropdownArrowRotation(buttonId) {
         const btn = document.getElementById(buttonId);
+
         if (btn) {
             btn.addEventListener('show.bs.dropdown', () => {
                 btn.classList.add('rotated');
@@ -23,17 +24,38 @@ document.addEventListener('DOMContentLoaded', () => {
         'applicantJobStatusDropdownBtn',
         'applicantHouseStatusDropdownBtn',
         'applicantLotStatusDropdownBtn',
-        'applicantRepresentingPatientDropdownBtn',
-        'applicantPatientCountDropdownBtn',
-        'patientSuffixDropdownBtn-1',
     ].forEach(setupDropdownArrowRotation);
+
+    function setupDynamicDropdownsRotation(prefix) {
+        document.querySelectorAll(`[id^="${prefix}"]`).forEach(btn => {
+            btn.addEventListener('show.bs.dropdown', () => {
+                btn.classList.add('rotated');
+            });
+
+            btn.addEventListener('hide.bs.dropdown', () => {
+                btn.classList.remove('rotated');
+            });
+        });
+    }
+
+    [
+        'patientSuffixDropdownBtn-',
+        'patientSexDropdownBtn-',
+        'patientCategoryDropdownBtn-',
+    ].forEach(setupDynamicDropdownsRotation);
 
     Livewire.on('scrollToElement', elementId => {
         const element = document.getElementById(elementId);
 
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            element.focus();
+            const scrollTarget = element.closest('.form-group') || element;
+            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+                element.focus();
+            } else if (element.classList.contains('dropdown-toggle')) {
+                element.focus();
+            }
         }
     });
 
@@ -55,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         monthlyIncomeDisplayInput.addEventListener('paste', (event) => {
             event.preventDefault();
-            const paste = (event.clipboardData || window.clipboardData).getData('text');
+            const paste = event.clipboardData.getData('text');
             const cleanPaste = paste.replace(/[^0-9]/g, '');
             setHiddenValueAndNotify(cleanPaste);
             monthlyIncomeDisplayInput.value = cleanPaste === '' ? '' : Number(cleanPaste).toLocaleString();
@@ -127,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const raw = e.target.value;
             const formatted = formatPhoneForDisplay(raw);
             e.target.value = formatted;
-            dispatchInputEvent(e.target);
 
             if (document.activeElement === e.target) {
                 try {
@@ -138,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         phoneInput.addEventListener('paste', (e) => {
             e.preventDefault();
-            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const paste = e.clipboardData.getData('text');
             const formatted = formatPhoneForDisplay(paste);
             phoneInput.value = formatted;
             dispatchInputEvent(phoneInput);
@@ -152,4 +173,136 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    const applicantBirthdateInput = document.getElementById('applicantBirthdateInput');
+    const applicantAgeInput = document.getElementById('applicantAgeInput');
+    const applicantAgeHidden = document.getElementById('applicantAgeHidden');
+
+    function calculateAge(birthDate) {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+
+    function updateApplicantAge() {
+        if (applicantBirthdateInput.value) {
+            const age = calculateAge(applicantBirthdateInput.value);
+            applicantAgeInput.value = age;
+            applicantAgeHidden.value = age;
+
+            const event = new Event('input', { bubbles: true });
+            applicantAgeHidden.dispatchEvent(event);
+
+            if (checkbox.checked) {
+                copyApplicantToPatient1();
+            }
+        } else {
+            applicantAgeInput.value = '';
+            applicantAgeHidden.value = '';
+        }
+    }
+
+    if (applicantBirthdateInput && applicantAgeInput && applicantAgeHidden) {
+        applicantBirthdateInput.addEventListener('change', updateApplicantAge);
+        applicantBirthdateInput.addEventListener('input', updateApplicantAge);
+
+        if (applicantBirthdateInput.value) {
+            updateApplicantAge();
+        }
+    }
+
+    const checkbox = document.getElementById('checkbox');
+    const patientNumberInput = document.getElementById('patientNumberInput');
+
+    function copyApplicantToPatient1() {
+        const applicantLastName = document.getElementById('applicantLastNameInput').value;
+        const applicantFirstName = document.getElementById('applicantFirstNameInput').value;
+        const applicantMiddleName = document.getElementById('applicantMiddleNameInput').value;
+        const applicantSuffix = document.getElementById('applicantSuffixDropdownBtn').textContent.trim();
+        const applicantSex = document.getElementById('applicantSexDropdownBtn').textContent.trim();
+        const applicantAge = document.getElementById('applicantAgeInput').value;
+
+        document.getElementById('patientLastNameInput-1').value = applicantLastName;
+        document.getElementById('patientFirstNameInput-1').value = applicantFirstName;
+        document.getElementById('patientMiddleNameInput-1').value = applicantMiddleName;
+        document.getElementById('patientSuffixDropdownBtn-1').textContent = applicantSuffix;
+        document.getElementById('patientSexDropdownBtn-1').textContent = applicantSex;
+        document.getElementById('patientAgeInput-1').value = applicantAge;
+
+        document.querySelectorAll('#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1').forEach(field => {
+            field.disabled = true;
+        });
+
+        document.querySelectorAll('#patientSuffixDropdownBtn-1, #patientSexDropdownBtn-1').forEach(btn => {
+            btn.disabled = true;
+        });
+    }
+
+    function clearPatient1() {
+        document.getElementById('patientLastNameInput-1').value = '';
+        document.getElementById('patientFirstNameInput-1').value = '';
+        document.getElementById('patientMiddleNameInput-1').value = '';
+        document.getElementById('patientSuffixDropdownBtn-1').textContent = '— Select —';
+        document.getElementById('patientSexDropdownBtn-1').textContent = '— Select —';
+        document.getElementById('patientAgeInput-1').value = '';
+
+        document.querySelectorAll('#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1').forEach(field => {
+            field.disabled = false;
+        });
+
+        document.querySelectorAll('#patientSuffixDropdownBtn-1, #patientSexDropdownBtn-1').forEach(btn => {
+            btn.disabled = false;
+        });
+    }
+
+    function handleCheckboxChange() {
+        if (checkbox.checked) {
+            copyApplicantToPatient1();
+        } else {
+            clearPatient1();
+        }
+    }
+
+    function handleApplicantFieldChange() {
+        if (checkbox.checked) {
+            copyApplicantToPatient1();
+        }
+    }
+
+    if (checkbox && patientNumberInput) {
+        checkbox.addEventListener('change', handleCheckboxChange);
+
+        document.getElementById('applicantLastNameInput').addEventListener('input', handleApplicantFieldChange);
+        document.getElementById('applicantFirstNameInput').addEventListener('input', handleApplicantFieldChange);
+        document.getElementById('applicantMiddleNameInput').addEventListener('input', handleApplicantFieldChange);
+
+        document.querySelectorAll('#applicantSuffixDropdownBtn + .dropdown-menu a').forEach(item => {
+            item.addEventListener('click', handleApplicantFieldChange);
+        });
+
+        document.querySelectorAll('#applicantSexDropdownBtn + .dropdown-menu a').forEach(item => {
+            item.addEventListener('click', handleApplicantFieldChange);
+        });
+
+        patientNumberInput.addEventListener('input', function () {
+            if (this.value > 10) {
+                this.value = 10;
+            }
+        });
+    }
+
+    document.querySelectorAll('.patient-age-input').forEach(input => {
+        input.addEventListener('input', function () {
+            if (this.value > 200) {
+                this.value = 200;
+            }
+        });
+    });
 });

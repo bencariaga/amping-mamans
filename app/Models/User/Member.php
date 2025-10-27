@@ -2,26 +2,27 @@
 
 namespace App\Models\User;
 
+use App\Models\Authentication\Account;
+use App\Models\Storage\File;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
-use App\Models\Authentication\Account;
-use App\Models\User\Staff;
-use App\Models\User\Client;
-use App\Models\User\Sponsor;
-use App\Models\User\Signer;
-use App\Models\Storage\File;
 
 class Member extends Authenticatable
 {
     use HasFactory, Notifiable, Searchable;
 
     protected $table = 'members';
+
     protected $primaryKey = 'member_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -43,17 +44,35 @@ class Member extends Authenticatable
 
     public function getFullNameAttribute(): string
     {
-        return Str::of("{$this->first_name} {$this->middle_name} {$this->last_name} {$this->suffix}")->trim();
+        return collect([$this->first_name, $this->middle_name, $this->last_name, $this->suffix])->filter()->implode(' ');
     }
 
     public function toSearchableArray(): array
     {
-        return ['full_name' => $this->full_name];
+        return [
+            'full_name' => $this->full_name,
+            'first_name' => $this->first_name,
+            'middle_name' => $this->middle_name,
+            'last_name' => $this->last_name,
+            'suffix' => $this->suffix,
+            'member_id' => $this->member_id,
+        ];
     }
 
     public function getAuthPassword()
     {
         return $this->staff?->password;
+    }
+
+    public static function generateSequentialId(string $prefix = 'MEMBER'): string
+    {
+        $year = Carbon::now()->year;
+        $base = "{$prefix}-{$year}";
+        $latest = static::where('member_id', 'like', "{$base}%")->latest('member_id')->first();
+        $lastNumber = $latest ? (int) Str::substr($latest->member_id, -9) : 0;
+        $nextNumber = Str::padLeft($lastNumber + 1, 9, '0');
+
+        return "{$base}-{$nextNumber}";
     }
 
     public static function getPrimaryKey()

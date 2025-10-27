@@ -2,8 +2,9 @@
 
 namespace App\Notifications;
 
+use Humans\Semaphore\Laravel\SemaphoreChannel;
+use Humans\Semaphore\Laravel\SemaphoreMessage;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -14,7 +15,7 @@ class SmsNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public string $smsMessage = 'Hello, Semaphore!')
     {
         //
     }
@@ -26,7 +27,16 @@ class SmsNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return [SemaphoreChannel::class];
+    }
+
+    /**
+     * Get the Semaphore representation of the notification.
+     */
+    public function toSemaphore(object $notifiable): SemaphoreMessage
+    {
+        return (new SemaphoreMessage)
+            ->message($this->smsMessage);
     }
 
     /**

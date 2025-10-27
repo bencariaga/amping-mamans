@@ -153,6 +153,7 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantMiddleNameInput,
 #applicantLastNameInput,
 #applicantBirthdateInput,
+#applicantAgeInput,
 #applicantPhoneNumberInput,
 #applicantCustomOccupationInput,
 #monthlyIncomeDisplayInput,
@@ -178,7 +179,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"],
 .form-control[id^="patientMiddleNameInput-"],
 .form-control[id^="patientLastNameInput-"],
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+.dropdown-toggle[id^="patientSexDropdownBtn-"],
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     height: 50px;
     border-radius: 6px;
     padding: 12px 1rem;
@@ -202,7 +205,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn,
 #applicantPhicAffiliationDropdownBtn,
 #applicantPhicCategoryDropdownBtn,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+.dropdown-toggle[id^="patientSexDropdownBtn-"],
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     font-weight: normal;
     text-align: left;
     display: flex;
@@ -213,6 +218,7 @@ input[type="number"]::-webkit-outer-spin-button {
 [data-theme="dark"] #applicantMiddleNameInput,
 [data-theme="dark"] #applicantLastNameInput,
 [data-theme="dark"] #applicantBirthdateInput,
+[data-theme="dark"] #applicantAgeInput,
 [data-theme="dark"] #applicantPhoneNumberInput,
 [data-theme="dark"] #applicantCustomOccupationInput,
 [data-theme="dark"] #monthlyIncomeDisplayInput,
@@ -238,7 +244,9 @@ input[type="number"]::-webkit-outer-spin-button {
 [data-theme="dark"] .form-control[id^="patientFirstNameInput-"],
 [data-theme="dark"] .form-control[id^="patientMiddleNameInput-"],
 [data-theme="dark"] .form-control[id^="patientLastNameInput-"],
-[data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+[data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+[data-theme="dark"] .dropdown-toggle[id^="patientSexDropdownBtn-"],
+[data-theme="dark"] .dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     border-color: var(--input-border);
 }
 
@@ -246,6 +254,7 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantMiddleNameInput:hover,
 #applicantLastNameInput:hover,
 #applicantBirthdateInput:hover,
+#applicantAgeInput:hover,
 #applicantPhoneNumberInput:hover,
 #applicantCustomOccupationInput:hover,
 #monthlyIncomeDisplayInput:hover,
@@ -271,7 +280,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"]:hover,
 .form-control[id^="patientMiddleNameInput-"]:hover,
 .form-control[id^="patientLastNameInput-"]:hover,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]:hover,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]:hover {
     background-color: var(--input-bg-focus);
 }
 
@@ -279,6 +290,7 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantMiddleNameInput:focus,
 #applicantLastNameInput:focus,
 #applicantBirthdateInput:focus,
+#applicantAgeInput:focus,
 #applicantPhoneNumberInput:focus,
 #applicantCustomOccupationInput:focus,
 #monthlyIncomeDisplayInput:focus,
@@ -304,7 +316,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"]:focus,
 .form-control[id^="patientMiddleNameInput-"]:focus,
 .form-control[id^="patientLastNameInput-"]:focus,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]:focus,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]:focus {
     background-color: var(--input-bg-focus);
     color: var(--input-text);
     border-color: var(--primary-color);
@@ -323,7 +337,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn::after,
 #applicantPhicAffiliationDropdownBtn::after,
 #applicantPhicCategoryDropdownBtn::after,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]::after {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]::after,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]::after,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]::after {
     position: absolute;
     font-size: 1.5rem;
     right: 1rem;
@@ -344,7 +360,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn.rotated::after,
 #applicantPhicAffiliationDropdownBtn.rotated::after,
 #applicantPhicCategoryDropdownBtn.rotated::after,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"].rotated::after {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"].rotated::after,
+.dropdown-toggle[id^="patientSexDropdownBtn-"].rotated::after,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"].rotated::after {
     transform: translateY(-50%) rotate(180deg);
 }
 
@@ -370,16 +388,24 @@ input[type="number"]::-webkit-outer-spin-button {
     color: #fff;
 }
 
-#applicantCustomOccupationInput[disabled],
-.form-control[id^="patientFirstNameInput-"][readonly],
-.form-control[id^="patientMiddleNameInput-"][readonly],
-.form-control[id^="patientLastNameInput-"][readonly] {
-    background-color: var(--disabled-bg-color-1);
-    border-color: var(--disabled-border-color-1);
-    color: var(--placeholder-color);
+#applicantCustomOccupationInput:disabled,
+#patientFirstNameInput-1:disabled,
+#patientMiddleNameInput-1:disabled,
+#patientLastNameInput-1:disabled,
+#patientAgeInput-1:disabled,
+#applicantCustomOccupationInput:disabled:hover,
+#patientFirstNameInput-1:disabled:hover,
+#patientMiddleNameInput-1:disabled:hover,
+#patientLastNameInput-1:disabled:hover,
+#patientAgeInput-1:disabled:hover {
+    background-color: var(--disabled-bg-color-1) !important;
+    border-color: var(--disabled-border-color-1) !important;
+    color: var(--placeholder-color) !important;
+    cursor: default !important;
 }
 
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"][disabled] {
+#patientSexDropdownBtn-1:disabled,
+#patientSuffixDropdownBtn-1:disabled {
     background-color: var(--disabled-bg-color-2);
     border-color: var(--disabled-border-color-2);
 }
@@ -408,4 +434,12 @@ input[type="number"]::-webkit-outer-spin-button {
 .btn-secondary:hover {
     background-color: #5a6268;
     border-color: #545b62;
+}
+
+#checkbox {
+    width: 40px;
+    height: 40px;
+    margin: 4px 4px 7px 12px;
+    cursor: pointer;
+    border: 1px solid var(--input-border);
 }

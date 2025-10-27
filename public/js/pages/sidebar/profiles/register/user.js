@@ -71,18 +71,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!roleInput || !roleBtn || !customInput) return;
 
-        if (roleInput.value) {
-            customInput.disabled = true;
-            customInput.required = false;
-            if (customInput.value) customInput.value = '';
-            customInput.placeholder = 'Reload the page to enable this.';
-        } else {
+        const customValue = customInput.value.trim();
+
+        if (customValue) {
             customInput.disabled = false;
             customInput.required = true;
             customInput.placeholder = 'Type to add a new role.';
-        }
 
-        if (customInput.value && customInput.value.trim()) {
             roleBtn.disabled = true;
             roleInput.value = '';
             roleBtn.textContent = 'Clear Role text to enable this.';
@@ -90,6 +85,18 @@ document.addEventListener('DOMContentLoaded', function () {
             roleBtn.disabled = false;
             const sel = document.querySelector('#roleDropdownBtn + .dropdown-menu .dropdown-item.active');
             roleBtn.textContent = sel ? sel.textContent.trim() : 'Select a role.';
+
+            const roleButtonText = roleBtn.textContent.trim();
+
+            if (roleButtonText === 'Other') {
+                customInput.disabled = false;
+                customInput.required = true;
+                customInput.placeholder = 'Type to add a new role.';
+            } else {
+                customInput.disabled = true;
+                customInput.required = false;
+                customInput.placeholder = 'Choose "Other" to enable this';
+            }
         }
     }
 

@@ -2,25 +2,27 @@
 
 namespace App\Models\Operation;
 
+use App\Models\Storage\Data;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Storage\Data;
-use App\Models\Operation\GuaranteeLetter;
-use App\Models\Operation\ExpenseRange;
 
 class TariffList extends Model
 {
     protected $table = 'tariff_lists';
+
     protected $primaryKey = 'tariff_list_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'tariff_list_id',
         'data_id',
-        'service_types_involved',
-        'effectivity_status',
+        'tl_status',
         'effectivity_date',
     ];
 

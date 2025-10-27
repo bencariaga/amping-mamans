@@ -2,20 +2,24 @@
 
 namespace App\Models\Authentication;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Storage\Data;
 use App\Models\User\Staff;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
     use HasFactory;
 
-    protected $table        = 'roles';
-    protected $primaryKey   = 'role_id';
-    public    $incrementing = false;
-    protected $keyType      = 'string';
-    public    $timestamps   = false;
+    protected $table = 'roles';
+
+    protected $primaryKey = 'role_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'role_id',

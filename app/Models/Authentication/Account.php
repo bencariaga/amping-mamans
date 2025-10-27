@@ -2,21 +2,25 @@
 
 namespace App\Models\Authentication;
 
+use App\Models\Storage\Data;
+use App\Models\User\AffiliatePartner;
+use App\Models\User\Member;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Storage\Data;
-use App\Models\User\Member;
-use App\Models\User\AffiliatePartner;
 
 class Account extends Model
 {
     use HasFactory;
 
-    protected $table        = 'accounts';
-    protected $primaryKey   = 'account_id';
-    public    $incrementing = false;
-    protected $keyType      = 'string';
-    public    $timestamps   = false;
+    protected $table = 'accounts';
+
+    protected $primaryKey = 'account_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'account_id',

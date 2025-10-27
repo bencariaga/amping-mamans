@@ -18,6 +18,6 @@
 
 @section('content')
     <div class="container-fluid mt-4">
-        <livewire:client.client-registration>
+        <livewire:client.client-registration />
     </div>
 @endsection

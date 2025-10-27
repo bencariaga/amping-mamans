@@ -1,0 +1,251 @@
+:root {
+    --danger-color: hsl(0, 70%, 50%);
+    --success-color: hsl(140, 50%, 45%);
+    --container-border: #ced4da;
+    --placeholder-color: #666;
+    --disabled-border-color-1: #bbb;
+    --disabled-border-color-2: #999;
+    --disabled-bg-color-1: #f4f4f4;
+    --disabled-bg-color-2: #ececec;
+    --disabled-text-color: #ccc;
+    --input-bg: #eee;
+    --input-border: #888;
+    --input-bg-focus: #fff;
+    --input-text: #000;
+    --arrow-color: #333;
+}
+
+[data-theme="dark"] {
+    --danger-color: hsl(0, 75%, 58%);
+    --success-color: hsl(140, 60%, 50%);
+    --container-border: #444;
+    --placeholder-color: #aaa;
+    --disabled-border-color-1: #444;
+    --disabled-border-color-2: #666;
+    --disabled-bg-color-1: #222;
+    --disabled-bg-color-2: #333;
+    --disabled-text-color: #555;
+    --input-bg: #333;
+    --input-border: #444;
+    --input-bg-focus: #000;
+    --input-text: #fff;
+    --date-picker-bg: #222;
+    --date-picker-text: #fff;
+    --dark-mode-invert: 1;
+    --arrow-color: #fff;
+}
+
+.main-content-body {
+    padding-top: 8px;
+}
+
+#assistanceRequestForm {
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: var(--item-bg);
+    border: 1.5px solid var(--container-border);
+    border-radius: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+}
+
+.form-control::-webkit-outer-spin-button,
+.form-control::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    background: transparent;
+    margin-left: 6px;
+}
+
+[data-theme="dark"] .form-control::-webkit-outer-spin-button,
+[data-theme="dark"] .form-control::-webkit-inner-spin-button {
+    filter: invert(1) brightness(1.6);
+}
+
+.form-legend {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: var(--input-text);
+}
+
+.form-legend .fas {
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    color: var(--text-color);
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-label {
+    font-weight: bold;
+    color: var(--input-text);
+    margin: 5px 0;
+}
+
+.label-hidden {
+    visibility: hidden;
+}
+
+.required-asterisk {
+    color: var(--danger-color);
+}
+
+.form-control,
+.form-select,
+.custom-dropdown-btn,
+#patientNameDropdownBtn {
+    border: 1px solid var(--input-border) !important;
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    font-weight: normal !important;
+    border-radius: 6px;
+    padding: 12px 20px 12px 12px;
+    transition: none;
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+}
+
+.form-control:hover,
+.custom-dropdown-btn:hover {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .form-control:hover,
+[data-theme="dark"] .custom-dropdown-btn:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+.form-control[readonly],
+.form-control[disabled] {
+    background-color: var(--disabled-bg-color-1);
+    border-color: var(--disabled-border-color-1);
+    color: var(--disabled-text-color);
+    cursor: not-allowed;
+}
+
+.form-control::placeholder {
+    color: var(--placeholder-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-hover);
+    border-color: var(--primary-color-hover);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: hsl(140, 60%, 50%);
+    border-color: hsl(140, 60%, 50%);
+}
+
+#msgTmpBtn {
+    height: 50px;
+}
+
+#patientNameDropdownBtn + .dropdown-menu,
+#serviceTypeDropdownBtn + .dropdown-menu,
+#messageTemplateDropdownBtn + .dropdown-menu,
+#affiliatePartnerDropdownBtn + .dropdown-menu {
+    top: auto !important;
+    bottom: 100% !important;
+    max-height: 146px;
+    overflow-y: auto;
+}
+
+.custom-dropdown-btn {
+    font-weight: normal !important;
+    display: flex;
+    justify-content: start;
+}
+
+.custom-dropdown-btn::after,
+#patientNameDropdownBtn::after {
+    color: var(--arrow-color);
+    font-size: 1.5rem;
+}
+
+.custom-dropdown-btn.rotated::after,
+#patientNameDropdownBtn.rotated::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.custom-dropdown-btn[aria-expanded="true"]::after {
+    transform: rotate(-180deg);
+}
+
+.form-control,
+.custom-dropdown-btn {
+    height: 50px;
+}
+
+.form-text .fw-bold {
+    font-weight: bold;
+}
+
+.muted-text {
+    color: #666;
+}
+
+[data-theme="dark"] .muted-text {
+    color: #aaa;
+}
+
+.message-preview {
+    border: 1px solid var(--input-border) !important;
+    background-color: var(--input-bg);
+    line-height: 1.75;
+    overflow-y: auto;
+    padding: 12px;
+    resize: none;
+    height: auto;
+}
+
+#phoneVerificationMessage {
+    font-weight: bold;
+}
+
+.two-container-handler {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.left-container {
+    flex: 6;
+}
+
+.right-container {
+    flex: 4;
+}
+
+@media (max-width: 768px) {
+    .left-container,
+    .right-container {
+        flex: 1 1 100%;
+        min-width: auto;
+    }
+}

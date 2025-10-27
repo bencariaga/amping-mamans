@@ -3,7 +3,7 @@
     <div class="nav-text">Add<br>Applicant</div>
 </a>
 
-<a type="button" id="householdBtn" class="footer-btn" href="">
+<a type="button" id="householdBtn" class="footer-btn" href="{{ route('profiles.households.list') }}">
     <div class="nav-icon"><i class="fas fa-house-user"></i></div>
     <div class="nav-text">Households</div>
 </a>

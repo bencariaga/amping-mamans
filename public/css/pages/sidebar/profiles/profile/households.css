@@ -1,0 +1,501 @@
+:root {
+    --primary-border-color: #888;
+    --secondary-border-color: #ced4da;
+    --item-bg: #e8e8e8;
+    --item-shadow: rgba(0, 0, 0, 0.3);
+    --item-hover-shadow: rgba(0, 0, 0, 0.3);
+    --input-bg: #d8d8d8;
+    --input-bg-hover: #fff;
+    --input-bg-focus: #fff;
+    --input-text-primary: #666;
+    --input-text-secondary: #000;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-hover-bg: #5a6268;
+    --btn-secondary-hover-border: #545b62;
+    --light-blue-color: #009879;
+    --danger-color: hsl(0, 70%, 50%);
+    --success-color: hsl(140, 50%, 45%);
+    --dark-mode-invert: 0;
+    --text-color: #000;
+    --table-header-bg: #0000bb;
+    --header-text: #fff;
+    --odd-row-bg: #fff;
+    --even-row-bg: #f2f2f2;
+    --disabled-bg: #ddd;
+    --disabled-color: #333;
+    --disabled-border: #888;
+    --disabled-stripe: rgba(255, 255, 255, 0.1);
+    --date-picker-icon: invert(0%);
+    --date-picker-bg: #fff;
+    --date-picker-text: #000;
+    --dark-mode-invert: 0;
+    --arrow-color: #333;
+}
+
+[data-theme="dark"] {
+    --primary-border-color: #444;
+    --secondary-border-color: #555;
+    --item-bg: #282828;
+    --item-shadow: rgba(0, 0, 0, 0.3);
+    --item-hover-shadow: rgba(0, 0, 0, 0.3);
+    --input-bg: #444;
+    --input-bg-hover: #000;
+    --input-bg-focus: #000;
+    --input-text-primary: #ccc;
+    --input-text-secondary: #fff;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-hover-bg: #5a6268;
+    --btn-secondary-hover-border: #545b62;
+    --light-blue-color: #80cbc4;
+    --danger-color: hsl(0, 75%, 58%);
+    --success-color: hsl(140, 60%, 50%);
+    --dark-mode-invert: 1;
+    --text-color: #fff;
+    --table-header-bg: #4a76d0;
+    --even-row-bg: #2a2a2a;
+    --odd-row-bg: #191919;
+    --disabled-bg: #222;
+    --disabled-color: #eee;
+    --disabled-border: #888;
+    --disabled-stripe: rgba(255, 255, 255, 0.1);
+    --date-picker-icon: invert(100%);
+    --date-picker-bg: #333;
+    --date-picker-text: #fff;
+    --dark-mode-invert: 0;
+    --arrow-color: #fff;
+}
+
+input[type="date"] {
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(var(--dark-mode-invert));
+    cursor: pointer;
+}
+
+.date-picker {
+    position: relative;
+}
+
+.date-picker input {
+    cursor: pointer;
+}
+
+.main-content-body {
+    padding-top: 10px;
+}
+
+.household-profile-container {
+    padding: 1rem;
+    min-width: 72.5rem;
+    margin: 0 auto 5rem;
+}
+
+.household-form-section,
+.household-header-section {
+    background: var(--item-bg);
+    border: 1px solid var(--primary-border-color);
+    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 24px 20px;
+}
+
+.household-form-section {
+    min-width: 72.5rem;
+}
+
+.household-header-section {
+    width: 72.5rem;
+}
+
+.main-content-body {
+    overflow-x: auto;
+}
+
+#hh-form-left {
+    width: 41%;
+    margin-right: 20px;
+}
+
+#hh-form-right {
+    width: 59%;
+    border-left: 1px solid var(--primary-border-color);
+}
+
+.household-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    align-items: start;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--input-text-secondary);
+}
+
+.form-check-input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--primary-border-color) !important;
+    height: 24px;
+    width: 24px;
+}
+
+.form-check-input:hover,
+.form-check-input:focus {
+    cursor: pointer;
+}
+
+#household-name {
+    width: 11rem;
+    border: 1px solid var(--primary-border-color);
+}
+
+#household-required-asterisk {
+    color: yellow;
+}
+
+.form-control:disabled {
+    background-color: var(--disabled-bg);
+    border-color: var(--disabled-border);
+    color: var(--disabled-color);
+    opacity: 0.75;
+}
+
+.dropdown-menu,
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg);
+}
+
+.dropdown-item {
+    color: var(--input-text);
+    height: 32px;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.dropdown-toggle::after {
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.household-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--input-bg);
+    margin-top: 20px;
+    margin-bottom: 5rem;
+}
+
+.household-table th,
+.household-table td {
+    border: 1px solid var(--primary-border-color);
+    text-align: center;
+    font-weight: bold;
+    width: min-content;
+    white-space: nowrap;
+}
+
+.household-table th {
+    background-color: var(--table-header-bg);
+    color: var(--header-text);
+    padding: 12px 16px;
+}
+
+.household-table td {
+    padding: 16px;
+}
+
+.household-table td .form-control {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--primary-border-color) !important;
+    background-color: var(--input-bg);
+    color: var(--input-text-secondary);
+    width: 210px;
+    white-space: nowrap;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+#age-input {
+    width: 4rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+#suffix-dropdown {
+    width: 80px;
+}
+
+#civil-status-dropdown {
+    width: 140px;
+}
+
+#relation-to-head-dropdown {
+    width: 210px;
+}
+
+#education-dropdown {
+    width: 180px;
+}
+
+#occupation-dropdown {
+    width: 210px;
+}
+
+.household-table td button,
+.household-table td .form-control {
+    height: 50px !important;
+}
+
+.household-table td .form-control:hover {
+    background-color: var(--input-bg-focus);
+}
+
+.household-table tr:nth-child(even) {
+    background-color: var(--even-row-bg);
+}
+
+.household-table tr:nth-child(odd) {
+    background-color: var(--odd-row-bg);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: red;
+    color: white;
+}
+
+.btn-danger:disabled {
+    opacity: 0.5;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.household-table .dropdown-toggle {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text-secondary) !important;
+    border: 1px solid var(--primary-border-color) !important;
+    height: 50px !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    display: flex;
+    justify-content: space-between;
+    white-space: nowrap;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.household-table .dropdown-toggle:hover {
+    background-color: var(--input-bg-focus) !important;
+}
+
+.household-table .dropdown-toggle:focus {
+    background-color: var(--input-bg-focus) !important;
+    color: var(--input-text-secondary) !important;
+    border-color: var(--light-blue-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 152, 121, 0.25) !important;
+}
+
+.household-table .dropdown-toggle::after {
+    display: inline-block;
+    font-size: 1.5rem !important;
+    margin-left: 0.5rem;
+    vertical-align: 0.25rem;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--arrow-color);
+}
+
+.household-table .dropdown-toggle.rotated::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.household-table .dropdown-menu {
+    background-color: var(--input-bg-focus);
+    border: 1px solid var(--input-border);
+    max-height: 146px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+}
+
+.household-table .dropdown-item {
+    color: var(--input-text-secondary);
+    height: 32px;
+    padding: 4px 1rem;
+    cursor: pointer;
+}
+
+.household-table .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text-secondary);
+}
+
+.household-table .dropdown-menu .dropdown-item:hover,
+.household-table .dropdown-menu .dropdown-item.active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+[data-theme="dark"] .household-table .dropdown-menu,
+[data-theme="dark"] .household-table .dropdown-menu .dropdown-item.active {
+    background-color: var(--input-bg);
+}
+
+.household-table .form-control {
+    height: 50px;
+    border-radius: 6px;
+    padding: 12px 1rem;
+    border: 1px solid var(--input-border);
+    color: var(--input-text-secondary);
+    background-color: var(--input-bg);
+    transition: all 50ms ease;
+}
+
+.household-table .form-control:focus {
+    background-color: var(--input-bg-focus);
+    color: var(--input-text-secondary);
+    border-color: var(--light-blue-color);
+    box-shadow: 0 0 0 0.25rem rgba(0, 152, 121, 0.25);
+}
+
+.select-client-btn,
+.verify-first-name-btn,
+.verify-middle-name-btn {
+    line-height: 1.5;
+    padding: 2rem 1rem;
+}
+
+.note-1,
+.note-2 {
+    text-align: left;
+}
+
+.note-1 {
+    font-size: 13px;
+}
+
+.note-2 {
+    font-size: 17px;
+}
+
+.hyperlink {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.modal-md {
+    width: 25rem;
+}
+
+.modal-content {
+    background-color: var(--card-bg, #fff);
+    color: var(--text-color, #000);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--input-border, #ccc);
+}
+
+.modal-header {
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-label {
+    font-weight: 500 !important;
+    color: var(--input-text);
+    margin-bottom: 1rem;
+    font-size: 18px;
+}
+
+#formControl {
+    margin-bottom: 1.5rem;
+}
+
+#commonBtn {
+    font-size: 1rem;
+    padding: 12px 20px;
+}
+
+.modal-content {
+    background-color: var(--modal-bg);
+    border: 1px solid var(--modal-border);
+}
+
+.modal-header,
+.modal-footer {
+    border: none;
+}
+
+.modal-footer {
+    background-color: var(--modal-bg);
+}
+
+.btn-close {
+    filter: invert(100%);
+}
+
+.list-group-item,
+.input-group .form-control,
+.input-group .input-group-text {
+    border-color: #888 !important;
+}

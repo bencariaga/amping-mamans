@@ -5,24 +5,26 @@ namespace App\Models\Operation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Operation\TariffList;
-use App\Models\Operation\Service;
 
 class ExpenseRange extends Model
 {
     protected $table = 'expense_ranges';
+
     protected $primaryKey = 'exp_range_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'exp_range_id',
         'tariff_list_id',
         'service_id',
         'exp_range_min',
         'exp_range_max',
-        'discount_percent',
-        'assist_amount'
+        'coverage_percent',
     ];
 
     protected static function boot()
