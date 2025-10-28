@@ -32,29 +32,41 @@
                     <h6 class="card-title mb-0">Template Placeholders</h6>
                 </div>
 
-                <div class="card-body" style="padding: 1.5rem;">
+                <div class="card-body" style="padding: 1rem;">
                     <div class="template-placeholder-group">
                         <div class="template-placeholder">
                             <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="applicant->client->member->first_name" data-label="Applicant's First Name">
-                                First Name
+                                Applicant's<br>First Name
                             </button>
                         </div>
 
                         <div class="template-placeholder">
                             <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="applicant->client->member->middle_name" data-label="Applicant's Middle Name">
-                                Middle Name
+                                Applicant's<br>Middle Name
                             </button>
                         </div>
 
                         <div class="template-placeholder">
                             <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="applicant->client->member->last_name" data-label="Applicant's Last Name">
-                                Last Name
+                                Applicant's<br>Last Name
                             </button>
                         </div>
 
                         <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="applicant->client->member->suffix" data-label="Applicant's Suffix">
-                                Suffix
+                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="applicant->client->member->suffix" data-label="Applicant's Suffix Name">
+                                Applicant's<br>Suffix Name
+                            </button>
+                        </div>
+
+                        <div class="template-placeholder">
+                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->service_type" data-label="Service Type">
+                                Service<br>Type
+                            </button>
+                        </div>
+
+                        <div class="template-placeholder">
+                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->billed_amount" data-label="Billed Amount">
+                                Billed<br>Amount
                             </button>
                         </div>
 
@@ -65,26 +77,38 @@
                         </div>
 
                         <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->service_type" data-label="Service Type">
-                                Service Type
+                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="patient->client->member->first_name" data-label="Patient's First Name">
+                                Patient's<br>First Name
+                            </button>
+                        </div>
+
+                        <div class="template-placeholder">
+                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="patient->client->member->middle_name" data-label="Patient's Middle Name">
+                                Patient's<br>Middle Name
+                            </button>
+                        </div>
+
+                        <div class="template-placeholder">
+                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="patient->client->member->last_name" data-label="Patient's Last Name">
+                                Patient's<br>Last Name
+                            </button>
+                        </div>
+
+                        <div class="template-placeholder">
+                            <button type="button" class="btn btn-outline-primary text-color w-100 placeholder-btn" data-key="patient->client->member->suffix" data-label="Patient's Suffix Name">
+                                Patient's<br>Suffix Name
                             </button>
                         </div>
 
                         <div class="template-placeholder">
                             <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->affiliate_partner->affiliate_partner_name" data-label="Affiliate Partner">
-                                Affiliate Partner
-                            </button>
-                        </div>
-
-                        <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->billed_amount" data-label="Billed Amount">
-                                Billed Amount
+                                Affiliate<br>Partner
                             </button>
                         </div>
 
                         <div class="template-placeholder">
                             <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->assistance_amount" data-label="Assistance Amount">
-                                Assistance Amount
+                                Assistance<br>Amount
                             </button>
                         </div>
 
@@ -120,7 +144,7 @@
 
                 <div class="card preview-card">
                     <div class="card-header bg-dark text-white">
-                        <h6 class="card-title mb-0">Output:<span class="float-end"><span id="sms-length-char" class="counter">0</span> (<span id="sms-credit-count">1 / 5</span> prepaid text message credits)</span></h6>
+                        <h6 class="card-title mb-0">Output:<span class="float-end"><span id="sms-length-char" class="counter">0</span></span></h6>
                     </div>
 
                     <div class="preview-body">

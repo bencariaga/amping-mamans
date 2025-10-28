@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2025 at 07:54 AM
+-- Generation Time: Oct 28, 2025 at 10:02 AM
 -- Server version: 8.0.43
 -- PHP Version: 8.4.13
 
@@ -102,12 +102,12 @@ CREATE TABLE `applicants` (
   `phase` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `block_number` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `house_number` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `job_status` enum('Permanent','Contractual','Casual') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `job_status` enum('Retired','Permanent','Contractual','Casual') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `house_occup_status` enum('Owner','Renter','House Sharer') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `lot_occup_status` enum('Owner','Renter','Lot Sharer','Informal Settler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `phic_affiliation` enum('Affiliated','Unaffiliated') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `phic_category` enum('Self-Employed','Sponsored / Indigent','Employed') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `is_also_patient` enum('Yes','No') COLLATE utf8mb4_general_ci NOT NULL,
+  `is_also_patient` enum('Yes','No') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `patient_number` int(2) UNSIGNED ZEROFILL NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -116,7 +116,7 @@ CREATE TABLE `applicants` (
 --
 
 INSERT INTO `applicants` (`applicant_id`, `client_id`, `province`, `city`, `municipality`, `barangay`, `subdivision`, `purok`, `sitio`, `street`, `phase`, `block_number`, `house_number`, `job_status`, `house_occup_status`, `lot_occup_status`, `phic_affiliation`, `phic_category`, `is_also_patient`, `patient_number`) VALUES
-('APPLICANT-2025-000000001', 'CLIENT-2025-000000001', 'South Cotabato', 'General Santos', 'N / A', 'Labangal', 'Doña Soledad', NULL, NULL, '', NULL, NULL, NULL, 'Casual', 'Renter', 'Renter', 'Affiliated', 'Employed', 'No', 01),
+('APPLICANT-2025-000000001', 'CLIENT-2025-000000001', 'South Cotabato', 'General Santos', 'N / A', 'Labangal', 'Doña Soledad', NULL, NULL, '', NULL, NULL, NULL, 'Casual', 'Renter', 'Renter', 'Affiliated', 'Employed', 'Yes', 02),
 ('APPLICANT-2025-000000002', 'CLIENT-2025-000000003', 'South Cotabato', 'General Santos', 'N / A', NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, 'Owner', 'Owner', 'Affiliated', 'Sponsored / Indigent', 'Yes', 03);
 
 -- --------------------------------------------------------
@@ -137,14 +137,6 @@ CREATE TABLE `applications` (
   `applied_at` date NOT NULL,
   `reapply_at` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `applications`
---
-
-INSERT INTO `applications` (`application_id`, `applicant_id`, `patient_id`, `affiliate_partner_id`, `exp_range_id`, `message_id`, `billed_amount`, `assistance_amount`, `applied_at`, `reapply_at`) VALUES
-('APPLICATION-2025-000000001', 'APPLICANT-2025-000000001', 'PATIENT-2025-000000001', 'AP-2025-000000001', 'EXP-RANGE-2025-000000028', 'MESSAGE-2025-000000001', 0100000, 0080000, '2025-10-22', '2026-01-20'),
-('APPLICATION-2025-000000002', 'APPLICANT-2025-000000001', 'PATIENT-2025-000000001', 'AP-2025-000000003', 'EXP-RANGE-2025-000000020', 'MESSAGE-2025-000000002', 0020000, 0012000, '2025-10-22', '2026-01-20');
 
 -- --------------------------------------------------------
 
@@ -225,10 +217,10 @@ CREATE TABLE `clients` (
 
 INSERT INTO `clients` (`client_id`, `member_id`, `occupation_id`, `birthdate`, `age`, `sex`, `civil_status`, `monthly_income`) VALUES
 ('CLIENT-2025-000000001', 'MEMBER-2025-000000008', 'OCCUP-2025-000000011', '2003-04-02', 022, 'Male', 'Single', 0010000),
-('CLIENT-2025-000000002', 'MEMBER-2025-000000009', NULL, NULL, 021, 'Female', NULL, NULL),
 ('CLIENT-2025-000000003', 'MEMBER-2025-000000010', 'OCCUP-2025-000000013', '2003-04-02', 022, 'Male', 'Single', 0010000),
 ('CLIENT-2025-000000004', 'MEMBER-2025-000000011', NULL, NULL, 100, 'Male', NULL, NULL),
-('CLIENT-2025-000000005', 'MEMBER-2025-000000012', NULL, NULL, 040, 'Male', NULL, NULL);
+('CLIENT-2025-000000005', 'MEMBER-2025-000000012', NULL, NULL, 040, 'Male', NULL, NULL),
+('CLIENT-2025-000000006', 'MEMBER-2025-000000013', NULL, NULL, 022, 'Female', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -248,7 +240,7 @@ CREATE TABLE `contacts` (
 --
 
 INSERT INTO `contacts` (`contact_id`, `client_id`, `contact_type`, `phone_number`) VALUES
-('CONTACT-2025-000000001', 'CLIENT-2025-000000001', 'Application', '0912-345-6789'),
+('CONTACT-2025-000000001', 'CLIENT-2025-000000001', 'Application', '0993-959-7683'),
 ('CONTACT-2025-000000002', 'CLIENT-2025-000000003', 'Application', '0907-632-3656');
 
 -- --------------------------------------------------------
@@ -271,7 +263,6 @@ CREATE TABLE `data` (
 
 INSERT INTO `data` (`data_id`, `data_status`, `created_at`, `updated_at`, `archived_at`) VALUES
 ('DATA-2025-000000001', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-000000002', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-000000003', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-000000004', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-000000005', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
@@ -302,12 +293,14 @@ INSERT INTO `data` (`data_id`, `data_status`, `created_at`, `updated_at`, `archi
 ('DATA-2025-000000030', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-000000031', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-000000032', 'Unarchived', '2025-10-06 03:02:04', '2025-10-06 03:02:04', NULL),
-('DATA-2025-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-10-22 13:52:16', NULL),
+('DATA-2025-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-10-28 08:10:52', NULL),
 ('DATA-2025-000000034', 'Unarchived', '2025-10-17 15:38:38', '2025-10-17 15:38:38', NULL),
 ('DATA-2025-000000035', 'Unarchived', '2025-10-17 15:43:08', '2025-10-17 15:43:08', NULL),
 ('DATA-2025-000000036', 'Unarchived', '2025-10-17 15:45:54', '2025-10-17 15:45:54', NULL),
 ('DATA-2025-000000037', 'Unarchived', '2025-10-18 15:55:24', '2025-10-18 15:55:24', NULL),
-('DATA-2025-000000038', 'Unarchived', '2025-10-18 15:55:24', '2025-10-18 15:55:24', NULL);
+('DATA-2025-000000041', 'Unarchived', '2025-10-28 11:40:00', '2025-10-28 11:40:00', NULL),
+('DATA-2025-000000042', 'Unarchived', '2025-10-28 11:45:18', '2025-10-28 11:45:18', NULL),
+('DATA-2025-000000043', 'Archived', '2025-10-28 14:30:00', '2025-10-28 14:30:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -550,7 +543,8 @@ INSERT INTO `expense_ranges` (`exp_range_id`, `tariff_list_id`, `service_id`, `e
 ('EXP-RANGE-2025-000000219', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0600001, 0700000, 100),
 ('EXP-RANGE-2025-000000220', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0700001, 0800000, 100),
 ('EXP-RANGE-2025-000000221', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0800001, 0900000, 100),
-('EXP-RANGE-2025-000000222', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0900001, 1000000, 100);
+('EXP-RANGE-2025-000000222', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0900001, 1000000, 100),
+('EXPokEc2EjMqU', 'TL-2025-OCT-1', 'SERVICE-2025-000000001', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -574,7 +568,7 @@ CREATE TABLE `files` (
 --
 
 INSERT INTO `files` (`file_id`, `data_id`, `member_id`, `file_type`, `filename`, `file_extension`, `purpose`, `downloaded_at`) VALUES
-('FILE-2025-000000001', 'DATA-2025-000000002', 'MEMBER-2025-000000001', 'Image', 'profile_pictures/SA2qEqYBYA8jpzJHA5QvLykMzcSPfY3qwk7weYje.png', 'png', NULL, NULL);
+('FILE-2025-000000001', 'DATA-2025-000000039', 'MEMBER-2025-000000001', 'Image', 'profile_pictures/9v06HSc7tl1zcY1R2tgzFNMPqpwESdaT6kKMdrtx.png', 'png', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -654,10 +648,10 @@ INSERT INTO `members` (`member_id`, `account_id`, `member_type`, `first_name`, `
 ('MEMBER-2025-000000006', 'ACCOUNT-2025-000000014', 'Mayor', 'Lorelie', 'Geronimo', 'Pacquiao', NULL, 'Lorelie Geronimo Pacquiao'),
 ('MEMBER-2025-000000007', 'ACCOUNT-2025-000000015', 'Executive Assistant', 'Maritess', 'Dapidran', 'Ambuang', NULL, 'Maritess Dapidran Ambuang'),
 ('MEMBER-2025-000000008', 'ACCOUNT-2025-000000016', 'Applicant', 'Benhur', 'Leproso', 'Cariaga', NULL, 'Benhur Leproso Cariaga'),
-('MEMBER-2025-000000009', 'ACCOUNT-2025-000000016', 'Patient', 'Angel', 'Provendido', 'Hinoctan', NULL, 'Angel Provendido Hinoctan'),
 ('MEMBER-2025-000000010', 'ACCOUNT-2025-000000017', 'Applicant', 'Benjamin', 'Ledesma', 'Carreon', 'Jr.', 'Benjamin Ledesma Carreon Jr.'),
 ('MEMBER-2025-000000011', 'ACCOUNT-2025-000000017', 'Patient', 'Simoun', 'Ibarra', 'Rivera', NULL, 'Simoun Ibarra Rivera'),
-('MEMBER-2025-000000012', 'ACCOUNT-2025-000000017', 'Patient', 'Julito', NULL, 'Saavedra', NULL, 'Julito Saavedra');
+('MEMBER-2025-000000012', 'ACCOUNT-2025-000000017', 'Patient', 'Julito', NULL, 'Saavedra', NULL, 'Julito Saavedra'),
+('MEMBER-2025-000000013', 'ACCOUNT-2025-000000016', 'Patient', 'Angel', 'Provendido', 'Hinoctan', NULL, 'Angel Provendido Hinoctan');
 
 -- --------------------------------------------------------
 
@@ -673,14 +667,6 @@ CREATE TABLE `messages` (
   `message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sent_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `messages`
---
-
-INSERT INTO `messages` (`message_id`, `msg_tmp_id`, `staff_id`, `contact_id`, `message_text`, `sent_at`) VALUES
-('MESSAGE-2025-000000001', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000001', 'Service Type Applied: Hospital Bill<br>Billed Amount: 100,000<br>Assistance Amount: 80,000<br>Applied At: October 22, 2025<br>Reapply At: January 20, 2026', '2025-10-22 09:59:40'),
-('MESSAGE-2025-000000002', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000001', 'Greetings, Benhur Leproso Cariaga! Here are the important details for your AMPING application today.<br><br>Service Type: Hemodialysis<br>Billed Amount: ₱ 20,000<br>Assistance Amount: ₱ 12,000<br>Affiliate Partner: Auguis Clinic and Hospital<br>Applied At: October 22, 2025<br>Reapply At: January 20, 2026<br><br>Thank you for your visit with us! Come again!', '2025-10-22 14:58:16');
 
 -- --------------------------------------------------------
 
@@ -700,7 +686,7 @@ CREATE TABLE `message_templates` (
 --
 
 INSERT INTO `message_templates` (`msg_tmp_id`, `data_id`, `msg_tmp_title`, `msg_tmp_text`) VALUES
-('MSG-TMP-2025-000000001', 'DATA-2025-000000033', 'Text Message Template 1', 'Greetings, [$application->applicant->client->member->first_name] [$application->applicant->client->member->middle_name] [$application->applicant->client->member->last_name]! Here are the important details for your AMPING application today.;;Service Type: [$application->service_type];Billed Amount: ₱ [$application->billed_amount];Assistance Amount: ₱ [$application->assistance_amount];Affiliate Partner: [$application->affiliate_partner->affiliate_partner_name];Applied At: [$application->applied_at];Reapply At: [$application->reapply_at];;Thank you for your visit with us! Come again!');
+('MSG-TMP-2025-000000001', 'DATA-2025-000000033', 'Text Message Template 1', 'Greetings, [$application->applicant->client->member->first_name] [$application->applicant->client->member->middle_name] [$application->applicant->client->member->last_name] [$application->applicant->client->member->suffix]! Here are the important details for your AMPING application today.;;For Patient: [$application->patient->client->member->first_name] [$application->patient->client->member->middle_name] [$application->patient->client->member->last_name] [$application->patient->client->member->suffix];Service Type: [$application->service_type];Billed Amount: ₱ [$application->billed_amount];Assistance Amount: ₱ [$application->assistance_amount];Affiliate Partner: [$application->affiliate_partner->affiliate_partner_name];Applied At: [$application->applied_at];Reapply At: [$application->reapply_at];;Thank you for your visit with us! Come again!');
 
 -- --------------------------------------------------------
 
@@ -752,7 +738,8 @@ INSERT INTO `occupations` (`occupation_id`, `data_id`, `occupation`) VALUES
 ('OCCUP-2025-000000010', 'DATA-2025-000000022', 'Teacher'),
 ('OCCUP-2025-000000011', 'DATA-2025-000000023', 'Student'),
 ('OCCUP-2025-000000012', 'DATA-2025-000000024', 'Security Guard'),
-('OCCUP-2025-000000013', 'DATA-2025-000000038', 'Waiter');
+('OCCUP-2025-000000013', 'DATA-2025-000000038', 'Waiter'),
+('OCCUP-2025-000000014', 'DATA-2025-000000041', 'Artist');
 
 -- --------------------------------------------------------
 
@@ -762,7 +749,7 @@ INSERT INTO `occupations` (`occupation_id`, `data_id`, `occupation`) VALUES
 
 CREATE TABLE `patients` (
   `patient_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `client_id` varchar(21) COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `applicant_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `patient_category` enum('PWD','Senior') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -772,10 +759,11 @@ CREATE TABLE `patients` (
 --
 
 INSERT INTO `patients` (`patient_id`, `client_id`, `applicant_id`, `patient_category`) VALUES
-('PATIENT-2025-000000001', 'CLIENT-2025-000000002', 'APPLICANT-2025-000000001', NULL),
 ('PATIENT-2025-000000002', 'CLIENT-2025-000000003', 'APPLICANT-2025-000000002', NULL),
 ('PATIENT-2025-000000003', 'CLIENT-2025-000000004', 'APPLICANT-2025-000000002', 'Senior'),
-('PATIENT-2025-000000004', 'CLIENT-2025-000000005', 'APPLICANT-2025-000000002', 'PWD');
+('PATIENT-2025-000000004', 'CLIENT-2025-000000005', 'APPLICANT-2025-000000002', 'PWD'),
+('PATIENT-2025-000000006', 'CLIENT-2025-000000006', 'APPLICANT-2025-000000001', NULL),
+('PATIENT-2025-000000007', 'CLIENT-2025-000000001', 'APPLICANT-2025-000000001', NULL);
 
 -- --------------------------------------------------------
 
@@ -922,7 +910,8 @@ CREATE TABLE `tariff_lists` (
 --
 
 INSERT INTO `tariff_lists` (`tariff_list_id`, `data_id`, `tl_status`, `effectivity_date`) VALUES
-('TL-2025-AUG-1', 'DATA-2025-000000025', 'Active', '2025-08-02');
+('TL-2025-AUG-1', 'DATA-2025-000000025', 'Active', '2025-08-02'),
+('TL-2025-OCT-1', 'DATA-2025-000000043', 'Draft', '2025-10-29');
 
 --
 -- Indexes for dumped tables

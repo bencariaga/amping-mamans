@@ -328,11 +328,16 @@ class TariffListController extends Controller
 
             $serviceLists = $rangesByService;
             $serviceTypes = $rangesByService->keys()->all();
+            $allServices = Service::all();
+            $allServiceTypes = $allServices->pluck('service_type', 'service_id')->toArray();
+            $usedServiceIds = $expenseRangesCollection->pluck('service_id')->unique()->toArray();
 
             return view('pages.tariff-list.tariff-list-view', [
                 'tariffListModel' => $tariffList,
                 'serviceLists' => $serviceLists,
                 'serviceTypes' => $serviceTypes,
+                'allServiceTypes' => $allServiceTypes,
+                'usedServiceIds' => $usedServiceIds,
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Tariff list version not found.'], 404);

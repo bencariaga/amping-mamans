@@ -21,6 +21,10 @@
         '[$application->applicant->client->member->middle_name]' => '[Applicant\'s Middle Name]',
         '[$application->applicant->client->member->last_name]' => '[Applicant\'s Last Name]',
         '[$application->applicant->client->member->suffix]' => '[Applicant\'s Suffix]',
+        '[$application->patient->client->member->first_name]' => '[Patient\'s First Name]',
+        '[$application->patient->client->member->middle_name]' => '[Patient\'s Middle Name]',
+        '[$application->patient->client->member->last_name]' => '[Patient\'s Last Name]',
+        '[$application->patient->client->member->suffix]' => '[Patient\'s Suffix]',
         '[$application->service_type]' => '[Service Type]',
         '[$application->affiliate_partner->affiliate_partner_name]' => '[Affiliate Partner]',
         '[$application->billed_amount]' => '[Billed Amount]',
@@ -34,10 +38,6 @@
 
 @section('content')
     <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
         <div id="template-filter-controls">
             <form id="template-filter-form" method="GET" action="{{ route('message-templates.list') }}">
                 <div class="controls-grid">
@@ -134,10 +134,10 @@
                             @endphp
 
                             <tr class="{{ $loop->even ? 'bg-light' : '' }}">
-                                <td class="px-4 py-2 text-center fw-bold fs-5">{{ $template->msg_tmp_title }}</td>
-                                <td class="px-5 py-2 template-text">{!! $readableText !!}</td>
+                                <td class="px-4 py-3 text-center fw-bold fs-5">{{ $template->msg_tmp_title }}</td>
+                                <td class="px-5 py-3 template-text">{!! $readableText !!}</td>
 
-                                <td class="px-3 py-2 text-center action-buttons">
+                                <td class="px-3 py-3 text-center action-buttons">
                                     <div class="gap-3 d-flex justify-content-center">
                                         <a href="{{ route('message-templates.edit', $template->msg_tmp_id) }}" class="btn btn-sm btn-warning px-3 py-2 fs-5" style="width: 12rem;">Edit Template</a>
 

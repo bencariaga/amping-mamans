@@ -24,7 +24,7 @@ class MessageTemplateController extends Controller
         try {
             $request->validate([
                 'msg_tmp_title' => 'required|string|max:30',
-                'msg_tmp_text' => [
+                'msg_tmp_text_hidden' => [
                     'required',
                     'string',
                     'max:1000',
@@ -43,31 +43,21 @@ class MessageTemplateController extends Controller
             MessageTemplate::create([
                 'data_id' => $data->data_id,
                 'msg_tmp_title' => $request->input('msg_tmp_title'),
-                'msg_tmp_text' => $request->input('msg_tmp_text'),
+                'msg_tmp_text' => $request->input('msg_tmp_text_hidden'),
             ]);
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Text message template created successfully.',
-                'redirect' => route('message-templates.list'),
-            ], 200);
+            return redirect()->route('message-templates.list')->with('success', 'Text message template has been created successfully.');
         } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors(),
-            ], 422);
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Message template creation failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create new Text message template. Please try again.',
-            ], 500);
+            return redirect()->back()->with('error', 'Failed to create new text message template. Please try again.');
         }
     }
 
@@ -81,7 +71,7 @@ class MessageTemplateController extends Controller
         try {
             $request->validate([
                 'msg_tmp_title' => 'required|string|max:30',
-                'msg_tmp_text' => [
+                'msg_tmp_text_hidden' => [
                     'required',
                     'string',
                     'max:1000',
@@ -93,7 +83,7 @@ class MessageTemplateController extends Controller
 
             $template->update([
                 'msg_tmp_title' => $request->input('msg_tmp_title'),
-                'msg_tmp_text' => $request->input('msg_tmp_text'),
+                'msg_tmp_text' => $request->input('msg_tmp_text_hidden'),
             ]);
 
             $template->data->update([
@@ -102,25 +92,15 @@ class MessageTemplateController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Text message template updated successfully.',
-                'redirect' => route('message-templates.list'),
-            ], 200);
+            return redirect()->route('message-templates.list')->with('success', 'Text message template has been updated successfully.');
         } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors(),
-            ], 422);
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (Exception $e) {
             Log::error('Message template update failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update Text message template. Please try again.',
-            ], 500);
+            return redirect()->back()->with('error', 'Failed to update text message template. Please try again.');
         }
     }
 
@@ -138,10 +118,7 @@ class MessageTemplateController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Text message template deleted successfully.',
-            ], 200);
+            return redirect()->route('message-templates.list')->with('success', 'Text message template has been deleted successfully.');
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -149,10 +126,7 @@ class MessageTemplateController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to permanently delete text message template. Please try again.',
-            ], 500);
+            return redirect()->back()->with('error', 'Failed to permanently delete text message template. Please try again.');
         }
     }
 }

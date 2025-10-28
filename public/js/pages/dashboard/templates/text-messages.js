@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const previewOutput = document.getElementById('output-text-preview');
     const placeholderButtons = document.querySelectorAll('.placeholder-btn');
     const smsLengthChar = document.getElementById('sms-length-char');
-    const smsCreditCount = document.getElementById('sms-credit-count');
     const charCount = document.getElementById('char-count');
     const titleCount = document.getElementById('title-count');
     const undoButton = document.getElementById('undo-button');
@@ -77,10 +76,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!templateTextarea || !previewOutput || !undoButton || !redoButton || !form) return;
 
     const exampleData = {
-        "applicant->client->member->first_name": "Juan",
-        "applicant->client->member->middle_name": "Cruz",
-        "applicant->client->member->last_name": "Santos",
-        "applicant->client->member->suffix": "Jr.",
+        "applicant->client->member->first_name": "Elizabeth",
+        "applicant->client->member->middle_name": "Alexandra",
+        "applicant->client->member->last_name": "Mary",
+        "applicant->client->member->suffix": "II",
+        "patient->client->member->first_name": "Juan",
+        "patient->client->member->middle_name": "Cruz",
+        "patient->client->member->last_name": "Santos",
+        "patient->client->member->suffix": "Jr.",
         "application->service_type": "Hospital Bill",
         "application->affiliate_partner->affiliate_partner_name": "St. Elizabeth Hospital, Inc.",
         "application->billed_amount": "100,000",
@@ -93,7 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
         "[$application->applicant->client->member->first_name]": "[Applicant's First Name]",
         "[$application->applicant->client->member->middle_name]": "[Applicant's Middle Name]",
         "[$application->applicant->client->member->last_name]": "[Applicant's Last Name]",
-        "[$application->applicant->client->member->suffix]": "[Applicant's Suffix]",
+        "[$application->applicant->client->member->suffix]": "[Applicant's Suffix Name]",
+        "[$application->patient->client->member->first_name]": "[Patient's First Name]",
+        "[$application->patient->client->member->middle_name]": "[Patient's Middle Name]",
+        "[$application->patient->client->member->last_name]": "[Patient's Last Name]",
+        "[$application->patient->client->member->suffix]": "[Patient's Suffix Name]",
         "[$application->service_type]": "[Service Type]",
         "[$application->affiliate_partner->affiliate_partner_name]": "[Affiliate Partner]",
         "[$application->billed_amount]": "[Billed Amount]",
@@ -109,7 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
         "[Applicant's First Name]": exampleData["applicant->client->member->first_name"],
         "[Applicant's Middle Name]": exampleData["applicant->client->member->middle_name"],
         "[Applicant's Last Name]": exampleData["applicant->client->member->last_name"],
-        "[Applicant's Suffix]": exampleData["applicant->client->member->suffix"],
+        "[Applicant's Suffix Name]": exampleData["applicant->client->member->suffix"],
+        "[Patient's First Name]": exampleData["patient->client->member->first_name"],
+        "[Patient's Middle Name]": exampleData["patient->client->member->middle_name"],
+        "[Patient's Last Name]": exampleData["patient->client->member->last_name"],
+        "[Patient's Suffix Name]": exampleData["patient->client->member->suffix"],
         "[Service Type]": exampleData["application->service_type"],
         "[Affiliate Partner]": exampleData["application->affiliate_partner->affiliate_partner_name"],
         "[Billed Amount]": exampleData["application->billed_amount"],
@@ -156,10 +167,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         templateTextarea.value = readableText;
-
         updatePreview();
         updateUndoRedoButtons();
-
         templateTextarea.focus();
     }
 
@@ -210,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (smsLengthChar) smsLengthChar.textContent = '0 / 160 characters';
             if (charCount) charCount.textContent = '0';
-            if (smsCreditCount) smsCreditCount.textContent = '1 / 5';
             return;
         }
 
@@ -223,17 +231,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const previewLength = substitutedPreview.length;
         if (charCount) charCount.textContent = templateWithLabels.length;
 
-        let credits = 1;
-
-        if (previewLength > 160) credits = 2;
-        if (previewLength > 320) credits = 3;
-        if (previewLength > 480) credits = 4;
-        if (previewLength > 640) credits = 5;
-
         let limit = Math.ceil(previewLength / 160) * 160;
         limit = Math.min(limit, 800);
 
-        if (smsCreditCount) smsCreditCount.textContent = `${credits} / 5`;
         if (smsLengthChar) smsLengthChar.textContent = `${previewLength} / ${limit} characters`;
 
         let outputHtml = '';
@@ -250,10 +250,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 segment = segment.replace(/;/g, '<br>');
-
                 outputHtml += segment;
                 currentPos = splitLimit;
-
                 messageIndex++;
             }
         }
@@ -296,43 +294,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const backendText = history[historyIndex] || '';
         const title = titleInput.value;
-        const isUpdate = form.getAttribute('method').toUpperCase() === 'POST' && form.querySelector('input[name="_method"][value="PUT"]') !== null;
-        const data = new URLSearchParams();
 
-        data.append('_token', form.querySelector('input[name="_token"]').value);
-        data.append('msg_tmp_title', title);
-        data.append('msg_tmp_text', backendText);
-
-        if (isUpdate) {
-            data.append('_method', 'PUT');
+        const hiddenTextInput = form.querySelector('input[name="msg_tmp_text_hidden"]');
+        if (!hiddenTextInput) {
+            const newHiddenInput = document.createElement('input');
+            newHiddenInput.type = 'hidden';
+            newHiddenInput.name = 'msg_tmp_text_hidden';
+            newHiddenInput.id = 'msg_tmp_text_hidden';
+            form.appendChild(newHiddenInput);
         }
 
-        const expectedSuccessStatus = isUpdate ? 200 : 201;
+        form.querySelector('input[name="msg_tmp_text_hidden"]').value = backendText;
+        titleInput.value = title;
 
-        fetch(form.action, {
-            method: 'POST',
-            body: data,
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
-            .then(response => response.json().then(data => ({ status: response.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === expectedSuccessStatus) {
-                    window.location.href = body.redirect;
-                } else if (status === 422) {
-                    displayValidationErrors(body.errors);
-                } else if (status === 500) {
-                    console.error('Server Error:', body.message || 'An unexpected server error occurred.');
-                } else {
-                    console.error('API Error:', body.message || 'An unknown API error occurred.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            });
+        form.submit();
     }
 
     function insertPlaceholder(key, label) {
@@ -352,30 +327,48 @@ document.addEventListener('DOMContentLoaded', function () {
         templateTextarea.value = newText;
 
         const newCursorPosition = start + readablePlaceholder.length;
-        templateTextarea.setSelectionRange(newCursorPosition, newCursorPosition);
+
+        templateTextarea.setSelectionRange(
+            newCursorPosition,
+            newCursorPosition
+        );
 
         saveState();
         updatePreview();
         templateTextarea.focus();
         clearValidationErrors();
 
-        const btn = Array.from(placeholderButtons).find(b =>
-            b.getAttribute('data-key') === key &&
-            b.getAttribute('data-label') === label
+        const btn = Array.from(placeholderButtons).find(
+            (b) => b.getAttribute("data-key") === key && b.getAttribute("data-label") === label
         );
 
         if (btn) {
-            btn.classList.add('btn-success');
-            btn.classList.remove('btn-outline-primary', 'btn-outline-success', 'btn-outline-info');
+            let originalClass = "";
+
+            if (btn.classList.contains("btn-outline-primary")) {
+                originalClass = "btn-outline-primary";
+            } else if (btn.classList.contains("btn-outline-success")) {
+                originalClass = "btn-outline-success";
+            } else if (btn.classList.contains("btn-outline-info")) {
+                originalClass = "btn-outline-info";
+            }
+
+            btn.classList.remove(
+                "btn-outline-primary",
+                "btn-outline-success",
+                "btn-outline-info"
+            );
+
+            btn.classList.add("btn-success", "placeholder-flash");
+
             setTimeout(() => {
-                btn.classList.remove('btn-success');
-                if (key.includes('applicant')) {
-                    btn.classList.add('btn-outline-primary');
-                } else if (key.includes('application->applied_at') || key.includes('application->reapply_at')) {
-                    btn.classList.add('btn-outline-info');
-                } else if (key.includes('application')) {
-                    btn.classList.add('btn-outline-success');
+                btn.classList.remove("btn-success", "placeholder-flash");
+
+                if (originalClass) {
+                    btn.classList.add(originalClass);
                 }
+
+                btn.blur();
             }, 500);
         }
     }
