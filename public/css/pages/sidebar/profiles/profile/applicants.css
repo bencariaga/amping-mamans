@@ -427,15 +427,15 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 #applicantCustomOccupationInput:disabled,
-#patientFirstNameInput-1:disabled,
-#patientMiddleNameInput-1:disabled,
-#patientLastNameInput-1:disabled,
-#patientAgeInput-1:disabled,
+#patientFirstNameInput-1:read-only,
+#patientMiddleNameInput-1:read-only,
+#patientLastNameInput-1:read-only,
+#patientAgeInput-1:read-only,
 #applicantCustomOccupationInput:disabled:hover,
-#patientFirstNameInput-1:disabled:hover,
-#patientMiddleNameInput-1:disabled:hover,
-#patientLastNameInput-1:disabled:hover,
-#patientAgeInput-1:disabled:hover {
+#patientFirstNameInput-1:read-only:hover,
+#patientMiddleNameInput-1:read-only:hover,
+#patientLastNameInput-1:read-only:hover,
+#patientAgeInput-1:read-only:hover {
     background-color: var(--disabled-bg-color-1) !important;
     border-color: var(--disabled-border-color-1) !important;
     color: var(--placeholder-color) !important;
@@ -480,6 +480,15 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 4px 4px 7px 12px;
     cursor: pointer;
     border: 1px solid var(--input-border);
+}
+
+#removePatientBtnContainer {
+    height: 79px;
+}
+
+#removePatientBtn {
+    height: 50px;
+    font-size: 20px;
 }
 
 .delete-account-modal {

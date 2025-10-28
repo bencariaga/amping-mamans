@@ -16,9 +16,12 @@ class BudgetUpdateController extends Controller
 {
     public function createForApplication($application, $assistanceAmount)
     {
-        $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')->orderBy('data.created_at', 'desc')->select('budget_updates.*')->first();
+        $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')
+            ->orderBy('data.created_at', 'desc')
+            ->select('budget_updates.*')
+            ->first();
 
-        $prevAmountAccum = $prevBudget->amount_accum ?? 0;
+        $amount_accum = $prevBudget->amount_accum ?? 0;
         $prevAmountRecent = $prevBudget->amount_recent ?? 0;
         $prevAmountSpent = $prevBudget->amount_spent ?? 0;
 
@@ -26,17 +29,19 @@ class BudgetUpdateController extends Controller
         $amount_change = $assistanceAmount;
         $amount_recent = $amount_before - $amount_change;
         $amount_spent = $prevAmountSpent + $amount_change;
-        $amount_accum = $prevAmountAccum;
+
+        $dataId = $this->generateDataId();
+        $budgetUpdateId = $this->generateBudgetUpdateId();
 
         $budgetData = Data::create([
-            'data_id' => 'DATA-'.Carbon::now()->year.'-'.Str::padLeft(Data::count() + 1, 9, '0'),
+            'data_id' => $dataId,
             'data_status' => 'Unarchived',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         $budgetUpdate = BudgetUpdate::create([
-            'budget_update_id' => 'BDG-UPD-'.Carbon::now()->year.'-'.Str::padLeft(BudgetUpdate::count() + 1, 9, '0'),
+            'budget_update_id' => $budgetUpdateId,
             'data_id' => $budgetData->data_id,
             'sponsor_id' => null,
             'possessor' => 'AMPING',

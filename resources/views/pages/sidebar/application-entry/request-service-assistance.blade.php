@@ -23,7 +23,12 @@
             <input type="hidden" id="applicantFirstName" name="applicant_first_name">
             <input type="hidden" id="applicantMiddleName" name="applicant_middle_name">
             <input type="hidden" id="applicantLastName" name="applicant_last_name">
+            <input type="hidden" id="applicantSuffix" name="applicant_suffix">
             <input type="hidden" id="applicantId" name="applicant_id">
+            <input type="hidden" id="patientFirstName" name="patient_first_name">
+            <input type="hidden" id="patientMiddleName" name="patient_middle_name">
+            <input type="hidden" id="patientLastName" name="patient_last_name">
+            <input type="hidden" id="patientSuffix" name="patient_suffix">
             <input type="hidden" id="patientId" name="patient_id">
             <input type="hidden" id="messageTemplateId" name="msg_tmp_id">
             <input type="hidden" id="autoApplicantData" value="{{ json_encode($applicantData ?? []) }}">
@@ -118,7 +123,7 @@
                         </div>
 
                         <div class="form-group col-md-6 d-flex align-items-end">
-                            <a type="button" class="btn btn-primary w-100" id="msgTmpBtn" href="{{ route('message-templates.list') }}">Message Templates</a>
+                            <a type="button" class="btn btn-primary w-100" id="msgTmpBtn" href="{{ route('message-templates.list') }}">MESSAGE TEMPLATES</a>
                         </div>
 
                         <div class="form-group col-md-6">

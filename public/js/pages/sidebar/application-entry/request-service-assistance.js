@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const applicantFirstNameInput = document.getElementById('applicantFirstName');
     const applicantMiddleNameInput = document.getElementById('applicantMiddleName');
     const applicantLastNameInput = document.getElementById('applicantLastName');
+    const applicantSuffixInput = document.getElementById('applicantSuffix');
+    const patientFirstNameInput = document.getElementById('patientFirstName');
+    const patientMiddleNameInput = document.getElementById('patientMiddleName');
+    const patientLastNameInput = document.getElementById('patientLastName');
+    const patientSuffixInput = document.getElementById('patientSuffix');
     const patientNameDropdownBtn = document.getElementById('patientNameDropdownBtn');
     const patientNameDropdownList = document.getElementById('patientNameDropdownList');
     const patientIdInput = document.getElementById('patientId');
@@ -39,6 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function showMessage(element, message, type) {
         element.textContent = message;
         element.className = `form-text fw-bold mt-1 d-block ${type === 'success' ? 'text-success' : 'text-danger'}`;
+
+        setTimeout(() => {
+            element.textContent = '';
+            element.className = 'form-text mt-1 d-none';
+        }, 3000);
     }
 
     function formatDateHuman(date) {
@@ -72,6 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const applicantFirstName = applicantFirstNameInput.value.trim();
         const applicantMiddleName = applicantMiddleNameInput.value.trim();
         const applicantLastName = applicantLastNameInput.value.trim();
+        const applicantSuffix = applicantSuffixInput.value.trim();
+        const patientFirstName = patientFirstNameInput.value.trim();
+        const patientMiddleName = patientMiddleNameInput.value.trim();
+        const patientLastName = patientLastNameInput.value.trim();
+        const patientSuffix = patientSuffixInput.value.trim();
         const serviceType = serviceTypeDropdownBtn.textContent.trim();
         const affiliatePartner = affiliatePartnerDropdownBtn.textContent.trim();
         const billedAmount = billedAmountInput.value;
@@ -79,9 +94,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const appliedAt = dateAppliedInput.value;
         const reapplyAt = dateToReapplyInput.value;
 
+        const applicantFullName = [applicantFirstName, applicantMiddleName, applicantLastName, applicantSuffix].filter(Boolean).join(' ');
+        const patientFullName = [patientFirstName, patientMiddleName, patientLastName, patientSuffix].filter(Boolean).join(' ');
+
         previewText = previewText.replace(/\[\$application->applicant->client->member->first_name\]/g, applicantFirstName);
         previewText = previewText.replace(/\[\$application->applicant->client->member->middle_name\]/g, applicantMiddleName);
         previewText = previewText.replace(/\[\$application->applicant->client->member->last_name\]/g, applicantLastName);
+        previewText = previewText.replace(/\[\$application->applicant->client->member->suffix\]/g, applicantSuffix);
+        previewText = previewText.replace(/\[\$application->applicant->client->member->full_name\]/g, applicantFullName);
+        previewText = previewText.replace(/\[\$application->patient->client->member->first_name\]/g, patientFirstName);
+        previewText = previewText.replace(/\[\$application->patient->client->member->middle_name\]/g, patientMiddleName);
+        previewText = previewText.replace(/\[\$application->patient->client->member->last_name\]/g, patientLastName);
+        previewText = previewText.replace(/\[\$application->patient->client->member->suffix\]/g, patientSuffix);
+        previewText = previewText.replace(/\[\$application->patient->client->member->full_name\]/g, patientFullName);
         previewText = previewText.replace(/\[\$application->service_type\]/g, serviceType);
         previewText = previewText.replace(/\[\$application->affiliate_partner->affiliate_partner_name\]/g, affiliatePartner);
         previewText = previewText.replace(/\[\$application->billed_amount\]/g, billedAmount);
@@ -107,27 +132,36 @@ document.addEventListener('DOMContentLoaded', function () {
     calculateDates();
 
     if (Object.keys(autoApplicantData).length > 0 && autoApplicantData.phone_number) {
-        phoneInput.value = autoApplicantData.phone_number;
-        applicantIdInput.value = autoApplicantData.applicant_id;
-        applicantNameInput.value = autoApplicantData.applicant_name;
-        applicantFirstNameInput.value = autoApplicantData.applicant_first_name || '';
-        applicantMiddleNameInput.value = autoApplicantData.applicant_middle_name || '';
-        applicantLastNameInput.value = autoApplicantData.applicant_last_name || '';
+        showMessage(phoneVerificationMessage, 'Loading...', 'error');
 
-        if (autoApplicantData.patient_id && autoApplicantData.patient_name) {
-            patientIdInput.value = autoApplicantData.patient_id;
-            patientNameHiddenInput.value = autoApplicantData.patient_name;
-            patientNameDropdownBtn.textContent = autoApplicantData.patient_name;
-        }
+        setTimeout(() => {
+            phoneInput.value = autoApplicantData.phone_number;
+            applicantIdInput.value = autoApplicantData.applicant_id;
+            applicantNameInput.value = autoApplicantData.applicant_name;
+            applicantFirstNameInput.value = autoApplicantData.applicant_first_name || '';
+            applicantMiddleNameInput.value = autoApplicantData.applicant_middle_name || '';
+            applicantLastNameInput.value = autoApplicantData.applicant_last_name || '';
+            applicantSuffixInput.value = autoApplicantData.applicant_suffix || '';
+            patientFirstNameInput.value = autoApplicantData.patient_first_name || '';
+            patientMiddleNameInput.value = autoApplicantData.patient_middle_name || '';
+            patientLastNameInput.value = autoApplicantData.patient_last_name || '';
+            patientSuffixInput.value = autoApplicantData.patient_suffix || '';
 
-        patientNameDropdownBtn.disabled = false;
-        patientNameDropdownBtn.textContent = 'Select a patient.';
+            if (autoApplicantData.patient_id && autoApplicantData.patient_name) {
+                patientIdInput.value = autoApplicantData.patient_id;
+                patientNameHiddenInput.value = autoApplicantData.patient_name;
+                patientNameDropdownBtn.textContent = autoApplicantData.patient_name;
+            }
 
-        if (autoApplicantData.patients && autoApplicantData.patients.length > 0) {
-            populatePatientDropdown(autoApplicantData.patients, autoApplicantData.patient_id);
-        }
+            patientNameDropdownBtn.disabled = false;
+            patientNameDropdownBtn.textContent = 'Select a patient.';
 
-        showMessage(phoneVerificationMessage, 'Applicant data automatically loaded.', 'success');
+            if (autoApplicantData.patients && autoApplicantData.patients.length > 0) {
+                populatePatientDropdown(autoApplicantData.patients, autoApplicantData.patient_id);
+            }
+
+            showMessage(phoneVerificationMessage, 'Applicant data automatically loaded.', 'success');
+        }, 250);
     }
 
     function populatePatientDropdown(patients, selectedPatientId = null) {
@@ -143,21 +177,37 @@ document.addEventListener('DOMContentLoaded', function () {
             link.href = '#';
             link.setAttribute('data-value', patient.patient_id);
             link.setAttribute('data-text', patient.patient_name);
+            link.setAttribute('data-first-name', patient.patient_first_name || '');
+            link.setAttribute('data-middle-name', patient.patient_middle_name || '');
+            link.setAttribute('data-last-name', patient.patient_last_name || '');
+            link.setAttribute('data-suffix', patient.patient_suffix || '');
             link.textContent = patient.patient_name;
 
             if (selectedPatientId && patient.patient_id === selectedPatientId) {
                 patientNameDropdownBtn.textContent = patient.patient_name;
                 patientIdInput.value = patient.patient_id;
                 patientNameHiddenInput.value = patient.patient_name;
+                patientFirstNameInput.value = patient.patient_first_name || '';
+                patientMiddleNameInput.value = patient.patient_middle_name || '';
+                patientLastNameInput.value = patient.patient_last_name || '';
+                patientSuffixInput.value = patient.patient_suffix || '';
             }
 
             link.addEventListener('click', function (event) {
                 event.preventDefault();
                 const value = this.getAttribute('data-value') || '';
                 const text = this.getAttribute('data-text') || '';
+                const firstName = this.getAttribute('data-first-name') || '';
+                const middleName = this.getAttribute('data-middle-name') || '';
+                const lastName = this.getAttribute('data-last-name') || '';
+                const suffix = this.getAttribute('data-suffix') || '';
                 patientNameDropdownBtn.textContent = text;
                 patientIdInput.value = value;
                 patientNameHiddenInput.value = text;
+                patientFirstNameInput.value = firstName;
+                patientMiddleNameInput.value = middleName;
+                patientLastNameInput.value = lastName;
+                patientSuffixInput.value = suffix;
                 updateMessagePreview();
             });
 
@@ -315,6 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const candidates = normalizeInputPhoneCandidates(phoneNumber);
+        showMessage(phoneVerificationMessage, 'Verifying...', 'error');
 
         try {
             const response = await fetch('/applications/verify-phone', {
@@ -328,27 +379,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
 
-            if (response.ok) {
-                applicantIdInput.value = data.applicant_id;
-                applicantNameInput.value = data.applicant_name;
-                patientIdInput.value = data.patient_id || '';
-                patientNameHiddenInput.value = data.patient_name || '';
-                patientNameDropdownBtn.textContent = data.patient_name || 'Select a patient.';
-                patientNameDropdownBtn.disabled = false;
-                populatePatientDropdown(data.patients, data.patient_id);
-                showMessage(phoneVerificationMessage, data.message, 'success');
-            } else {
-                applicantIdInput.value = '';
-                applicantNameInput.value = '';
-                patientIdInput.value = '';
-                patientNameHiddenInput.value = '';
-                patientNameDropdownBtn.textContent = 'Verify the phone number first.';
-                patientNameDropdownBtn.disabled = true;
-                const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Verification failed.';
-                showMessage(phoneVerificationMessage, text, 'error');
-            }
+            setTimeout(() => {
+                if (response.ok) {
+                    applicantIdInput.value = data.applicant_id;
+                    applicantNameInput.value = data.applicant_name;
+                    applicantFirstNameInput.value = data.applicant_first_name || '';
+                    applicantMiddleNameInput.value = data.applicant_middle_name || '';
+                    applicantLastNameInput.value = data.applicant_last_name || '';
+                    applicantSuffixInput.value = data.applicant_suffix || '';
+                    patientIdInput.value = data.patient_id || '';
+                    patientNameHiddenInput.value = data.patient_name || '';
+                    patientFirstNameInput.value = data.patient_first_name || '';
+                    patientMiddleNameInput.value = data.patient_middle_name || '';
+                    patientLastNameInput.value = data.patient_last_name || '';
+                    patientSuffixInput.value = data.patient_suffix || '';
+                    patientNameDropdownBtn.textContent = data.patient_name || 'Select a patient.';
+                    patientNameDropdownBtn.disabled = false;
+                    populatePatientDropdown(data.patients, data.patient_id);
+                    showMessage(phoneVerificationMessage, data.message, 'success');
+                } else {
+                    applicantIdInput.value = '';
+                    applicantNameInput.value = '';
+                    patientIdInput.value = '';
+                    patientNameHiddenInput.value = '';
+                    patientNameDropdownBtn.textContent = 'Verify the phone number first.';
+                    patientNameDropdownBtn.disabled = true;
+                    const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Verification failed.';
+                    showMessage(phoneVerificationMessage, text, 'error');
+                }
+            }, 250);
         } catch (error) {
-            showMessage(phoneVerificationMessage, 'An error occurred during verification.', 'error');
+            setTimeout(() => {
+                showMessage(phoneVerificationMessage, 'An error occurred during verification.', 'error');
+            }, 250);
         }
     });
 
@@ -366,27 +429,33 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        showMessage(billedAmountMessage, 'Calculating from the latest active tariff version...', 'error');
+
         try {
             const response = await fetch(`/applications/calculate-amount?service_id=${encodeURIComponent(serviceId)}&billed_amount=${encodeURIComponent(billedAmount)}`);
             const data = await response.json();
 
-            if (response.ok) {
-                assistanceAmountInput.value = formatNumberWithCommas(data.assistance_amount);
-                assistanceAmountRawInput.value = Number(data.assistance_amount);
-                tariffListVersionInput.value = data.tariff_list_version;
-                tariffListVersionRawInput.value = data.tariff_list_version;
-                showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
-                updateMessagePreview();
-            } else {
-                assistanceAmountInput.value = '';
-                assistanceAmountRawInput.value = '';
-                tariffListVersionInput.value = '';
-                tariffListVersionRawInput.value = '';
-                const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Calculation failed.';
-                showMessage(billedAmountMessage, text, 'error');
-            }
+            setTimeout(() => {
+                if (response.ok) {
+                    assistanceAmountInput.value = formatNumberWithCommas(data.assistance_amount);
+                    assistanceAmountRawInput.value = Number(data.assistance_amount);
+                    tariffListVersionInput.value = data.tariff_list_version;
+                    tariffListVersionRawInput.value = data.tariff_list_version;
+                    showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
+                    updateMessagePreview();
+                } else {
+                    assistanceAmountInput.value = '';
+                    assistanceAmountRawInput.value = '';
+                    tariffListVersionInput.value = '';
+                    tariffListVersionRawInput.value = '';
+                    const text = data.error || (data.errors && Object.values(data.errors).flat().join(' ')) || 'Calculation failed.';
+                    showMessage(billedAmountMessage, text, 'error');
+                }
+            }, 250);
         } catch (error) {
-            showMessage(billedAmountMessage, 'An error occurred during calculation.', 'error');
+            setTimeout(() => {
+                showMessage(billedAmountMessage, 'An error occurred during calculation.', 'error');
+            }, 250);
         }
     });
 

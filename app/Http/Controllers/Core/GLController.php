@@ -200,7 +200,8 @@ class GLController extends Controller
             ->first();
 
         $patientMember = DB::table('patients')
-            ->join('members', 'patients.member_id', '=', 'members.member_id')
+            ->join('clients', 'patients.client_id', '=', 'clients.client_id')
+            ->join('members', 'clients.member_id', '=', 'members.member_id')
             ->where('patients.patient_id', $application->patient_id)
             ->select('members.first_name', 'members.middle_name', 'members.last_name')
             ->first();
