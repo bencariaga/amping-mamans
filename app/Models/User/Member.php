@@ -2,8 +2,8 @@
 
 namespace App\Models\User;
 
+use App\Actions\DatabaseTableIdGeneration\GenerateMemberId;
 use App\Models\Authentication\Account;
-use App\Models\Storage\File;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,7 +33,6 @@ class Member extends Authenticatable
         'middle_name',
         'last_name',
         'suffix',
-        'full_name',
     ];
 
     protected $hidden = [
@@ -41,6 +40,17 @@ class Member extends Authenticatable
     ];
 
     protected $appends = ['full_name'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($member) {
+            if (empty($member->member_id)) {
+                $member->member_id = GenerateMemberId::execute();
+            }
+        });
+    }
 
     public function getFullNameAttribute(): string
     {
@@ -103,15 +113,5 @@ class Member extends Authenticatable
     public function signer()
     {
         return $this->hasOne(Signer::class, 'member_id');
-    }
-
-    public function files()
-    {
-        return $this->hasMany(File::class, 'member_id');
-    }
-
-    public function profilePictures()
-    {
-        return $this->hasMany(File::class, 'member_id');
     }
 }

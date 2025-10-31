@@ -2,12 +2,11 @@
 
 namespace App\Models\Authentication;
 
-use App\Models\Storage\Data;
+use App\Actions\DatabaseTableIdGeneration\GenerateOccupationId;
+use App\Models\Operation\Data;
 use App\Models\User\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class Occupation extends Model
 {
@@ -35,11 +34,7 @@ class Occupation extends Model
 
         static::creating(function ($o) {
             if (empty($o->occupation_id)) {
-                $year = Carbon::now()->year;
-                $base = "OCCUP-{$year}";
-                $last = static::where('occupation_id', 'like', "{$base}-%")->latest('occupation_id')->value('occupation_id');
-                $seq = $last ? (int) Str::substr($last, -9) : 0;
-                $o->occupation_id = "{$base}-".Str::padLeft($seq + 1, 9, '0');
+                $o->occupation_id = GenerateOccupationId::execute();
             }
             if (empty($o->data_id)) {
                 $o->data_id = Data::create()->data_id;

@@ -2,296 +2,296 @@
 -- YEAR = 2000, 2025 | MON = JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC
 -- N = 000000000, 00000, 0000, 000, 00, 0 (incremental, but reusable)
 
--- data table
+-- 1. data table
 -- Format: DATA-YEAR-MON-000000000
 CREATE TABLE data (
-    data_id VARCHAR(23) PRIMARY KEY,
-    archive_status ENUM('Archived', 'Unarchived') NOT NULL,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
-    archived_at DATETIME NULL
+    data_id varchar(23) NOT NULL,
+    archive_status enum('Archived','Unarchived') NOT NULL,
+    created_at datetime NOT NULL,
+    updated_at datetime NOT NULL,
+    archived_at datetime DEFAULT NULL
 );
 
--- accounts table
+-- 2. accounts table
 -- Format: ACCOUNT-YEAR-MON-0000
 CREATE TABLE accounts (
-    account_id VARCHAR(21) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    account_status ENUM('Active', 'Deactivated') NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    account_id varchar(21) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    account_status enum('Active','Deactivated') NOT NULL
 );
 
--- members table
+-- 3. members table
 -- Format: MEMBER-YEAR-MON-0000
 CREATE TABLE members (
-    member_id VARCHAR(20) PRIMARY KEY,
-    account_id VARCHAR(21) NOT NULL,
-    member_type ENUM('Client', 'Staff', 'Signer', 'Third-Party') NOT NULL,
-    last_name VARCHAR(20) NOT NULL,
-    middle_name VARCHAR(20),
-    first_name VARCHAR(20) NOT NULL,
-    suffix ENUM('Jr.', 'Sr.', 'II', 'III', 'IV', 'V'),
-    FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+    member_id varchar(20) NOT NULL,
+    account_id varchar(21) NOT NULL,
+    member_type enum('Client','Staff','Signer','Third-Party') NOT NULL,
+    last_name varchar(20) NOT NULL,
+    middle_name varchar(20) DEFAULT NULL,
+    first_name varchar(20) NOT NULL,
+    suffix enum('Jr.','Sr.','II','III','IV','V') DEFAULT NULL
 );
 
--- roles table
+-- 4. roles table
 -- Format: ROLE-YEAR-0
 CREATE TABLE roles (
-    role_id VARCHAR(11) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    role VARCHAR(20) NOT NULL,
-    allowed_actions TEXT,
-    access_scope TEXT
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    role_id varchar(11) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    role varchar(20) NOT NULL,
+    allowed_actions text,
+    access_scope text
 );
 
--- staff table
+-- 5. staff table
 -- Format: STAFF-YEAR-00
 CREATE TABLE staff (
-    staff_id VARCHAR(13) PRIMARY KEY,
-    member_id VARCHAR(20) NOT NULL,
-    role_id VARCHAR(11) NOT NULL,
-    file_name TEXT,
-    file_extension ENUM('.jpg', '.jpeg', 'jfif', '.png'),
-    password TEXT NOT NULL,
-    FOREIGN KEY (member_id) REFERENCES members(member_id),
-    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+    staff_id varchar(13) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    role_id varchar(11) NOT NULL,
+    file_name text,
+    file_extension enum('.jpg','.jpeg','jfif','.png') DEFAULT NULL,
+    password text NOT NULL
 );
 
--- affiliate_partners table
+-- 6. third_parties table
+-- Format: TP-YEAR-000
+CREATE TABLE third_parties (
+    tp_id varchar(11) NOT NULL,
+    account_id varchar(21) NOT NULL,
+    tp_type enum('Affiliate Partner','Sponsor') NOT NULL
+);
+
+-- 7. affiliate_partners table
 -- Format: AP-YEAR-00
 CREATE TABLE affiliate_partners (
-    ap_id VARCHAR(10) PRIMARY KEY,
-    account_id VARCHAR(21) NOT NULL,
-    ap_name VARCHAR(255) NOT NULL,
-    ap_type ENUM('Hospital / Clinic', 'Pharmacy / Drugstore', 'Funeral Company') NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+    ap_id varchar(10) NOT NULL,
+    tp_id varchar(21) NOT NULL,
+    ap_name varchar(60) NOT NULL,
+    ap_type enum('Hospital / Clinic','Pharmacy / Drugstore','Funeral Company') NOT NULL
 );
 
--- sponsors table
+-- 8. sponsors table
 -- Format: SPONSOR-YEAR-00
 CREATE TABLE sponsors (
-    sponsor_id VARCHAR(15) PRIMARY KEY,
-    member_id VARCHAR(20) NOT NULL,
-    sponsor_type ENUM('Politician', 'Business Owner', 'Other'),
-    designation VARCHAR(30),
-    organization_name VARCHAR(60),
-    FOREIGN KEY (member_id) REFERENCES members(member_id)
+    sponsor_id varchar(15) NOT NULL,
+    tp_id varchar(11) NOT NULL,
+    sponsor_type enum('Politician','Business Owner','Other') DEFAULT NULL,
+    designation varchar(30) DEFAULT NULL,
+    organization_name varchar(60) DEFAULT NULL
 );
 
--- signers table
+-- 9. signers table
 -- Format: SIGNER-YEAR-0
 CREATE TABLE signers (
-    signer_id VARCHAR(14) PRIMARY KEY,
-    member_id VARCHAR(20) NOT NULL,
-    post_nominal_letters VARCHAR(20),
-    FOREIGN KEY (member_id) REFERENCES members(member_id)
+    signer_id varchar(13) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    post_nominal_letters varchar(20) DEFAULT NULL
 );
 
--- occupations table
+-- 10. occupations table
 -- Format: OCCUPATION-YEAR-00
 CREATE TABLE occupations (
-    occupation_id VARCHAR(18) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    occupation VARCHAR(20) NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    occupation_id varchar(18) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    occupation varchar(20) NOT NULL
 );
 
--- clients table
+-- 11. clients table
 -- Format: CLIENT-YEAR-MON-0000
 CREATE TABLE clients (
-    client_id VARCHAR(20) PRIMARY KEY,
-    member_id VARCHAR(20) NOT NULL,
-    occupation_id VARCHAR(21),
-    birthdate DATE,
-    age INT(3) NOT NULL,
-    sex ENUM('Male', 'Female'),
-    civil_status ENUM('Single', 'Married', 'Separated', 'Widowed'),
-    monthly_income INT(6),
-    FOREIGN KEY (member_id) REFERENCES members(member_id),
-    FOREIGN KEY (occupation_id) REFERENCES occupations(occupation_id)
+    client_id varchar(20) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    occupation_id varchar(21) DEFAULT NULL,
+    client_type enum('Applicant','Household Member') NOT NULL,
+    birthdate date DEFAULT NULL,
+    age INT(3) UNSIGNED ZEROFILL NOT NULL, -- age int(3) NOT NULL,
+    sex enum('Male','Female') DEFAULT NULL,
+    civil_status enum('Single','Married','Separated','Widowed') DEFAULT NULL,
+    monthly_income INT(7) UNSIGNED ZEROFILL DEFAULT NULL -- monthly_income int(7) DEFAULT NULL
 );
 
--- applicants table
+-- 12. applicants table
 -- Format: APPLICANT-YEAR-MON-0000
 CREATE TABLE applicants (
-    applicant_id VARCHAR(23) PRIMARY KEY,
-    client_id VARCHAR(20) NOT NULL,
-    province ENUM('South Cotabato') NOT NULL,
-    city ENUM('General Santos') NOT NULL,
-    municipality ENUM('N / A'),
-    barangay ENUM('Apopong', 'Baluan', 'Batomelong', 'Buayan', 'Bula', 'Calumpang', 'City Heights', 'Conel', 'Dadiangas East', 'Dadiangas North', 'Dadiangas South', 'Dadiangas West', 'Fatima', 'Katangawan', 'Labangal', 'Lagao', 'Ligaya', 'Mabuhay', 'Olympog', 'San Isidro', 'San Jose', 'Siguel', 'Sinawal', 'Tambler', 'Tinagacan', 'Upper Labay') NOT NULL,
-    subdivision VARCHAR(20),
-    purok VARCHAR(20),
-    sitio VARCHAR(20),
-    street VARCHAR(20),
-    phase VARCHAR(10),
-    block_number VARCHAR(10),
-    house_number VARCHAR(10),
-    job_status ENUM('Permanent', 'Contractual', 'Casual', 'Retired') NOT NULL,
-    house_occupation_status ENUM('Owner', 'Renter', 'House Sharer') NOT NULL,
-    lot_occupation_status ENUM('Owner', 'Renter', 'Lot Sharer', 'Informal Settler') NOT NULL,
-    phic_affiliation ENUM('Affiliated', 'Unaffiliated') NOT NULL,
-    phic_category ENUM('Self-Employed', 'Sponsored / Indigent', 'Employed'),
-    is_also_patient ENUM('yes', 'no') NOT NULL,
-    patient_quantity INT(2) NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES clients(client_id)
+    applicant_id varchar(23) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    province enum('South Cotabato') NOT NULL,
+    city enum('General Santos') NOT NULL,
+    municipality enum('N / A') DEFAULT NULL,
+    barangay enum('Apopong','Baluan','Batomelong','Buayan','Bula','Calumpang','City Heights','Conel','Dadiangas East','Dadiangas North','Dadiangas South','Dadiangas West','Fatima','Katangawan','Labangal','Lagao','Ligaya','Mabuhay','Olympog','San Isidro','San Jose','Siguel','Sinawal','Tambler','Tinagacan','Upper Labay') NOT NULL,
+    subdivision varchar(20) DEFAULT NULL,
+    purok varchar(20) DEFAULT NULL,
+    sitio varchar(20) DEFAULT NULL,
+    street varchar(20) DEFAULT NULL,
+    phase varchar(10) DEFAULT NULL,
+    block_number varchar(10) DEFAULT NULL,
+    house_number varchar(10) DEFAULT NULL,
+    job_status enum('Permanent','Contractual','Casual','Retired') NOT NULL,
+    house_occupation_status enum('Owner','Renter','House Sharer') NOT NULL,
+    lot_occupation_status enum('Owner','Renter','Lot Sharer','Informal Settler') NOT NULL,
+    phic_affiliation enum('Affiliated','Unaffiliated') NOT NULL,
+    phic_category enum('Self-Employed','Sponsored / Indigent','Employed') DEFAULT NULL,
+    is_also_patient enum('yes','no') NOT NULL,
+    patient_quantity INT(10) UNSIGNED ZEROFILL NOT NULL -- patient_quantity int(10) NOT NULL
 );
 
--- patients table
+-- 13. patients table
 -- Format: PATIENT-YEAR-MON-00000
 CREATE TABLE patients (
-    patient_id VARCHAR(21) PRIMARY KEY,
-    client_id VARCHAR(20) NOT NULL,
-    applicant_id VARCHAR(23) NOT NULL,
-    patient_category ENUM('PWD', 'Senior') NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES clients(client_id),
-    FOREIGN KEY (applicant_id) REFERENCES applicants(applicant_id)
+    patient_id varchar(22) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    applicant_id varchar(23) NOT NULL,
+    patient_category enum('PWD','Senior') DEFAULT NULL
 );
 
--- households table
+-- 14. households table
 -- Format: HOUSEHOLD-YEAR-MON-000
 CREATE TABLE households (
-    household_id VARCHAR(22) PRIMARY KEY,
-    household_name VARCHAR(20) NOT NULL
+    household_id varchar(22) NOT NULL,
+    household_name varchar(20) NOT NULL
 );
 
--- household_members table
+-- 15. household_members table
 -- Format: HM-YEAR-MON-00000
 CREATE TABLE household_members (
-    household_member_id VARCHAR(17) PRIMARY KEY,
-    household_id VARCHAR(22) NOT NULL,
-    client_id VARCHAR(20) NOT NULL,
-    educational_attainment ENUM('Elementary', 'High School', 'College'),
-    relationship_to_applicant ENUM('Self', 'Friend', 'Wife', 'Husband', 'Daughter', 'Son', 'Sister', 'Brother', 'Mother', 'Father', 'Granddaughter', 'Grandson', 'Grandmother', 'Grandfather', 'Aunt', 'Uncle', 'Nephew', 'Niece', 'Cousin') NOT NULL,
-    FOREIGN KEY (household_id) REFERENCES households(household_id),
-    FOREIGN KEY (client_id) REFERENCES clients(client_id)
+    household_member_id varchar(17) NOT NULL,
+    household_id varchar(22) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    educational_attainment enum('Elementary','High School','College') DEFAULT NULL,
+    relationship_to_applicant enum('Self','Friend','Wife','Husband','Daughter','Son','Sister','Brother','Mother','Father','Granddaughter','Grandson','Grandmother','Grandfather','Aunt','Uncle','Nephew','Niece','Cousin') NOT NULL
 );
 
--- contacts table
+-- 16. contacts table
 -- Format: CONTACT-YEAR-MON-0000
 CREATE TABLE contacts (
-    contact_id VARCHAR(21) PRIMARY KEY,
-    client_id VARCHAR(20) NOT NULL,
-    contact_type ENUM('Application', 'Emergency') NOT NULL,
-    contact_number VARCHAR(17) NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES clients(client_id)
+    contact_id varchar(21) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    contact_type enum('Application','Emergency') NOT NULL,
+    contact_number varchar(17) NOT NULL
 );
 
--- services table
+-- 17. services table
 -- Format: SERVICE-YEAR-00
 CREATE TABLE services (
-    service_id VARCHAR(15) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    service VARCHAR(20) NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    service_id varchar(15) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    service varchar(20) NOT NULL
 );
 
--- budget_updates table
+-- 18. budget_updates table
 -- Format: BDG-UPD-YEAR-MON-00000
 CREATE TABLE budget_updates (
-    budget_update_id VARCHAR(22) PRIMARY KEY,
-    sponsor_id VARCHAR(15) NOT NULL,
-    possessor ENUM('AMPING', 'Sponsor'),
-    amount_accum INT(16),
-    amount_spent INT(16),
-    amount_recent INT(16),
-    amount_before INT(16),
-    amount_change INT(16),
-    direction ENUM('Positive', 'Negative'),
-    reason ENUM('Yearly Budget Provision', 'Supplementary Budget', 'GL Release', 'Sponsor Donation', 'Budget Manipulation'),
-    PRIMARY KEY (tariff_list_id, sponsor_id)
+    budget_update_id varchar(22) NOT NULL,
+    sponsor_id varchar(15) NOT NULL,
+    possessor enum('AMPING','Sponsor') DEFAULT NULL,
+    amount_accum INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_accum int(16) DEFAULT NULL,
+    amount_spent INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_spent int(16) DEFAULT NULL,
+    amount_recent INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_recent int(16) DEFAULT NULL,
+    amount_before INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_before int(16) DEFAULT NULL,
+    amount_change INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_change int(16) DEFAULT NULL,
+    direction enum('Positive','Negative') DEFAULT NULL,
+    reason enum('Yearly Budget Provision','Supplementary Budget','GL Release','Sponsor Donation','Budget Manipulation') DEFAULT NULL
 );
 
--- tariff_lists table
+-- 19. tariff_lists table
 -- Format: TL-YEAR-MON-0
 CREATE TABLE tariff_lists (
-    tariff_list_id VARCHAR(13) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    tl_status ENUM('Draft', 'Scheduled', 'Active', 'Inactive') NOT NULL,
-    effectivity_date DATE NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    tariff_list_id varchar(13) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    tl_status enum('Draft','Scheduled','Active','Inactive') NOT NULL,
+    effectivity_date date NOT NULL
 );
 
--- expense_ranges table
+-- 20. expense_ranges table
 -- Format: EXP-RANGE-YEAR-MON-00000
 CREATE TABLE expense_ranges (
-    exp_range_id VARCHAR(24) PRIMARY KEY,
-    tariff_list_id VARCHAR(13) NOT NULL,
-    service_id VARCHAR(15) NOT NULL,
-    exp_range_min INT(7) NOT NULL,
-    exp_range_max INT(7) NOT NULL,
-    coverage_percent INT(3) NOT NULL,
-    FOREIGN KEY (tariff_list_id) REFERENCES tariff_lists(tariff_list_id),
-    FOREIGN KEY (service_id) REFERENCES services(service_id)
+    exp_range_id varchar(24) NOT NULL,
+    tariff_list_id varchar(13) NOT NULL,
+    service_id varchar(15) NOT NULL,
+    exp_range_min INT(7) UNSIGNED ZEROFILL NOT NULL, -- exp_range_min int(7) NOT NULL,
+    exp_range_max INT(7) UNSIGNED ZEROFILL NOT NULL, -- exp_range_max int(7) NOT NULL,
+    coverage_percent INT(3) UNSIGNED ZEROFILL NOT NULL -- coverage_percent int(3) NOT NULL
 );
 
--- message_templates table
+-- 21. message_templates table
 -- Format: MSG-TMP-YEAR-MON-0
 CREATE TABLE message_templates (
-    msg_tmp_id VARCHAR(18) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    msg_tmp_title VARCHAR(30) NOT NULL,
-    msg_tmp_text TEXT NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
+    msg_tmp_id varchar(18) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    msg_tmp_title varchar(30) NOT NULL,
+    msg_tmp_text text NOT NULL
 );
 
--- messages table
+-- 22. messages table
 -- Format: MESSAGE-YEAR-MON-0000
 CREATE TABLE messages (
-    message_id VARCHAR(21) PRIMARY KEY,
-    staff_id VARCHAR(13) NOT NULL,
-    contact_id VARCHAR(21) NOT NULL,
-    message_text TEXT NOT NULL,
-    sent_at DATETIME NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
-    FOREIGN KEY (contact_id) REFERENCES contacts(contact_id)
+    message_id varchar(21) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    contact_id varchar(21) NOT NULL,
+    message_text text NOT NULL,
+    sent_at datetime NOT NULL
 );
 
--- applications table
+-- 23. applications table
 -- Format: APPLICATION-YEAR-MON-0000
 CREATE TABLE applications (
-    application_id VARCHAR(25) PRIMARY KEY,
-    patient_id VARCHAR(21) NOT NULL,
-    ap_id VARCHAR(10) NOT NULL,
-    exp_range_id VARCHAR(24) NOT NULL,
-    message_id VARCHAR(21) NOT NULL,
-    billed_amount INT(7),
-    apply_at DATETIME,
-    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
-    FOREIGN KEY (ap_id) REFERENCES affiliate_partners(ap_id),
-    FOREIGN KEY (exp_range_id) REFERENCES expense_ranges(exp_range_id),
-    FOREIGN KEY (message_id) REFERENCES messages(message_id)
+    application_id varchar(25) NOT NULL,
+    patient_id varchar(22) NOT NULL,
+    ap_id varchar(10) NOT NULL,
+    exp_range_id varchar(24) NOT NULL,
+    message_id varchar(21) NOT NULL,
+    billed_amount INT(7) UNSIGNED ZEROFILL DEFAULT NULL, -- billed_amount int(7) DEFAULT NULL,
+    assistance_amount INT(7) UNSIGNED ZEROFILL NOT NULL, -- assistance_amount int(7) NOT NULL,
+    application_date datetime DEFAULT NULL,
+    reapplication_date date NOT NULL
 );
 
--- guarantee_letters table
+-- 24. guarantee_letters table
 -- Format: GL-YEAR-MON-0000
 CREATE TABLE guarantee_letters (
-    gl_id VARCHAR(16) PRIMARY KEY,
-    data_id VARCHAR(23) NOT NULL,
-    application_id VARCHAR(25) NOT NULL,
-    sponsor_id VARCHAR(15) NOT NULL,
-    is_sponsored ENUM('Yes', 'No') NOT NULL,
-    FOREIGN KEY (data_id) REFERENCES data(data_id)
-    FOREIGN KEY (application_id) REFERENCES applications(application_id),
-    FOREIGN KEY (sponsor_id) REFERENCES sponsors(sponsor_id)
+    gl_id varchar(16) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    application_id varchar(25) NOT NULL,
+    sponsor_id varchar(15) NOT NULL,
+    is_sponsored enum('Yes','No') NOT NULL
 );
 
--- audit_logs table
+-- 25. audit_logs table
 -- Format: LOG-YEAR-MON-000000000
 CREATE TABLE audit_logs (
-    audit_log_id VARCHAR(19) PRIMARY KEY,
-    staff_id VARCHAR(13) NOT NULL,
-    audit_log_type ENUM('Login', 'Logout', 'Page Access', 'Data Creation', 'Data Update', 'Data Deletion'),
-    audit_log_text TEXT NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    al_id varchar(22) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    al_type enum('Login','Logout','Page Access','Data Creation','Data Update','Data Deletion') DEFAULT NULL,
+    al_text text NOT NULL
 );
 
--- reports table
+-- 26. reports table
 -- Format: REPORT-YEAR-000
 CREATE TABLE reports (
-    report_id VARCHAR(15) PRIMARY KEY,
-    staff_id VARCHAR(13) NOT NULL,
-    report_type ENUM('Daily', 'Weekly', 'Monthly', 'Ad Hoc'),
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    report_id varchar(15) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    report_type enum('Daily','Weekly','Monthly','Ad Hoc') DEFAULT NULL
+);
+
+-- Additional tables present in the current SQL dump (generated by Laravel):
+
+-- 27. cache table
+CREATE TABLE cache (
+    `key` varchar(255) NOT NULL,
+    `value` mediumtext NOT NULL,
+    `expiration` int NOT NULL
+);
+
+-- 28. cache_locks table
+CREATE TABLE cache_locks (
+    `key` varchar(255) NOT NULL,
+    `owner` varchar(255) NOT NULL,
+    `expiration` int NOT NULL
+);
+
+-- 29. migrations table
+CREATE TABLE migrations (
+    id int UNSIGNED NOT NULL,
+    migration varchar(255) NOT NULL,
+    batch int NOT NULL
 );

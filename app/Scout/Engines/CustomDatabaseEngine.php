@@ -10,13 +10,13 @@ class CustomDatabaseEngine extends BaseDatabaseEngine
     public function update($models)
     {
         $models->each(function ($model) {
-            $attributes = collect($model->toSearchableArray())
-                ->mapWithKeys(fn($value, $key) => [Str::snake($key) => $value])
-                ->all();
+            $searchableAttributes = collect($model->toSearchableArray())->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value]);
+            $fillableAttributes = collect($model->getFillable());
+            $attributes = $searchableAttributes->filter(fn ($value, $key) => $fillableAttributes->contains($key))->all();
 
-            $model->newModelQuery()
-                ->whereKey($model->getKey())
-                ->update($attributes);
+            if (! empty($attributes)) {
+                $model->newModelQuery()->whereKey($model->getKey())->update($attributes);
+            }
         });
     }
 

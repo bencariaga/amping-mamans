@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Models\Storage;
+namespace App\Models\Operation;
 
-use App\Models\Audit\Log;
+use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
 use App\Models\Authentication\Account;
 use App\Models\Authentication\Occupation;
 use App\Models\Authentication\Role;
 use App\Models\Communication\MessageTemplate;
-use App\Models\Operation\BudgetUpdate;
-use App\Models\Operation\Service;
-use App\Models\Operation\TariffList;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class Data extends Model
 {
@@ -31,7 +27,7 @@ class Data extends Model
 
     protected $fillable = [
         'data_id',
-        'data_status',
+        'archive_status',
         'created_at',
         'updated_at',
         'archived_at',
@@ -43,11 +39,7 @@ class Data extends Model
 
         static::creating(function ($d) {
             if (empty($d->data_id)) {
-                $year = Carbon::now()->year;
-                $base = "DATA-{$year}";
-                $last = static::where('data_id', 'like', "{$base}-%")->latest('data_id')->value('data_id');
-                $seq = $last ? (int) Str::substr($last, -9) : 0;
-                $d->data_id = "{$base}-".Str::padLeft($seq + 1, 9, '0');
+                $d->data_id = GenerateDataId::execute();
             }
             if (empty($d->created_at)) {
                 $d->created_at = Carbon::now();
@@ -74,9 +66,9 @@ class Data extends Model
         return $this->hasMany(MessageTemplate::class, 'data_id', 'data_id');
     }
 
-    public function budgetUpdates()
+    public function guaranteeLetters()
     {
-        return $this->hasMany(BudgetUpdate::class, 'data_id', 'data_id');
+        return $this->hasMany(GuaranteeLetter::class, 'data_id', 'data_id');
     }
 
     public function services()
@@ -87,16 +79,6 @@ class Data extends Model
     public function tariffLists()
     {
         return $this->hasMany(TariffList::class, 'data_id', 'data_id');
-    }
-
-    public function files()
-    {
-        return $this->hasMany(File::class, 'data_id', 'data_id');
-    }
-
-    public function logs()
-    {
-        return $this->hasMany(Log::class, 'data_id', 'data_id');
     }
 
     public function occupations()

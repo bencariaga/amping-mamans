@@ -21,8 +21,7 @@
         $isSelf = Auth::id() === $user->member_id;
         $updateRoute = $isSelf ? route('user.profile.update') : route('profiles.users.update', ['user' => $user->member_id]);
         $destroyRoute = $isSelf ? route('user.profile.destroy') : route('profiles.users.destroy', ['user' => $user->member_id]);
-        $imageRecord = $user->files()->firstWhere('file_type', 'Image');
-        $profileImage = optional($imageRecord)->filename;
+        $profileImage = $user->staff?->file_name;
         $roleLabel = $user->member_type === 'Staff' && $user->staff ? optional($user->staff->role)->role : 'N/A';
         $fullName = trim($user->first_name . ' ' . $user->last_name);
     @endphp

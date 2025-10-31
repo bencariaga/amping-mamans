@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Core\SearchController;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Http\Controllers\Core\SearchController;
 
 class SidebarController extends Controller
 {
-    public function assistanceRequest(): View
-    {
-        return view('pages.sidebar.application-entry.assistance-request');
-    }
-
     public function usersList(Request $request)
     {
         return app(SearchController::class)->listUsers($request);
@@ -21,6 +16,11 @@ class SidebarController extends Controller
     public function clientsList(Request $request)
     {
         return app(SearchController::class)->listClients($request);
+    }
+
+    public function assistanceRequest(): View
+    {
+        return view('pages.sidebar.application-entry.request-service-assistance');
     }
 
     public function users(): View

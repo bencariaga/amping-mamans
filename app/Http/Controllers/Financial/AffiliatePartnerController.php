@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use App\Models\Storage\Data;
-use App\Models\User\AffiliatePartner;
 use App\Models\Authentication\Account;
+use App\Models\Operation\Data;
 use App\Models\Operation\GuaranteeLetter;
+use App\Models\User\AffiliatePartner;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AffiliatePartnerController extends Controller
 {
@@ -21,7 +21,8 @@ class AffiliatePartnerController extends Controller
         $base = "{$prefix}-{$year}";
         $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
-        return $base . '-' . Str::padLeft($lastNum + 1, 9, '0');
+
+        return $base.'-'.Str::padLeft($lastNum + 1, 9, '0');
     }
 
     public function index()
@@ -49,7 +50,7 @@ class AffiliatePartnerController extends Controller
                     'data_id' => $dataId,
                     'data_status' => 'Unarchived',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
                 $accountId = $this->generateNextId('ACCOUNT', 'accounts', 'account_id');
@@ -59,7 +60,7 @@ class AffiliatePartnerController extends Controller
                     'account_status' => 'Active',
                     'registered_at' => now(),
                     'last_deactivated_at' => null,
-                    'last_reactivated_at' => null
+                    'last_reactivated_at' => null,
                 ]);
 
                 AffiliatePartner::create([
@@ -83,7 +84,7 @@ class AffiliatePartnerController extends Controller
                 if ($partner) {
                     $partner->update([
                         'affiliate_partner_name' => (string) $partnerName,
-                        'affiliate_partner_type' => (string) $partnerType
+                        'affiliate_partner_type' => (string) $partnerType,
                     ]);
 
                     if ($partner->account && $partner->account->data) {
@@ -106,7 +107,7 @@ class AffiliatePartnerController extends Controller
                     $partner->delete();
                     $referencing = DB::table('affiliate_partners')->where('account_id', $accountId)->exists();
 
-                    if (!$referencing) {
+                    if (! $referencing) {
                         $account = Account::find($accountId);
                         if ($account) {
                             $dataId = $account->data_id;
@@ -127,15 +128,15 @@ class AffiliatePartnerController extends Controller
                     'id' => $partner->affiliate_partner_id,
                     'name' => $partner->affiliate_partner_name,
                     'type' => $partner->affiliate_partner_type,
-                    'status' => 'existing'
+                    'status' => 'existing',
                 ];
             });
 
             return response()->json(['success' => true, 'affiliatePartners' => $updatedAffiliatePartners]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 }
-

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Communication;
 
 use App\Http\Controllers\Controller;
 use App\Models\Communication\MessageTemplate;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

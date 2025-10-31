@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Actions\DatabaseTableIdGeneration\GenerateClientId;
 use App\Models\Authentication\Occupation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,7 @@ class Client extends Model
         'client_id',
         'member_id',
         'occupation_id',
+        'client_type',
         'birthdate',
         'age',
         'sex',
@@ -39,12 +41,7 @@ class Client extends Model
 
         static::creating(function ($client) {
             if (empty($client->client_id)) {
-                $year = Carbon::now()->year;
-                $base = "CLIENT-{$year}";
-                $latest = static::where('client_id', 'like', "{$base}%")->latest('client_id')->first();
-                $last = $latest ? (int) Str::substr($latest->client_id, -9) : 0;
-                $next = Str::padLeft($last + 1, 9, '0');
-                $client->client_id = "{$base}-{$next}";
+                $client->client_id = GenerateClientId::execute();
             }
         });
     }
@@ -80,9 +77,9 @@ class Client extends Model
         return $this->hasOne(Patient::class, 'client_id', 'client_id');
     }
 
-    public function households()
+    public function householdMembers()
     {
-        return $this->hasMany(Household::class, 'client_id', 'client_id');
+        return $this->hasMany(HouseholdMember::class, 'client_id', 'client_id');
     }
 
     public function occupation()

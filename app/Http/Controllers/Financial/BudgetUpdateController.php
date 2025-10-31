@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
 use App\Models\Operation\BudgetUpdate;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use App\Models\User\Sponsor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

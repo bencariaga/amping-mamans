@@ -15,148 +15,104 @@
 @endsection
 
 @section('content')
-        @php
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Carbon;
+    <div class="container">
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="datetime-card">
+                    <div class="datetime-content">
+                        <i class="fas fa-clock fa-2x me-3"></i>
+                        <span id="live-clock" class="datetime-text"></span>
+                    </div>
 
-    $currentYear = Carbon::now()->year;
-    $startOfYear = Carbon::create($currentYear, 1, 1, 0, 0, 0);
-    $endOfYear = Carbon::create($currentYear, 12, 31, 23, 59, 59);
-
-    $startOfToday = Carbon::now()->startOfDay();
-    $endOfToday = Carbon::now()->endOfDay();
-
-    $glYearCount = DB::table('guarantee_letters')->count();
-    $glTodayCount = DB::table('guarantee_letters')->count();
-        @endphp
-
-        <div id="top-section">
-            <div class="datetime-section">
-                <div class="date-container">
-                    <div class="datetime" id="live-clock"></div>
+                    @include('components.utility.date')
                 </div>
-
-                @include('components.utility.date')
             </div>
         </div>
 
-        <div id="bottom-section">
-            <div class="dashboard-grid mb-4">
-                <div class="budget-section">
-                    <div class="dashboard-card">
-                        <a class="text-decoration-none text-reset" onclick="window.openAllocateBudgetModal()">
-                            <h6 class="card-title">Allocated Budget:</h6>
-                            <div class="amount" id="allocated-budget-amount">Loading...</div>
-                        </a>
-                    </div>
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <div class="info-card">
+                    <div class="info-card-header"><span>Approved Applicant Application Entries</span></div>
 
-                    <div class="dashboard-card">
-                        <a class="text-decoration-none text-reset">
-                            <h6 class="card-title">Budget Amount Used:</h6>
-                            <div class="amount" id="budget-used-amount">Loading...</div>
-                        </a>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <a class="text-decoration-none text-reset">
-                            <h6 class="card-title">Remaining Budget:</h6>
-                            <div class="amount" id="remaining-budget-amount">Loading...</div>
-                        </a>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <a class="text-decoration-none text-reset" onclick="window.openSupplementaryBudgetModal()">
-                            <h6 class="card-title">Supplementary Budget Used:</h6>
-                            <div class="amount" id="supplementary-budget-status">Loading...</div>
-                        </a>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <h6 class="card-title">Approved Guarantee Letters:</h6>
-
-                        <div class="d-flex flex-row mt-3 mb-4 gap-5">
-                            <div>
-                                <div class="card-subtitle"><b>Today:</b></div>
-                                <div id="card-subamount-today" class="card-subamount">{{ $glTodayCount }}</div>
+                    <div class="info-card-body">
+                        <div class="gl-stats">
+                            <div class="gl-stat-item">
+                                <div class="gl-stat-label">Today</div>
+                                <div class="gl-stat-value gl-stat-value-primary" id="gl-today-count">{{ $glTodayCount }}</div>
                             </div>
 
-                            <div>
-                                <div class="card-subtitle"><b>In {{ $currentYear }}:</b></div>
-                                <div id="card-subamount-year" class="card-subamount">{{ $glYearCount }}</div>
+                            <div class="gl-stat-divider"></div>
+
+                            <div class="gl-stat-item">
+                                <div class="gl-stat-label">In {{ $currentYear }}</div>
+                                <div class="gl-stat-value gl-stat-value-primary" id="gl-year-count">{{ $glYearCount }}</div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="show-more pt-3 pb-0">
-                            <a class="show-more-text" href="{{ route('applications.list') }}">View List</a>
+                    <div class="info-card-footer">
+                        <a href="{{ route('applications.list') }}" class="info-card-link">View All Application Entries<i class="fas fa-chevron-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 d-flex align-items-center">
+                <div class="row g-3 h-100">
+                    <div class="col-md-6">
+                        <div class="stat-card stat-card-primary" onclick="window.openAllocateBudgetModal()">
+                            <div class="stat-card-body">
+                                <div class="stat-card-icon"><i class="fas fa-wallet"></i></div>
+
+                                <div class="stat-card-content">
+                                    <h6 class="stat-card-title">Allocated Budget<br>&nbsp;</h6>
+                                    <div class="stat-card-value" id="allocated-budget-amount">Loading...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="trinity-card d-flex flex-column justify-content-between">
-                        <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="{{ route('profiles.applicants.create') }}">
-                            <div class="card-special d-flex align-items-center">
-                                <i class="fas fa-user-plus" style="width: 32px; aspect-ratio: 1 / 1;"></i>
-                                <h6 class="trinity-text">Register Applicant<br>(Multi-Step Form)</h6>
-                            </div>
-                        </a>
+                    <div class="col-md-6">
+                        <div class="stat-card stat-card-primary">
+                            <div class="stat-card-body">
+                                <div class="stat-card-icon"><i class="fas fa-money-bill-wave"></i></div>
 
-                        <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="{{ route('request-service-assistance') }}">
-                            <div class="card-special d-flex align-items-center">
-                                <i class="fas fa-plus-circle"></i>
-                                <h6 class="trinity-text">Request Service Assistance</h6>
+                                <div class="stat-card-content">
+                                    <h6 class="stat-card-title">Budget Used<br>&nbsp;</h6>
+                                    <div class="stat-card-value" id="budget-used-amount">Loading...</div>
+                                </div>
                             </div>
-                        </a>
-
-                        <a class="dashboard-card text-decoration-none d-flex justify-content-between" id="trinityBtns" href="{{ route('message-templates.list') }}">
-                            <div class="card-special d-flex align-items-center">
-                                <i class="fas fa-comment-alt"></i>
-                                <h6 class="trinity-text">SMS Templates</h6>
-                            </div>
-                        </a>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card-section">
-                    <a class="action-card" href="{{ route('guarantee-letter') }}">
-                        <i class="mt-2 fas fa-file-alt"></i>
-                        <h6>Guarantee Letter</h6>
-                    </a>
+                    <div class="col-md-6">
+                        <div class="stat-card stat-card-primary">
+                            <div class="stat-card-body">
+                                <div class="stat-card-icon"><i class="fas fa-piggy-bank"></i></div>
 
-                    <a class="action-card" href="{{ route('tariff-lists') }}">
-                        <i class="mt-2 fas fa-list-alt"></i>
-                        <h6 class="mb-2">Tariff Lists</h6>
-                    </a>
+                                <div class="stat-card-content">
+                                    <h6 class="stat-card-title">Remaining Budget<br>&nbsp;</h6>
+                                    <div class="stat-card-value" id="remaining-budget-amount">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <a class="action-card" href="">
-                        <i class="mt-2 fas fa-chart-line"></i>
-                        <h6 class="mb-2">Reports</h6>
-                    </a>
-                </div>
+                    <div class="col-md-6">
+                        <div class="stat-card stat-card-primary" onclick="window.openSupplementaryBudgetModal()">
+                            <div class="stat-card-body">
+                                <div class="stat-card-icon"><i class="fas fa-sack-dollar"></i></div>
 
-                <div class="service-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="service-header">SERVICE TYPE</th>
-                                <th class="tariff-header">TARIFF LIST VERSION USED</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach($serviceTariffMapping as $serviceType => $tariffId)
-                                <tr>
-                                    <td class="fw-semibold">{{ $serviceType }}</td>
-                                    <td class="fw-semibold">{{ $tariffId }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    <div class="show-more">
-                        <a class="show-more-text" href="{{ route('tariff-lists') }}">Show More...</a>
+                                <div class="stat-card-content">
+                                    <h6 class="stat-card-title">Is Supplementary<br>Budget Used?</h6>
+                                    <div class="stat-card-value" id="supplementary-budget-status">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 @endsection
 
 @section('footer')

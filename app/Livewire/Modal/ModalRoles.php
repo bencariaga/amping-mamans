@@ -2,76 +2,84 @@
 
 namespace App\Livewire\Modal;
 
-use Livewire\Component;
 use App\Models\Authentication\Role;
+use App\Models\Operation\Data;
 use App\Models\User\Staff;
-use App\Models\Storage\Data;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Livewire\Component;
 
 class ModalRoles extends Component
 {
     public $roles = [];
+
     public $newRoleName = '';
+
     public $newAllowedActions = [];
+
     public $newAccessScope = [];
+
     public $editingRoleId = null;
+
     public $editingRoleName = '';
+
     public $editingAllowedActions = [];
+
     public $editingAccessScope = [];
+
     public $isOpen = false;
 
     protected $listeners = [
         'loadRoles' => 'loadRoles',
         'openRolesModal' => 'openModal',
-        'closeRolesModal' => 'closeModal'
+        'closeRolesModal' => 'closeModal',
     ];
 
     private function allowedActionsOptions(): array
     {
         return [
-            "Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services",
+            'Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services',
             "Create, view, edit, archive, download, and print reports, including the AMPING's financial status and user activity data",
-            "Create, view, edit, archive, download, and print templates for assistance request forms, guarantee letters, and text messages",
-            "Create, view, edit, and delete tariff lists and change the version of tariff lists to use for assistance amount calculation",
-            "Create, view, edit, and delete staff role names and client occupation names",
-            "Assign and reassigned roles to staff members",
-            "Approve or reject assistance requests and authorize guarantee letters",
-            "Send text messages to applicants with approved guarantee letters",
-            "Update, add to, and monitor the program budget from government funds, sponsors, and other sources",
-            "Delete system cache and log data when necessary",
-            "View and use assistance request templates to create assistance request forms",
+            'Create, view, edit, archive, download, and print templates for assistance request forms, guarantee letters, and text messages',
+            'Create, view, edit, and delete tariff lists and change the version of tariff lists to use for assistance amount calculation',
+            'Create, view, edit, and delete staff role names and client occupation names',
+            'Assign and reassigned roles to staff members',
+            'Approve or reject assistance requests and authorize guarantee letters',
+            'Send text messages to applicants with approved guarantee letters',
+            'Update, add to, and monitor the program budget from government funds, sponsors, and other sources',
+            'Delete system cache and log data when necessary',
+            'View and use assistance request templates to create assistance request forms',
             "View the AMPING's financial status, including the program budget sources from government funds, sponsors, and other sources",
-            "View the staff role names and client occupation names",
-            "View the roles of staff members",
-            "View the version of tariff lists to use for assistance amount calculation",
-            "View and use guarantee letter templates to create guarantee letters",
-            "View accounts of staff members, applicants, sponsors, affiliate partners, and services",
-            "View and use text message templates to create text messages"
+            'View the staff role names and client occupation names',
+            'View the roles of staff members',
+            'View the version of tariff lists to use for assistance amount calculation',
+            'View and use guarantee letter templates to create guarantee letters',
+            'View accounts of staff members, applicants, sponsors, affiliate partners, and services',
+            'View and use text message templates to create text messages',
         ];
     }
 
     private function accessScopeOptions(): array
     {
         return [
-            "Full access to every web page, every feature, and every module, without restrictions",
-            "Full access to profiles and system activities of staff members, applicants, patients, sponsors, and affiliate partners",
-            "Full access to templates for assistance request forms, guarantee letters, and text messages",
-            "Full access to financial records, such as budgets, expenses, and funding sources",
-            "Full access to staff role and client occupation names, and tariff lists",
-            "Full access to staff role and tariff list adjustments",
-            "Full access to data and account archiving, deletion, and deactivation",
-            "Full access to logs and reports",
-            "Access limited to viewing and editing account profiles",
-            "Access limited to viewing templates for assistance request forms",
-            "Access limited to viewing financial records, such as budgets, expenses, and funding sources",
-            "Access limited to viewing staff roles, client occupations, and tariff list versions",
-            "Access limited to viewing account profiles",
-            "Access limited to viewing templates for guarantee letters",
-            "Access limited to approving and rejecting assistance requests and authorizing guarantee letters",
-            "Access limited to viewing templates for text messages",
-            "Access limited to sending text messages to applicants with approved guarantee letters"
+            'Full access to every web page, every feature, and every module, without restrictions',
+            'Full access to profiles and system activities of staff members, applicants, patients, sponsors, and affiliate partners',
+            'Full access to templates for assistance request forms, guarantee letters, and text messages',
+            'Full access to financial records, such as budgets, expenses, and funding sources',
+            'Full access to staff role and client occupation names, and tariff lists',
+            'Full access to staff role and tariff list adjustments',
+            'Full access to data and account archiving, deletion, and deactivation',
+            'Full access to logs and reports',
+            'Access limited to viewing and editing account profiles',
+            'Access limited to viewing templates for assistance request forms',
+            'Access limited to viewing financial records, such as budgets, expenses, and funding sources',
+            'Access limited to viewing staff roles, client occupations, and tariff list versions',
+            'Access limited to viewing account profiles',
+            'Access limited to viewing templates for guarantee letters',
+            'Access limited to approving and rejecting assistance requests and authorizing guarantee letters',
+            'Access limited to viewing templates for text messages',
+            'Access limited to sending text messages to applicants with approved guarantee letters',
         ];
     }
 
@@ -91,6 +99,7 @@ class ModalRoles extends Component
                 $result[] = $opt;
             }
         }
+
         return $result;
     }
 
@@ -115,6 +124,7 @@ class ModalRoles extends Component
             ->map(function ($role) use ($optionsA, $optionsS) {
                 $allowed = $role->allowed_actions ?? '';
                 $scope = $role->access_scope ?? '';
+
                 return [
                     'role_id' => $role->role_id,
                     'data_id' => $role->data_id,
@@ -122,7 +132,7 @@ class ModalRoles extends Component
                     'allowed_actions' => $allowed,
                     'allowed_actions_list' => $this->matchOptionsFromString($allowed, $optionsA),
                     'access_scope' => $scope,
-                    'access_scope_list' => $this->matchOptionsFromString($scope, $optionsS)
+                    'access_scope_list' => $this->matchOptionsFromString($scope, $optionsS),
                 ];
             })
             ->toArray();
@@ -138,14 +148,14 @@ class ModalRoles extends Component
                 'data_id' => $dataId,
                 'data_status' => 'Unarchived',
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
             Role::create([
                 'role_id' => $this->generateNextId('ROLE', 'roles', 'role_id'),
                 'data_id' => $dataId,
                 'role' => $this->newRoleName,
                 'allowed_actions' => collect($this->newAllowedActions)->join('. '),
-                'access_scope' => collect($this->newAccessScope)->join('. ')
+                'access_scope' => collect($this->newAccessScope)->join('. '),
             ]);
             DB::commit();
             $this->newRoleName = '';
@@ -155,7 +165,7 @@ class ModalRoles extends Component
             $this->dispatch('showToast', ['message' => 'Role added', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error adding role: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error adding role: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -189,7 +199,7 @@ class ModalRoles extends Component
                 $role->update([
                     'role' => $this->editingRoleName,
                     'allowed_actions' => collect($this->editingAllowedActions)->join('. '),
-                    'access_scope' => collect($this->editingAccessScope)->join('. ')
+                    'access_scope' => collect($this->editingAccessScope)->join('. '),
                 ]);
                 DB::commit();
                 $this->cancelEdit();
@@ -198,7 +208,7 @@ class ModalRoles extends Component
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error updating role: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error updating role: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -209,11 +219,13 @@ class ModalRoles extends Component
             $role = Role::where('role_id', $roleId)->first();
             if (! $role) {
                 $this->dispatch('showToast', ['message' => 'Role not found', 'type' => 'error']);
+
                 return;
             }
             $staffCount = Staff::where('role_id', $role->role_id)->count();
             if ($staffCount > 0) {
                 $this->dispatch('showToast', ['message' => "Cannot delete role '{$role->role}' because {$staffCount} staff member(s) are assigned to it.", 'type' => 'error']);
+
                 return;
             }
             $dataId = $role->data_id;
@@ -227,7 +239,7 @@ class ModalRoles extends Component
             $this->dispatch('showToast', ['message' => 'Role deleted', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error deleting role: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error deleting role: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -235,10 +247,11 @@ class ModalRoles extends Component
     {
         $year = Carbon::now()->year;
         $base = "{$prefix}-{$year}";
-        $max  = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
+        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
         $next = $lastNum + 1;
         $padded = Str::padLeft($next, 9, '0');
+
         return "{$base}-{$padded}";
     }
 
@@ -251,7 +264,7 @@ class ModalRoles extends Component
     {
         return view('livewire.modal.modal-roles', [
             'allowedActionsOptions' => $this->allowedActionsOptions(),
-            'accessScopeOptions' => $this->accessScopeOptions()
+            'accessScopeOptions' => $this->accessScopeOptions(),
         ]);
     }
 }

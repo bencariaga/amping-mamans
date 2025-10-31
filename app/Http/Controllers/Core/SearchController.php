@@ -28,7 +28,7 @@ class SearchController extends Controller
         $sortBy = $request->input('sort_by', 'latest');
         $perPage = $request->input('per_page', 4);
 
-        $baseQuery = Member::with(['profilePictures', 'staff.role'])->whereHas('staff');
+        $baseQuery = Member::with(['staff.role'])->whereHas('staff');
 
         if ($search) {
             $term = "%{$search}%";

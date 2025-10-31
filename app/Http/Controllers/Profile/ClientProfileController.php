@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use App\Models\Authentication\Account;
 use App\Models\Authentication\Occupation;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use App\Models\User\Applicant;
 use App\Models\User\Client;
 use App\Models\User\Contact;

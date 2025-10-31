@@ -34,6 +34,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'showDashboard'])->name('dashboard');
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+    Route::post('/clear-cache', [DashboardController::class, 'clearCache'])->name('clear-cache');
 
     Route::get('/tariff-lists', [SearchController::class, 'listTariffs'])->name('tariff-lists');
     Route::get('/request-service-assistance', [ApplicationController::class, 'showAssistanceRequest'])->name('request-service-assistance');

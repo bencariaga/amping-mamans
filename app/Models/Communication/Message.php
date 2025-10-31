@@ -2,12 +2,11 @@
 
 namespace App\Models\Communication;
 
+use App\Actions\DatabaseTableIdGeneration\GenerateMessageId;
 use App\Models\Operation\Application;
 use App\Models\User\Contact;
 use App\Models\User\Staff;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class Message extends Model
 {
@@ -23,7 +22,6 @@ class Message extends Model
 
     protected $fillable = [
         'message_id',
-        'msg_tmp_id',
         'staff_id',
         'contact_id',
         'message_text',
@@ -36,12 +34,7 @@ class Message extends Model
 
         static::creating(function ($message) {
             if (empty($message->message_id)) {
-                $year = Carbon::now()->year;
-                $base = "MESSAGE-{$year}";
-                $latest = static::where('message_id', 'like', "{$base}%")->latest('message_id')->first();
-                $last = $latest ? (int) Str::substr($latest->message_id, -9) : 0;
-                $next = Str::padLeft($last + 1, 9, '0');
-                $message->message_id = "{$base}-{$next}";
+                $message->message_id = GenerateMessageId::execute();
             }
         });
     }
@@ -51,23 +44,18 @@ class Message extends Model
         return (new static)->getKeyName();
     }
 
-    public function template()
-    {
-        return $this->belongsTo(MessageTemplate::class, 'msg_tmp_id');
-    }
-
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_id');
+        return $this->belongsTo(Staff::class, 'staff_id', 'staff_id');
     }
 
     public function contact()
     {
-        return $this->belongsTo(Contact::class, 'contact_id');
+        return $this->belongsTo(Contact::class, 'contact_id', 'contact_id');
     }
 
-    public function application()
+    public function applications()
     {
-        return $this->hasOne(Application::class, 'message_id');
+        return $this->hasMany(Application::class, 'message_id', 'message_id');
     }
 }

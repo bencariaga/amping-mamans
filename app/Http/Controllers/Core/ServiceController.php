@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use App\Models\Operation\Service;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
@@ -17,40 +17,41 @@ class ServiceController extends Controller
     {
         $year = Carbon::now()->year;
         $base = "{$prefix}-{$year}";
-        $max  = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
+        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
         $next = $lastNum + 1;
         $padded = Str::padLeft($next, 9, '0');
+
         return "{$base}-{$padded}";
     }
 
     private function assistScopeOptions(): array
     {
         return [
-            "Inpatient Care",
-            "Outpatient Care",
-            "Generic Drug",
-            "Branded Drug",
-            "Biopsy",
-            "CT Scan",
-            "MRI",
-            "Pap Test",
-            "PET Scan",
-            "Ultrasound",
-            "X-Ray Scan",
-            "Endoscopy",
-            "Electrolyte Imbalance",
-            "End-Stage Renal Disease",
-            "Drug Overdose",
-            "Liver Dialysis",
-            "Hypervolemia",
-            "Peritoneal Dialysis",
-            "Poisoning",
-            "Uremia",
-            "Anemia",
-            "Blood Transfusion",
-            "Childbirth",
-            "Hemorrhage"
+            'Inpatient Care',
+            'Outpatient Care',
+            'Generic Drug',
+            'Branded Drug',
+            'Biopsy',
+            'CT Scan',
+            'MRI',
+            'Pap Test',
+            'PET Scan',
+            'Ultrasound',
+            'X-Ray Scan',
+            'Endoscopy',
+            'Electrolyte Imbalance',
+            'End-Stage Renal Disease',
+            'Drug Overdose',
+            'Liver Dialysis',
+            'Hypervolemia',
+            'Peritoneal Dialysis',
+            'Poisoning',
+            'Uremia',
+            'Anemia',
+            'Blood Transfusion',
+            'Childbirth',
+            'Hemorrhage',
         ];
     }
 
@@ -90,7 +91,7 @@ class ServiceController extends Controller
                 'data_id' => $svc->data_id,
                 'service_type' => $svc->service_type ?? '',
                 'assist_scope' => $assist,
-                'assist_scope_list' => $this->matchOptionsFromString($assist, $options)
+                'assist_scope_list' => $this->matchOptionsFromString($assist, $options),
             ];
         });
 
@@ -108,7 +109,7 @@ class ServiceController extends Controller
 
         try {
             foreach ($creates as $svcData) {
-                if (!is_array($svcData) || empty($svcData['service_type'])) {
+                if (! is_array($svcData) || empty($svcData['service_type'])) {
                     continue;
                 }
 
@@ -124,19 +125,19 @@ class ServiceController extends Controller
                     'data_id' => $dataId,
                     'data_status' => 'Unarchived',
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ]);
 
                 Service::create([
                     'service_id' => $this->generateNextId('SERVICE', 'services', 'service_id'),
                     'data_id' => $dataId,
                     'service_type' => $svcName,
-                    'assist_scope' => isset($svcData['assist_scope']) ? $svcData['assist_scope'] : null
+                    'assist_scope' => isset($svcData['assist_scope']) ? $svcData['assist_scope'] : null,
                 ]);
             }
 
             foreach ($updates as $svcData) {
-                if (!is_array($svcData) || empty($svcData['service_id']) || empty($svcData['service_type'])) {
+                if (! is_array($svcData) || empty($svcData['service_id']) || empty($svcData['service_type'])) {
                     continue;
                 }
 
@@ -149,12 +150,12 @@ class ServiceController extends Controller
 
                 Service::where('service_id', $svcId)->update([
                     'service_type' => $svcName,
-                    'assist_scope' => isset($svcData['assist_scope']) ? $svcData['assist_scope'] : null
+                    'assist_scope' => isset($svcData['assist_scope']) ? $svcData['assist_scope'] : null,
                 ]);
             }
 
             foreach ($deletes as $svcId) {
-                if (!is_string($svcId) || Str::of($svcId)->trim() === '') {
+                if (! is_string($svcId) || Str::of($svcId)->trim() === '') {
                     continue;
                 }
 
@@ -179,7 +180,7 @@ class ServiceController extends Controller
                         }
                     }
 
-                    if (!$referencing) {
+                    if (! $referencing) {
                         Data::where('data_id', $dataId)->delete();
                     }
                 }
@@ -197,13 +198,14 @@ class ServiceController extends Controller
                     'data_id' => $svc->data_id,
                     'service_type' => $svc->service_type ?? '',
                     'assist_scope' => $assist,
-                    'assist_scope_list' => $this->matchOptionsFromString($assist, $options)
+                    'assist_scope_list' => $this->matchOptionsFromString($assist, $options),
                 ];
             });
 
             return response()->json(['success' => true, 'services' => $updatedServices]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -219,6 +221,7 @@ class ServiceController extends Controller
 
                 if ($expenseCount > 0) {
                     DB::rollBack();
+
                     return response()->json(['success' => false, 'error' => "Cannot delete service '{$svc->service_type}' because {$expenseCount} expense range(s) reference it."]);
                 }
 
@@ -234,17 +237,19 @@ class ServiceController extends Controller
                     }
                 }
 
-                if (!$referencing) {
+                if (! $referencing) {
                     Data::where('data_id', $dataId)->delete();
                 }
 
                 DB::commit();
+
                 return response()->json(['success' => true]);
             }
 
             return response()->json(['success' => false, 'error' => 'Service not found.']);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }

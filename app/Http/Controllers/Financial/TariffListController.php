@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
+use App\Models\Operation\Data;
 use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\Service;
 use App\Models\Operation\TariffList;
-use App\Models\Storage\Data;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;

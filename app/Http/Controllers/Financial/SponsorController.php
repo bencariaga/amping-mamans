@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Financial;
 use App\Http\Controllers\Controller;
 use App\Models\Authentication\Account;
 use App\Models\Operation\BudgetUpdate;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use App\Models\User\Member;
 use App\Models\User\Sponsor;
 use Exception;

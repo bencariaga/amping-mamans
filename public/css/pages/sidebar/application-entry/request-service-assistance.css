@@ -242,11 +242,3 @@
 .right-container {
     flex: 4;
 }
-
-@media (max-width: 768px) {
-    .left-container,
-    .right-container {
-        flex: 1 1 100%;
-        min-width: auto;
-    }
-}

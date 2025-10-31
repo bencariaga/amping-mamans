@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\Controller;
-use App\Models\Storage\Data;
+use App\Models\Operation\Data;
 use App\Models\User\Household;
 use Illuminate\Http\Request;
 
