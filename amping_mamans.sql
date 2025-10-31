@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 02:30 AM
+-- Generation Time: Oct 31, 2025 at 02:12 PM
 -- Server version: 8.0.43
 -- PHP Version: 8.4.13
 
@@ -488,6 +488,7 @@ CREATE TABLE `guarantee_letters` (
   `data_id` varchar(23) NOT NULL,
   `application_id` varchar(25) NOT NULL,
   `sponsor_id` varchar(15) NOT NULL,
+  `is_cancelled` enum('Yes','No') NOT NULL,
   `is_sponsored` enum('Yes','No') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -747,7 +748,7 @@ CREATE TABLE `staff` (
 --
 
 INSERT INTO `staff` (`staff_id`, `member_id`, `role_id`, `file_name`, `file_extension`, `password`) VALUES
-('STAFF-2025-01', 'MEMBER-2025-AUG-0001', 'ROLE-2025-1', 'profile_pictures/9v06HSc7tl1zcY1R2tgzFNMPqpwESdaT6kKMdrtx', '.png', '$2y$10$LfnfOs8unDeUIS5BGIxQ9uJWb/O2XW3Hy/5iqBytMyCI6A0qkL12y');
+('STAFF-2025-01', 'MEMBER-2025-AUG-0001', 'ROLE-2025-1', 'profile_pictures/dRGNkHAAEqiMTUWPdeQlzbgWagXuFnaoQc4zjzqL.png', '.png', '$2y$10$LfnfOs8unDeUIS5BGIxQ9uJWb/O2XW3Hy/5iqBytMyCI6A0qkL12y');
 
 -- --------------------------------------------------------
 

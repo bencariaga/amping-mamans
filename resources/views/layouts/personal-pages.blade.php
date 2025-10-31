@@ -28,7 +28,6 @@
 
                 themeToggle.addEventListener('click', () => {
                     currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-
                     document.documentElement.classList.add('theme-transition');
                     document.documentElement.setAttribute('data-theme', currentTheme);
                     localStorage.setItem('theme', currentTheme);
@@ -70,7 +69,6 @@
         <link href="{{ asset('css/layouts/media-queries.css') }}" rel="stylesheet">
         <link href="{{ asset('css/layouts/variables.css') }}" rel="stylesheet">
         @stack('styles')
-        @livewireStyles
     </head>
 
     <body class="d-flex flex-column min-vh-100 bg-transition">
@@ -99,100 +97,92 @@
                 <div class="sidebar-content">
                     <nav class="d-flex flex-column px-3 sidebar-nav">
                         <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+                            <div class="nav-icon"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></div>
                             <div class="nav-text">Log Out</div>
                         </a>
 
                         <a class="nav-link" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to clear the cache?')) { document.getElementById('clear-cache-form').submit(); }">
-                            <div class="nav-icon"><i class="fas fa-broom"></i></div>
+                            <div class="nav-icon"><i class="fas fa-broom" aria-hidden="true"></i></div>
                             <div class="nav-text">Clear Cache</div>
                         </a>
 
                         <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#essentialsMenu" role="button" aria-expanded="false" aria-controls="essentialsMenu">
-                            <div class="nav-icon"><i class="fas fa-toolbox"></i></div>
+                            <div class="nav-icon"><i class="fas fa-toolbox" aria-hidden="true"></i></div>
                             <div class="nav-text">Essentials</div>
                         </a>
                         <div class="collapse" id="essentialsMenu">
                             <a class="nav-link sub-nav-link" id="multiStepFormBtn" href="{{ route('profiles.applicants.create') }}">
-                                <div class="nav-icon"><i class="fas fa-list-ol"></i></div>
+                                <div class="nav-icon"><i class="fas fa-list-ol" aria-hidden="true"></i></div>
                                 <div class="nav-text">Multi-Step Form<br>(New Applicants)</div>
                             </a>
                             <a class="nav-link sub-nav-link" id="multiStepFormBtn" href="{{ route('request-service-assistance') }}">
-                                <div class="nav-icon"><i class="fas fa-list-ol"></i></div>
+                                <div class="nav-icon"><i class="fas fa-list-ol" aria-hidden="true"></i></div>
                                 <div class="nav-text">Multi-Step Form<br>(Existing Applicants)</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('tariff-lists') }}">
-                                <div class="nav-icon"><i class="fas fa-list-alt"></i></div>
+                                <div class="nav-icon"><i class="fas fa-list-alt" aria-hidden="true"></i></div>
                                 <div class="nav-text">Tariff Lists</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('guarantee-letter') }}">
-                                <div class="nav-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="nav-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
                                 <div class="nav-text">Guarantee Letters</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('message-templates.list') }}">
-                                <div class="nav-icon"><i class="fas fa-comment-alt"></i></div>
+                                <div class="nav-icon"><i class="fas fa-comment-alt" aria-hidden="true"></i></div>
                                 <div class="nav-text">SMS Templates</div>
                             </a>
-                            <a class="nav-link sub-nav-link" onclick="window.openRolesModal()">
-                                <div class="nav-icon"><i class="fa-solid fa-user-tag"></i></div>
-                                <div class="nav-text">Roles</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" onclick="window.openOccupationsModal()">
-                                <div class="nav-icon"><i class="fas fa-briefcase"></i></div>
-                                <div class="nav-text">Occupations</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" onclick="window.openServicesModal()">
-                                <div class="nav-icon"><i class="fas fa-hand-holding-medical"></i></div>
-                                <div class="nav-text">Services</div>
+                            <a class="nav-link sub-nav-link" href="">
+                                <div class="nav-icon"><i class="fa fa-asterisk" aria-hidden="true"></i></div>
+                                <div class="nav-text">Miscellaneous</div>
                             </a>
                         </div>
 
                         <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#accountsMenu" role="button" aria-expanded="false" aria-controls="accountsMenu">
-                            <div class="nav-icon"><i class="fas fa-users-cog"></i></div>
+                            <div class="nav-icon"><i class="fas fa-users-cog" aria-hidden="true"></i></div>
                             <div class="nav-text">Accounts</div>
                         </a>
                         <div class="collapse" id="accountsMenu">
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.users.list') }}">
-                                <div class="nav-icon"><i class="fas fa-user-friends"></i></div>
+                                <div class="nav-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></div>
                                 <div class="nav-text">Users</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.applicants.list') }}">
-                                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                                <div class="nav-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
                                 <div class="nav-text">Applicants</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.households.list') }}">
-                                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                                <div class="nav-icon"><i class="fas fa-home" aria-hidden="true"></i></div>
                                 <div class="nav-text">Households</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('sponsors.list') }}">
-                                <div class="nav-icon"><i class="fas fa-hands-helping"></i></div>
+                                <div class="nav-icon"><i class="fas fa-hands-helping" aria-hidden="true"></i></div>
                                 <div class="nav-text">Sponsors</div>
                             </a>
                             <a class="nav-link sub-nav-link" onclick="window.openAffiliatePartnersModal()">
-                                <div class="nav-icon"><i class="fas fa-handshake"></i></div>
+                                <div class="nav-icon"><i class="fas fa-handshake" aria-hidden="true"></i></div>
                                 <div class="nav-text">Affiliate Partners</div>
                             </a>
                         </div>
 
                         <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#systemMenu" role="button" aria-expanded="false" aria-controls="systemMenu">
-                            <div class="nav-icon"><i class="fas fa-cogs"></i></div>
+                            <div class="nav-icon"><i class="fas fa-cogs" aria-hidden="true"></i></div>
                             <div class="nav-text">System</div>
                         </a>
                         <div class="collapse" id="systemMenu">
                             <a class="nav-link sub-nav-link" href="#">
-                                <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div>
+                                <div class="nav-icon"><i class="fas fa-clipboard-list" aria-hidden="true"></i></div>
                                 <div class="nav-text">Audit Logs</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="#">
-                                <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                                <div class="nav-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                                 <div class="nav-text">Reports</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="#">
-                                <div class="nav-icon"><i class="fas fa-user-slash"></i></div>
+                                <div class="nav-icon"><i class="fas fa-user-slash" aria-hidden="true"></i></div>
                                 <div class="nav-text">Deactivated Accounts</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="#">
-                                <div class="nav-icon"><i class="fas fa-archive"></i></div>
+                                <div class="nav-icon"><i class="fas fa-archive" aria-hidden="true"></i></div>
                                 <div class="nav-text">Archives</div>
                             </a>
                         </div>
@@ -247,18 +237,9 @@
             </main>
         </div>
 
-        @include('pages.dashboard.landing.allocate-budget')
-        @include('pages.dashboard.landing.supplementary-budget')
-        @include('components.overlays.modals.affiliate-partners')
-        @include('components.overlays.modals.occupations')
-        @include('components.overlays.modals.roles')
-        @include('components.overlays.modals.services')
-        @include('components.overlays.modals.sponsors')
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
         <script src="{{ asset('js/components/overlays/modals.js') }}"></script>
         <script src="{{ asset('js/layouts/personal-pages.js') }}"></script>
         @stack('scripts')
-        @livewireScripts
     </body>
 </html>

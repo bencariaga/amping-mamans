@@ -14,10 +14,8 @@ use App\Models\User\Household;
 use App\Models\User\Member;
 use App\Models\User\Sponsor;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SearchController extends Controller

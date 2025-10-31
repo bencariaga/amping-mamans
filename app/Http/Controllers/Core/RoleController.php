@@ -2,29 +2,18 @@
 
 namespace App\Http\Controllers\Core;
 
+use App\Actions\Core\CreateRole;
+use App\Actions\Core\DeleteRole;
+use App\Actions\Core\UpdateRole;
 use App\Http\Controllers\Controller;
 use App\Models\Authentication\Role;
-use App\Models\Operation\Data;
-use App\Models\User\Staff;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
-    private function generateNextId(string $prefix, string $table, string $primaryKey): string
-    {
-        $year = Carbon::now()->year;
-        $base = "{$prefix}-{$year}";
-        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
-        $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
-        $next = $lastNum + 1;
-        $padded = Str::padLeft($next, 9, '0');
-
-        return "{$base}-{$padded}";
-    }
 
     private function allowedActionsOptions(): array
     {
@@ -113,7 +102,7 @@ class RoleController extends Controller
         ]);
 
         foreach ($request->input('roles') as $memberId => $roleId) {
-            Staff::where('member_id', $memberId)->update(['role_id' => $roleId]);
+            DB::table('staff')->where('member_id', $memberId)->update(['role_id' => $roleId]);
         }
 
         return redirect()->route('profiles.users.list')->with('success', 'User roles have been updated successfully.');
@@ -142,7 +131,7 @@ class RoleController extends Controller
         return response()->json($roles);
     }
 
-    public function confirmChanges(Request $request)
+    public function confirmChanges(Request $request, CreateRole $createRole, UpdateRole $updateRole, DeleteRole $deleteRole)
     {
         $payload = $request->all();
         $creates = isset($payload['create']) && is_array($payload['create']) ? $payload['create'] : [];
@@ -153,7 +142,7 @@ class RoleController extends Controller
 
         try {
             foreach ($creates as $roleData) {
-                if (! is_array($roleData) || empty($roleData['role'])) {
+                if (!is_array($roleData) || empty($roleData['role'])) {
                     continue;
                 }
 
@@ -163,67 +152,37 @@ class RoleController extends Controller
                     continue;
                 }
 
-                $dataId = $this->generateNextId('DATA', 'data', 'data_id');
-                Data::create(['data_id' => $dataId, 'data_status' => 'Unarchived']);
-
-                Role::create([
-                    'role_id' => $this->generateNextId('ROLE', 'roles', 'role_id'),
-                    'data_id' => $dataId,
+                $createRole->execute([
                     'role' => (string) $roleName,
-                    'allowed_actions' => isset($roleData['allowed_actions']) ? $roleData['allowed_actions'] : null,
-                    'access_scope' => isset($roleData['access_scope']) ? $roleData['access_scope'] : null,
+                    'allowed_actions' => $roleData['allowed_actions'] ?? null,
+                    'access_scope' => $roleData['access_scope'] ?? null,
                 ]);
             }
 
             foreach ($updates as $roleData) {
-                if (! is_array($roleData) || empty($roleData['role_id']) || empty($roleData['role'])) {
+                if (!is_array($roleData) || empty($roleData['role_id']) || empty($roleData['role'])) {
                     continue;
                 }
 
-                $roleId = $roleData['role_id'];
                 $roleName = Str::of($roleData['role'])->trim();
 
                 if ($roleName === '') {
                     continue;
                 }
 
-                Role::where('role_id', $roleId)->update([
+                $updateRole->execute($roleData['role_id'], [
                     'role' => (string) $roleName,
-                    'allowed_actions' => isset($roleData['allowed_actions']) ? $roleData['allowed_actions'] : null,
-                    'access_scope' => isset($roleData['access_scope']) ? $roleData['access_scope'] : null,
+                    'allowed_actions' => $roleData['allowed_actions'] ?? null,
+                    'access_scope' => $roleData['access_scope'] ?? null,
                 ]);
             }
 
             foreach ($deletes as $roleId) {
-                if (! is_string($roleId) || Str::of($roleId)->trim() === '') {
+                if (!is_string($roleId) || Str::of($roleId)->trim() === '') {
                     continue;
                 }
 
-                $role = Role::where('role_id', $roleId)->first();
-
-                if ($role) {
-                    $staffCount = Staff::where('role_id', $role->role_id)->count();
-
-                    if ($staffCount > 0) {
-                        throw new Exception("Cannot delete role '{$role->role}' because {$staffCount} staff member(s) are assigned to it.");
-                    }
-
-                    $dataId = $role->data_id;
-                    $role->delete();
-                    $referencing = false;
-                    $tablesToCheck = ['roles'];
-
-                    foreach ($tablesToCheck as $table) {
-                        if (DB::table($table)->where('data_id', $dataId)->exists()) {
-                            $referencing = true;
-                            break;
-                        }
-                    }
-
-                    if (! $referencing) {
-                        Data::where('data_id', $dataId)->delete();
-                    }
-                }
+                $deleteRole->execute($roleId);
             }
 
             DB::commit();
@@ -257,44 +216,15 @@ class RoleController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id, DeleteRole $deleteRole)
     {
         DB::beginTransaction();
 
         try {
-            $role = Role::where('role_id', $id)->first();
+            $deleteRole->execute($id);
+            DB::commit();
 
-            if ($role) {
-                $staffCount = Staff::where('role_id', $role->role_id)->count();
-
-                if ($staffCount > 0) {
-                    DB::rollBack();
-
-                    return response()->json(['success' => false, 'error' => "Cannot delete role '{$role->role}' because {$staffCount} staff member(s) are assigned to it."]);
-                }
-
-                $dataId = $role->data_id;
-                $role->delete();
-                $referencing = false;
-                $tablesToCheck = ['roles'];
-
-                foreach ($tablesToCheck as $table) {
-                    if (DB::table($table)->where('data_id', $dataId)->exists()) {
-                        $referencing = true;
-                        break;
-                    }
-                }
-
-                if (! $referencing) {
-                    Data::where('data_id', $dataId)->delete();
-                }
-
-                DB::commit();
-
-                return response()->json(['success' => true]);
-            }
-
-            return response()->json(['success' => false, 'error' => 'Role not found.']);
+            return response()->json(['success' => true]);
         } catch (Exception $e) {
             DB::rollBack();
 

@@ -61,7 +61,7 @@
                     <div class="col-md-6">
                         <div class="stat-card stat-card-primary" onclick="window.openAllocateBudgetModal()">
                             <div class="stat-card-body">
-                                <div class="stat-card-icon"><i class="fas fa-wallet"></i></div>
+                                <div class="stat-card-icon"><i class="fas fa-wallet" aria-hidden="true"></i></div>
 
                                 <div class="stat-card-content">
                                     <h6 class="stat-card-title">Allocated Budget<br>&nbsp;</h6>
@@ -74,7 +74,7 @@
                     <div class="col-md-6">
                         <div class="stat-card stat-card-primary">
                             <div class="stat-card-body">
-                                <div class="stat-card-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                <div class="stat-card-icon"><i class="fas fa-money-bill-wave" aria-hidden="true"></i></div>
 
                                 <div class="stat-card-content">
                                     <h6 class="stat-card-title">Budget Used<br>&nbsp;</h6>
@@ -87,7 +87,7 @@
                     <div class="col-md-6">
                         <div class="stat-card stat-card-primary">
                             <div class="stat-card-body">
-                                <div class="stat-card-icon"><i class="fas fa-piggy-bank"></i></div>
+                                <div class="stat-card-icon"><i class="fas fa-piggy-bank" aria-hidden="true"></i></div>
 
                                 <div class="stat-card-content">
                                     <h6 class="stat-card-title">Remaining Budget<br>&nbsp;</h6>
@@ -100,7 +100,7 @@
                     <div class="col-md-6">
                         <div class="stat-card stat-card-primary" onclick="window.openSupplementaryBudgetModal()">
                             <div class="stat-card-body">
-                                <div class="stat-card-icon"><i class="fas fa-sack-dollar"></i></div>
+                                <div class="stat-card-icon"><i class="fas fa-sack-dollar" aria-hidden="true"></i></div>
 
                                 <div class="stat-card-content">
                                     <h6 class="stat-card-title">Is Supplementary<br>Budget Used?</h6>

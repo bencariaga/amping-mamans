@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Financial;
 
+use App\Actions\Financial\CreateTariffList;
+use App\Actions\Financial\DeleteTariffList;
+use App\Actions\Financial\UpdateAllTariffStatuses;
+use App\Actions\Financial\UpdateTariffList;
 use App\Http\Controllers\Controller;
-use App\Models\Operation\Data;
 use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\Service;
 use App\Models\Operation\TariffList;
@@ -13,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -73,135 +75,6 @@ class TariffListController extends Controller
         return $serviceTariffs;
     }
 
-    private function generateTariffListId()
-    {
-        $year = Carbon::now()->year;
-        $month = Carbon::now()->format('M');
-        $month = Str::upper($month);
-
-        $existingTariffLists = TariffList::where('tariff_list_id', 'like', "TL-{$year}-{$month}-%")
-            ->orderBy('tariff_list_id', 'asc')
-            ->get()
-            ->pluck('tariff_list_id')
-            ->map(function ($id) {
-                return (int) Str::afterLast($id, '-');
-            })
-            ->toArray();
-
-        $n = 1;
-        for ($i = 1; $i <= 9; $i++) {
-            if (! in_array($i, $existingTariffLists)) {
-                $n = $i;
-                break;
-            }
-        }
-
-        if (count($existingTariffLists) >= 9) {
-            throw new Exception('You cannot create more than 9 tariff list versions in the same month');
-        }
-
-        return "TL-{$year}-{$month}-{$n}";
-    }
-
-    private function generateDataId()
-    {
-        $year = Carbon::now()->year;
-        $prefix = "DATA-{$year}-";
-
-        $latestData = Data::where('data_id', 'like', "{$prefix}%")->orderBy('data_id', 'desc')->first();
-
-        $n = 1;
-        if ($latestData) {
-            $lastNumber = (int) Str::substr($latestData->data_id, -9);
-            $n = $lastNumber + 1;
-        }
-
-        return $prefix.Str::padLeft($n, 9, '0');
-    }
-
-    protected function calculateTariffStatus(TariffList $tariffList, $allTariffLists)
-    {
-        $currentDateTime = Carbon::now();
-        $effectivityDate = Carbon::parse($tariffList->effectivity_date)->startOfDay();
-
-        $serviceIds = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
-            ->whereNotNull('exp_range_min')
-            ->whereNotNull('exp_range_max')
-            ->whereNotNull('coverage_percent')
-            ->where('exp_range_min', '>', 0)
-            ->where('exp_range_max', '>', 0)
-            ->where('coverage_percent', '>', 0)
-            ->distinct()
-            ->pluck('service_id');
-
-        $hasValidRanges = false;
-        foreach ($serviceIds as $serviceId) {
-            $rangeCount = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
-                ->where('service_id', $serviceId)
-                ->whereNotNull('exp_range_min')
-                ->whereNotNull('exp_range_max')
-                ->whereNotNull('coverage_percent')
-                ->where('exp_range_min', '>', 0)
-                ->where('exp_range_max', '>', 0)
-                ->where('coverage_percent', '>', 0)
-                ->count();
-            if ($rangeCount >= 2) {
-                $hasValidRanges = true;
-                break;
-            }
-        }
-
-        if (! $hasValidRanges) {
-            return ['status' => 'Draft', 'color' => 'warning', 'textColor' => 'black'];
-        }
-
-        if ($effectivityDate->lte($currentDateTime->copy()->startOfDay())) {
-            $tariffServiceIds = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
-                ->distinct()
-                ->pluck('service_id')
-                ->toArray();
-
-            $hasActiveService = false;
-            foreach ($tariffServiceIds as $serviceId) {
-                $latestTariffForService = $allTariffLists
-                    ->filter(function ($tl) use ($serviceId, $currentDateTime) {
-                        $tlEffDate = Carbon::parse($tl->effectivity_date)->startOfDay();
-                        if ($tlEffDate->gt($currentDateTime->copy()->startOfDay())) {
-                            return false;
-                        }
-                        $hasService = ExpenseRange::where('tariff_list_id', $tl->tariff_list_id)
-                            ->where('service_id', $serviceId)
-                            ->exists();
-
-                        return $hasService;
-                    })
-                    ->sortByDesc(function ($tl) {
-                        return Carbon::parse($tl->effectivity_date)->timestamp;
-                    })
-                    ->first();
-
-                if ($latestTariffForService && $latestTariffForService->tariff_list_id === $tariffList->tariff_list_id) {
-                    $hasActiveService = true;
-                    break;
-                }
-            }
-
-            if ($hasActiveService) {
-                return ['status' => 'Active', 'color' => 'success', 'textColor' => 'white'];
-            } else {
-                return ['status' => 'Inactive', 'color' => 'secondary', 'textColor' => 'white'];
-            }
-        } else {
-            $hoursUntilEffective = $currentDateTime->diffInHours($effectivityDate, false);
-
-            if ($hoursUntilEffective <= 24) {
-                return ['status' => 'Scheduled', 'color' => 'danger', 'textColor' => 'white'];
-            } else {
-                return ['status' => 'Scheduled', 'color' => 'primary', 'textColor' => 'white'];
-            }
-        }
-    }
-
     public function create()
     {
         return view('pages.tariff-list.tariff-list-create');
@@ -231,7 +104,7 @@ class TariffListController extends Controller
         return response()->json(['is_taken' => $exists], 200);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateTariffList $createTariffList, UpdateAllTariffStatuses $updateAllTariffStatuses)
     {
         try {
             $request->validate([
@@ -248,36 +121,8 @@ class TariffListController extends Controller
                 'effectivity_date.unique' => 'The selected effectivity date is already taken by another tariff list version.',
             ]);
 
-            $tariffListId = $this->generateTariffListId();
-            $dataId = $this->generateDataId();
-
-            DB::transaction(function () use ($request, $tariffListId, $dataId) {
-                Data::create([
-                    'data_id' => $dataId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                $tariffList = TariffList::create([
-                    'tariff_list_id' => $tariffListId,
-                    'data_id' => $dataId,
-                    'effectivity_date' => $request->effectivity_date,
-                    'tl_status' => 'Draft',
-                ]);
-
-                foreach ($request->selectedServices as $serviceId) {
-                    ExpenseRange::create([
-                        'exp_range_id' => $this->expenseRangeController->generateExpRangeId(),
-                        'tariff_list_id' => $tariffListId,
-                        'service_id' => $serviceId,
-                        'exp_range_min' => null,
-                        'exp_range_max' => null,
-                        'coverage_percent' => null,
-                    ]);
-                }
-            });
-
-            $this->updateAllTariffStatuses();
+            $createTariffList->execute($request->effectivity_date, $request->selectedServices);
+            $updateAllTariffStatuses->execute();
 
             return response()->json(['message' => 'Tariff list version has been added.'], 200);
         } catch (Exception $e) {
@@ -355,13 +200,11 @@ class TariffListController extends Controller
         }
     }
 
-    public function update(Request $request, string $tariffListId)
+    public function update(Request $request, string $tariffListId, UpdateTariffList $updateTariffList)
     {
         Log::info('Update request data:', $request->all());
 
         try {
-            $tariffList = TariffList::where('tariff_list_id', $tariffListId)->firstOrFail();
-
             $ranges = $this->collectAllRanges($request);
 
             if ($this->expenseRangeController->checkOverlap($ranges)) {
@@ -373,16 +216,14 @@ class TariffListController extends Controller
             DB::beginTransaction();
 
             try {
-                $validatedAndFormattedRanges = $this->expenseRangeController->validateAndFormatRanges($tariffList->tariff_list_id, $ranges);
+                $validatedAndFormattedRanges = $this->expenseRangeController->validateAndFormatRanges($tariffListId, $ranges);
 
-                $this->expenseRangeController->updateRangesForTariffList($tariffList->tariff_list_id, $validatedAndFormattedRanges);
-
-                $tariffList->save();
+                $updateTariffList->execute($tariffListId, $validatedAndFormattedRanges);
 
                 DB::commit();
 
                 Log::info('Successfully updated tariff list with ranges', [
-                    'tariff_list_id' => $tariffList->tariff_list_id,
+                    'tariff_list_id' => $tariffListId,
                 ]);
 
                 session()->flash('success', 'Tariff list has been updated successfully.');
@@ -434,34 +275,11 @@ class TariffListController extends Controller
         return $ranges;
     }
 
-    protected function updateAllTariffStatuses()
-    {
-        $allTariffLists = TariffList::with('expenseRanges')->get();
-
-        foreach ($allTariffLists as $tariffList) {
-            $statusData = $this->calculateTariffStatus($tariffList, $allTariffLists);
-            $tariffList->tl_status = $statusData['status'];
-            $tariffList->save();
-        }
-    }
-
-    public function destroy(string $tariffListId)
+    public function destroy(string $tariffListId, DeleteTariffList $deleteTariffList, UpdateAllTariffStatuses $updateAllTariffStatuses)
     {
         try {
-            $tariffList = TariffList::where('tariff_list_id', $tariffListId)->firstOrFail();
-            $dataId = $tariffList->data_id;
-            $versionsCount = TariffList::where('data_id', $dataId)->count();
-
-            DB::transaction(function () use ($tariffList, $dataId, $versionsCount) {
-                ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)->delete();
-                $tariffList->delete();
-
-                if ($versionsCount === 1) {
-                    Data::where('data_id', $dataId)->delete();
-                }
-            });
-
-            $this->updateAllTariffStatuses();
+            $deleteTariffList->execute($tariffListId);
+            $updateAllTariffStatuses->execute();
 
             return response()->json(['message' => 'Tariff list version has been deleted.'], 200);
         } catch (ModelNotFoundException $e) {

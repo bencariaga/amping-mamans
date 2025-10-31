@@ -15,10 +15,10 @@ use App\Http\Controllers\Financial\AffiliatePartnerController;
 use App\Http\Controllers\Financial\BudgetUpdateController;
 use App\Http\Controllers\Financial\SponsorController;
 use App\Http\Controllers\Financial\TariffListController;
-use App\Http\Controllers\Profile\ClientProfileController;
+use App\Http\Controllers\Profile\ApplicantProfileController;
 use App\Http\Controllers\Profile\HouseholdProfileController;
 use App\Http\Controllers\Profile\UserProfileController;
-use App\Http\Controllers\Registration\ClientRegistrationController;
+use App\Http\Controllers\Registration\ApplicantRegistrationController;
 use App\Http\Controllers\Registration\HouseholdRegistrationController;
 use App\Http\Controllers\Registration\UserRegistrationController;
 use Illuminate\Support\Facades\Route;
@@ -73,11 +73,11 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('applicants')->name('applicants.')->group(function () {
             Route::get('/', [SearchController::class, 'listClients'])->name('list');
-            Route::get('add', [ClientRegistrationController::class, 'create'])->name('create');
-            Route::post('/', [ClientRegistrationController::class, 'store'])->name('store');
-            Route::get('{applicant}', [ClientProfileController::class, 'show'])->name('show');
-            Route::put('{applicant}', [ClientProfileController::class, 'update'])->name('update');
-            Route::delete('{applicant}', [ClientProfileController::class, 'destroy'])->name('destroy');
+            Route::get('add', [ApplicantRegistrationController::class, 'create'])->name('create');
+            Route::post('/', [ApplicantRegistrationController::class, 'store'])->name('store');
+            Route::get('{applicant}', [ApplicantProfileController::class, 'show'])->name('show');
+            Route::put('{applicant}', [ApplicantProfileController::class, 'update'])->name('update');
+            Route::delete('{applicant}', [ApplicantProfileController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('households')->name('households.')->group(function () {
