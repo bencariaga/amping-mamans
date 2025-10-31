@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use App\Models\Authentication\Account;
 use App\Models\Operation\BudgetUpdate;
-use App\Models\Storage\Data;
-use App\Models\User\Sponsor;
+use App\Models\Operation\Data;
 use App\Models\User\Member;
+use App\Models\User\Sponsor;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class SponsorController extends Controller
 {
@@ -23,7 +23,8 @@ class SponsorController extends Controller
         $base = "{$prefix}-{$year}";
         $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
-        return $base . '-' . Str::padLeft($lastNum + 1, 9, '0');
+
+        return $base.'-'.Str::padLeft($lastNum + 1, 9, '0');
     }
 
     public function index(Request $request)
@@ -32,7 +33,7 @@ class SponsorController extends Controller
         $sortBy = $request->get('sort_by', 'latest');
         $search = $request->get('search', '');
 
-        $query = Sponsor::select('sponsors.*')
+        $query = Sponsor::select('sponsors.*', 'data.created_at as data_created_at')
             ->leftJoin('members', 'sponsors.member_id', '=', 'members.member_id')
             ->leftJoin('accounts', 'members.account_id', '=', 'accounts.account_id')
             ->leftJoin('data', 'accounts.data_id', '=', 'data.data_id')
@@ -41,7 +42,7 @@ class SponsorController extends Controller
                 $q->where('possessor', 'Sponsor')->where('reason', 'Sponsor Donation');
             }], 'amount_change');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $term = "%{$search}%";
                 $q->where('members.full_name', 'like', $term)
@@ -52,7 +53,7 @@ class SponsorController extends Controller
 
         switch ($sortBy) {
             case 'oldest':
-                $query->orderByRaw('COALESCE(data.created_at, "1970-01-01") ASC');
+                $query->orderBy('data_created_at', 'ASC');
                 break;
             case 'name_asc':
                 $query->orderBy('members.full_name', 'asc');
@@ -67,7 +68,7 @@ class SponsorController extends Controller
                 $query->orderBy('sponsor_type', 'desc');
                 break;
             default:
-                $query->orderByRaw('COALESCE(data.created_at, NOW()) DESC');
+                $query->orderBy('data_created_at', 'DESC');
                 break;
         }
 
@@ -86,10 +87,11 @@ class SponsorController extends Controller
                     'last_name' => $s->member->last_name ?? '',
                     'suffix' => $s->member->suffix ?? '',
                     'sponsor_name' => $s->sponsor_name,
-                    'total_amount_contributed' => isset($s->total_amount_contributed) && $s->total_amount_contributed !== null ? (float) $s->total_amount_contributed : 0.00,
-                    'created_at' => $s->member->account->data->created_at ?? null
+                    'total_amount_contributed' => isset($s->total_amount_contributed) && $s->total_amount_contributed !== null ? (float) $s->total_amount_contributed : 0,
+                    'created_at' => $s->member->account->data->created_at ?? null,
                 ];
             })->values();
+
             return response()->json(['sponsors' => $result]);
         }
 
@@ -107,8 +109,8 @@ class SponsorController extends Controller
                 'last_name' => $s->member->last_name ?? '',
                 'suffix' => $s->member->suffix ?? '',
                 'sponsor_name' => $s->sponsor_name,
-                'total_amount_contributed' => isset($s->total_amount_contributed) && $s->total_amount_contributed !== null ? (float) $s->total_amount_contributed : 0.00,
-                'created_at' => $s->member->account->data->created_at ?? null
+                'total_amount_contributed' => isset($s->total_amount_contributed) && $s->total_amount_contributed !== null ? (float) $s->total_amount_contributed : 0,
+                'created_at' => $s->member->account->data->created_at ?? null,
             ];
         })->values();
 
@@ -129,7 +131,7 @@ class SponsorController extends Controller
             }], 'amount_change')
             ->find($id);
 
-        if (!$sponsor) {
+        if (! $sponsor) {
             return response()->json(['error' => 'Sponsor not found'], 404);
         }
 
@@ -168,12 +170,15 @@ class SponsorController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json(['message' => 'Sponsor created successfully!']);
         } catch (ValidationException $e) {
             DB::rollBack();
+
             return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -195,8 +200,9 @@ class SponsorController extends Controller
 
             $sponsor = Sponsor::with('member')->find($id);
 
-            if (!$sponsor) {
+            if (! $sponsor) {
                 DB::rollBack();
+
                 return response()->json(['error' => 'Sponsor not found'], 404);
             }
 
@@ -218,12 +224,15 @@ class SponsorController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json(['message' => 'Sponsor updated successfully!']);
         } catch (ValidationException $e) {
             DB::rollBack();
+
             return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -265,7 +274,7 @@ class SponsorController extends Controller
                     $sponsor->update([
                         'sponsor_type' => $item['sponsor_type'] ?? $sponsor->sponsor_type,
                         'designation' => $item['designation'] ?? $sponsor->designation,
-                        'organization_name' => $item['organization_name'] ?? $sponsor->organization_name
+                        'organization_name' => $item['organization_name'] ?? $sponsor->organization_name,
                     ]);
                 }
             }
@@ -276,6 +285,7 @@ class SponsorController extends Controller
                     $budgetUpdateCount = BudgetUpdate::where('sponsor_id', $sponsor->sponsor_id)->count();
                     if ($budgetUpdateCount > 0) {
                         DB::rollBack();
+
                         return response()->json(['success' => false, 'error' => "Cannot delete Sponsor '{$sponsor->sponsor_name}' because {$budgetUpdateCount} budget update(s) are associated with it."]);
                     }
                     $memberId = $sponsor->member_id;
@@ -289,9 +299,11 @@ class SponsorController extends Controller
             }
 
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -300,7 +312,7 @@ class SponsorController extends Controller
     {
         $validated = $request->validate([
             'contributions' => 'required|array',
-            'sponsorId' => 'required|string'
+            'sponsorId' => 'required|string',
         ]);
 
         try {
@@ -312,13 +324,13 @@ class SponsorController extends Controller
 
                     if ($budgetUpdate) {
                         $budgetUpdate->amount_change = $contributionData['amount'];
-                        $budgetUpdate->amount_accum = 0.00;
-                        $budgetUpdate->amount_before = 0.00;
-                        $budgetUpdate->amount_recent = 0.00;
-                        $budgetUpdate->amount_spent = 0.00;
+                        $budgetUpdate->amount_accum = 0;
+                        $budgetUpdate->amount_before = 0;
+                        $budgetUpdate->amount_recent = 0;
+                        $budgetUpdate->amount_spent = 0;
                         $budgetUpdate->save();
 
-                        if (!empty($contributionData['created_at'])) {
+                        if (! empty($contributionData['created_at'])) {
                             $createdAt = Carbon::parse($contributionData['created_at']);
                             $data = $budgetUpdate->data;
                             if ($data) {
@@ -333,7 +345,7 @@ class SponsorController extends Controller
                     $budgetUpdateId = $this->generateBudgetUpdateId();
 
                     $createdAt = Carbon::now();
-                    if (!empty($contributionData['created_at'])) {
+                    if (! empty($contributionData['created_at'])) {
                         try {
                             $createdAt = Carbon::parse($contributionData['created_at']);
                         } catch (Exception $e) {
@@ -345,7 +357,7 @@ class SponsorController extends Controller
                         'data_id' => $dataId,
                         'data_status' => 'Unarchived',
                         'created_at' => $createdAt,
-                        'updated_at' => $createdAt
+                        'updated_at' => $createdAt,
                     ]);
 
                     BudgetUpdate::create([
@@ -353,24 +365,26 @@ class SponsorController extends Controller
                         'data_id' => $dataId,
                         'sponsor_id' => $validated['sponsorId'],
                         'possessor' => 'Sponsor',
-                        'amount_accum' => 0.00,
-                        'amount_recent' => 0.00,
-                        'amount_before' => 0.00,
+                        'amount_accum' => 0,
+                        'amount_recent' => 0,
+                        'amount_before' => 0,
                         'amount_change' => $contributionData['amount'],
-                        'amount_spent' => 0.00,
+                        'amount_spent' => 0,
                         'direction' => 'Increase',
                         'reason' => 'Sponsor Donation',
                     ]);
                 }
             }
 
-            $budgetUpdateController = app()->make(\App\Http\Controllers\Financial\BudgetUpdateController::class);
+            $budgetUpdateController = app()->make(BudgetUpdateController::class);
             $budgetUpdateController->recalculateBudgetHistory();
 
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -380,8 +394,9 @@ class SponsorController extends Controller
         $year = Carbon::now()->year;
         $base = "DATA-{$year}";
         $last = Data::where('data_id', 'like', "{$base}-%")->latest('data_id')->value('data_id');
-        $seq  = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+        $seq = $last ? (int) Str::substr($last, -9) : 0;
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 
     private function generateAccountId(): string
@@ -389,8 +404,9 @@ class SponsorController extends Controller
         $year = Carbon::now()->year;
         $base = "ACCOUNT-{$year}";
         $last = Account::where('account_id', 'like', "{$base}-%")->latest('account_id')->value('account_id');
-        $seq  = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+        $seq = $last ? (int) Str::substr($last, -9) : 0;
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 
     private function generateMemberId(): string
@@ -398,8 +414,9 @@ class SponsorController extends Controller
         $year = Carbon::now()->year;
         $base = "MEMBER-{$year}";
         $last = Member::where('member_id', 'like', "{$base}-%")->latest('member_id')->value('member_id');
-        $seq  = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+        $seq = $last ? (int) Str::substr($last, -9) : 0;
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 
     private function generateBudgetUpdateId(): string
@@ -407,7 +424,8 @@ class SponsorController extends Controller
         $year = Carbon::now()->year;
         $base = "BDG-UPD-{$year}";
         $last = BudgetUpdate::where('budget_update_id', 'like', "{$base}-%")->latest('budget_update_id')->value('budget_update_id');
-        $seq  = $last ? (int) Str::substr($last, -9) : 0;
-        return "{$base}-" . Str::padLeft($seq + 1, 9, '0');
+        $seq = $last ? (int) Str::substr($last, -9) : 0;
+
+        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 }

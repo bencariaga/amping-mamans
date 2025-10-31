@@ -419,17 +419,3 @@
     font-style: italic;
     color: var(--text-color);
 }
-
-@media (max-width: 768px) {
-    .image-upload-wrap {
-        width: 160px;
-        height: 160px;
-    }
-    .wrap-placeholder {
-        font-size: 42px;
-    }
-    .image-placeholder-label {
-        width: 160px;
-        font-size: 12px;
-    }
-}

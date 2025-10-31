@@ -27,6 +27,7 @@
                                 <button class="btn btn-primary fw-bold" type="submit">Search</button>
                             </div>
                         </div>
+
                         <div class="filter-sort-wrapper d-flex align-items-center gap-2">
                             <label for="sortDropdownBtn" class="form-label fw-bold mb-0">Sort:</label>
                             <div class="dropdown filter-sort-dropdown">
@@ -59,6 +60,7 @@
                                 <input type="hidden" id="filter-sort-by" name="sort_by" value="{{ request('sort_by', 'latest') }}">
                             </div>
                         </div>
+
                         <div class="filter-per-page-wrapper d-flex align-items-center gap-2">
                             <label for="perPageDropdownBtn" class="form-label fw-bold mb-0">Rows:</label>
                             <div class="dropdown filter-per-page-dropdown">
@@ -75,6 +77,7 @@
                                 <input type="hidden" id="filter-per-page" name="per_page" value="{{ request('per_page', 5) }}">
                             </div>
                         </div>
+
                         <div id="sponsor-pagination-controls" class="d-flex align-items-center gap-2">
                             @if($sponsors instanceof \Illuminate\Pagination\LengthAwarePaginator)
                                 <span class="fw-bold">{{ $sponsors->firstItem() }}-{{ $sponsors->lastItem() }} of {{ $sponsors->total() }} items</span>
@@ -107,6 +110,7 @@
                             <th class="text-center sponsor-table-header">Action</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach($sponsors as $sponsor)
                             @php
@@ -114,20 +118,26 @@
                                 $first = optional($sponsor->member)->first_name ?? '';
                                 $middle = optional($sponsor->member)->middle_name ?? '';
                                 $suffix = optional($sponsor->member)->suffix ?? '';
+
                                 $middleInitial = $middle !== '' ? strtoupper(substr(trim($middle), 0, 1)) . '.' : '';
+
                                 $parts = [];
+
                                 if ($last !== '') $parts[] = $last . ',';
                                 if ($first !== '') $parts[] = $first;
                                 if ($middleInitial !== '') $parts[] = $middleInitial;
                                 if ($suffix !== '') $parts[] = $suffix;
+
                                 $name = trim(implode(' ', $parts));
-                                $total_amount = number_format(isset($sponsor->total_amount_contributed) && $sponsor->total_amount_contributed !== null ? (float) $sponsor->total_amount_contributed : 0, 2);
+                                $total_amount = number_format(isset($sponsor->total_amount_contributed) && $sponsor->total_amount_contributed !== null ? (float) $sponsor->total_amount_contributed : 0, 0);
                             @endphp
+
                             <tr class="{{ $loop->even ? 'bg-light' : '' }}">
-                                <td class="px-4 py-2 text-center">{{ $name ?? 'N/A' }}</td>
+                                <td class="px-4 py-2 text-left">{{ $name ?? 'N/A' }}</td>
                                 <td class="px-3 py-2 text-center">{{ $sponsor->sponsor_type ?? 'N/A' }}</td>
                                 <td class="px-3 py-2 text-center">{{ $sponsor->designation ?? 'N/A' }}</td>
-                                <td class="px-3 py-2 text-center">₱ {{ $total_amount ?? 'N/A' }}</td>
+                                <td class="py-2 text-left" style="padding-left: 72.5px;">₱ {{ $total_amount ?? 'N/A' }}</td>
+
                                 <td class="py-2 text-center action-buttons">
                                     <div class="d-flex gap-2 justify-content-center">
                                         <a href="{{ route('sponsors.tables.show', ['id' => $sponsor->sponsor_id]) }}" class="btn btn-sm btn-primary px-3 py-2">Show Contributions</a>

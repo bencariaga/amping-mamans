@@ -2,32 +2,34 @@
 
 namespace App\Models\Operation;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use App\Models\Operation\GuaranteeLetter;
-use App\Models\Operation\ExpenseRange;
+use App\Actions\DatabaseTableIdGeneration\GenerateApplicationId;
+use App\Models\Communication\Message;
 use App\Models\User\AffiliatePartner;
-use App\Models\User\Applicant;
 use App\Models\User\Patient;
+use Illuminate\Database\Eloquent\Model;
 
 class Application extends Model
 {
     protected $table = 'applications';
+
     protected $primaryKey = 'application_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = [
         'application_id',
-        'applicant_id',
         'patient_id',
-        'affiliate_partner_id',
+        'ap_id',
         'exp_range_id',
+        'message_id',
         'billed_amount',
-        'applied_at',
-        'reapply_at',
         'assistance_amount',
+        'application_date',
+        'reapplication_date',
     ];
 
     protected static function boot()
@@ -36,12 +38,7 @@ class Application extends Model
 
         static::creating(function ($app) {
             if (empty($app->application_id)) {
-                $year = Carbon::now()->year;
-                $base = "APPLICATION-{$year}";
-                $latest = static::where('application_id', 'like', "{$base}%")->latest('application_id')->first();
-                $last = $latest ? (int) Str::substr($latest->application_id, -9) : 0;
-                $next = Str::padLeft($last + 1, 9, '0');
-                $app->application_id = "{$base}-{$next}";
+                $app->application_id = GenerateApplicationId::execute();
             }
         });
     }
@@ -51,28 +48,28 @@ class Application extends Model
         return (new static)->getKeyName();
     }
 
-    public function applicant()
-    {
-        return $this->belongsTo(Applicant::class, 'applicant_id');
-    }
-
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patient_id');
-    }
-
-    public function expenseRange()
-    {
-        return $this->belongsTo(ExpenseRange::class, 'exp_range_id');
+        return $this->belongsTo(Patient::class, 'patient_id', 'patient_id');
     }
 
     public function affiliatePartner()
     {
-        return $this->belongsTo(AffiliatePartner::class, 'affiliate_partner_id');
+        return $this->belongsTo(AffiliatePartner::class, 'ap_id', 'ap_id');
+    }
+
+    public function expenseRange()
+    {
+        return $this->belongsTo(ExpenseRange::class, 'exp_range_id', 'exp_range_id');
+    }
+
+    public function message()
+    {
+        return $this->belongsTo(Message::class, 'message_id', 'message_id');
     }
 
     public function guaranteeLetter()
     {
-        return $this->hasOne(GuaranteeLetter::class, 'application_id');
+        return $this->hasOne(GuaranteeLetter::class, 'application_id', 'application_id');
     }
 }

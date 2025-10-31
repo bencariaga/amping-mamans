@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use App\Models\Storage\Data;
 use App\Models\Authentication\Occupation;
+use App\Models\Operation\Data;
 use App\Models\User\Client;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OccupationController extends Controller
 {
@@ -18,9 +18,10 @@ class OccupationController extends Controller
     {
         $year = Carbon::now()->year;
         $base = "{$prefix}-{$year}";
-        $max  = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
+        $max = DB::table($table)->where($primaryKey, 'like', "{$base}-%")->max($primaryKey);
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
-        return $base . '-' . Str::padLeft($lastNum + 1, 9, '0');
+
+        return $base.'-'.Str::padLeft($lastNum + 1, 9, '0');
     }
 
     public function index()
@@ -31,21 +32,21 @@ class OccupationController extends Controller
     public function store(Request $request)
     {
         $request->validate(['occupation' => 'required|string|max:30']);
-        $dataId = 'DATA-' . now()->year . '-' . Str::padLeft(Data::count() + 1, 9, '0');
+        $dataId = 'DATA-'.now()->year.'-'.Str::padLeft(Data::count() + 1, 9, '0');
 
         Data::create([
-            'data_id'     => $dataId,
+            'data_id' => $dataId,
             'data_status' => 'Unarchived',
-            'created_at'  => now(),
-            'updated_at'  => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        $occId = 'OCCUP-' . now()->year . '-' . Str::padLeft(Occupation::count() + 1, 9, '0');
+        $occId = 'OCCUP-'.now()->year.'-'.Str::padLeft(Occupation::count() + 1, 9, '0');
 
         $occupation = Occupation::create([
             'occupation_id' => $occId,
-            'data_id'       => $dataId,
-            'occupation'    => $request->occupation,
+            'data_id' => $dataId,
+            'occupation' => $request->occupation,
         ]);
 
         return response()->json($occupation);
@@ -70,7 +71,7 @@ class OccupationController extends Controller
                 Occupation::create([
                     'occupation_id' => $this->generateNextId('OCCUP', 'occupations', 'occupation_id'),
                     'data_id' => $dataId,
-                    'occupation' => (string) $occupationName
+                    'occupation' => (string) $occupationName,
                 ]);
             }
 
@@ -106,7 +107,7 @@ class OccupationController extends Controller
                         }
                     }
 
-                    if (!$referencing) {
+                    if (! $referencing) {
                         Data::where('data_id', $dataId)->delete();
                     }
                 }
@@ -121,6 +122,7 @@ class OccupationController extends Controller
             return response()->json(['success' => true, 'occupations' => $updatedOccupations]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -137,6 +139,7 @@ class OccupationController extends Controller
 
                 if ($clientCount > 0) {
                     DB::rollBack();
+
                     return response()->json(['success' => false, 'error' => "Cannot delete occupation '{$occupation->occupation}' because {$clientCount} client(s) are assigned to it."]);
                 }
 
@@ -152,17 +155,19 @@ class OccupationController extends Controller
                     }
                 }
 
-                if (!$referencing) {
+                if (! $referencing) {
                     Data::where('data_id', $dataId)->delete();
                 }
 
                 DB::commit();
+
                 return response()->json(['success' => true]);
             }
 
             return response()->json(['success' => false, 'error' => 'Occupation not found.']);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }

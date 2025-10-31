@@ -45,23 +45,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setupDropdown('sortDropdownBtn', 'filter-sort-by', 'client-filter-form');
     setupDropdown('perPageDropdownBtn', 'filter-per-page', 'client-filter-form');
-
-    document.querySelectorAll('.copy-symbol').forEach(copySymbol => {
-        copySymbol.addEventListener('click', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            const phoneNumber = this.getAttribute('data-phone-number');
-
-            navigator.clipboard.writeText(phoneNumber).then(() => {
-                const originalIcon = this.querySelector('i');
-                originalIcon.className = 'fa fa-check';
-
-                setTimeout(() => {
-                    originalIcon.className = 'fa fa-copy';
-                }, 1000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-        });
-    });
 });

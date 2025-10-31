@@ -157,29 +157,8 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     appearance: auto;
     -webkit-appearance: auto;
-    background-color: var(--input-bg);
-    filter: invert(var(--dark-mode-invert));
-}
-
-.row .button-container {
-    position: fixed;
-    z-index: 1000;
-    bottom: 20px;
-    width: 250px;
-    height: 33.5px;
-    font-weight: bold;
-    border-radius: 8px;
-}
-
-.button-container .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 250px;
-    height: 50px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 20px;
+    background-color: var(--input-bg) !important;
+    filter: invert(var(--dark-mode-invert)) !important;
 }
 
 .header-title {
@@ -208,11 +187,11 @@ input[type="number"]::-webkit-outer-spin-button {
     color: var(--danger-color);
 }
 
-#formControl,
 #applicantFirstNameInput,
 #applicantMiddleNameInput,
 #applicantLastNameInput,
 #applicantBirthdateInput,
+#applicantAgeInput,
 #applicantPhoneNumberInput,
 #applicantCustomOccupationInput,
 #monthlyIncomeDisplayInput,
@@ -238,7 +217,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"],
 .form-control[id^="patientMiddleNameInput-"],
 .form-control[id^="patientLastNameInput-"],
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+.dropdown-toggle[id^="patientSexDropdownBtn-"],
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     height: 50px;
     border-radius: 6px;
     padding: 12px 1rem;
@@ -262,18 +243,20 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn,
 #applicantPhicAffiliationDropdownBtn,
 #applicantPhicCategoryDropdownBtn,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+.dropdown-toggle[id^="patientSexDropdownBtn-"],
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     font-weight: normal;
     text-align: left;
     display: flex;
     justify-content: flex-start;
 }
 
-[data-theme="dark"] #formControl,
 [data-theme="dark"] #applicantFirstNameInput,
 [data-theme="dark"] #applicantMiddleNameInput,
 [data-theme="dark"] #applicantLastNameInput,
 [data-theme="dark"] #applicantBirthdateInput,
+[data-theme="dark"] #applicantAgeInput,
 [data-theme="dark"] #applicantPhoneNumberInput,
 [data-theme="dark"] #applicantCustomOccupationInput,
 [data-theme="dark"] #monthlyIncomeDisplayInput,
@@ -299,15 +282,17 @@ input[type="number"]::-webkit-outer-spin-button {
 [data-theme="dark"] .form-control[id^="patientFirstNameInput-"],
 [data-theme="dark"] .form-control[id^="patientMiddleNameInput-"],
 [data-theme="dark"] .form-control[id^="patientLastNameInput-"],
-[data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"] {
+[data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"],
+[data-theme="dark"] .dropdown-toggle[id^="patientSexDropdownBtn-"],
+[data-theme="dark"] .dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
     border-color: var(--input-border);
 }
 
-#formControl:hover,
 #applicantFirstNameInput:hover,
 #applicantMiddleNameInput:hover,
 #applicantLastNameInput:hover,
 #applicantBirthdateInput:hover,
+#applicantAgeInput:hover,
 #applicantPhoneNumberInput:hover,
 #applicantCustomOccupationInput:hover,
 #monthlyIncomeDisplayInput:hover,
@@ -333,15 +318,17 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"]:hover,
 .form-control[id^="patientMiddleNameInput-"]:hover,
 .form-control[id^="patientLastNameInput-"]:hover,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]:hover,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]:hover {
     background-color: var(--input-bg-focus);
 }
 
-#formControl:focus,
 #applicantFirstNameInput:focus,
 #applicantMiddleNameInput:focus,
 #applicantLastNameInput:focus,
 #applicantBirthdateInput:focus,
+#applicantAgeInput:focus,
 #applicantPhoneNumberInput:focus,
 #applicantCustomOccupationInput:focus,
 #monthlyIncomeDisplayInput:focus,
@@ -367,7 +354,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .form-control[id^="patientFirstNameInput-"]:focus,
 .form-control[id^="patientMiddleNameInput-"]:focus,
 .form-control[id^="patientLastNameInput-"]:focus,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]:focus,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]:focus {
     background-color: var(--input-bg-focus);
     color: var(--input-text);
     border-color: var(--primary-color);
@@ -386,7 +375,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn::after,
 #applicantPhicAffiliationDropdownBtn::after,
 #applicantPhicCategoryDropdownBtn::after,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"]::after {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"]::after,
+.dropdown-toggle[id^="patientSexDropdownBtn-"]::after,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"]::after {
     position: absolute;
     font-size: 1.5rem;
     right: 1rem;
@@ -407,7 +398,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #applicantPatientCountDropdownBtn.rotated::after,
 #applicantPhicAffiliationDropdownBtn.rotated::after,
 #applicantPhicCategoryDropdownBtn.rotated::after,
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"].rotated::after {
+.dropdown-toggle[id^="patientSuffixDropdownBtn-"].rotated::after,
+.dropdown-toggle[id^="patientSexDropdownBtn-"].rotated::after,
+.dropdown-toggle[id^="patientCategoryDropdownBtn-"].rotated::after {
     transform: translateY(-50%) rotate(180deg);
 }
 
@@ -433,16 +426,24 @@ input[type="number"]::-webkit-outer-spin-button {
     color: #fff;
 }
 
-#applicantCustomOccupationInput[disabled],
-.form-control[id^="patientFirstNameInput-"][readonly],
-.form-control[id^="patientMiddleNameInput-"][readonly],
-.form-control[id^="patientLastNameInput-"][readonly] {
-    background-color: var(--disabled-bg-color-1);
-    border-color: var(--disabled-border-color-1);
-    color: var(--placeholder-color);
+#applicantCustomOccupationInput:disabled,
+#patientFirstNameInput-1:read-only,
+#patientMiddleNameInput-1:read-only,
+#patientLastNameInput-1:read-only,
+#patientAgeInput-1:read-only,
+#applicantCustomOccupationInput:disabled:hover,
+#patientFirstNameInput-1:read-only:hover,
+#patientMiddleNameInput-1:read-only:hover,
+#patientLastNameInput-1:read-only:hover,
+#patientAgeInput-1:read-only:hover {
+    background-color: var(--disabled-bg-color-1) !important;
+    border-color: var(--disabled-border-color-1) !important;
+    color: var(--placeholder-color) !important;
+    cursor: default !important;
 }
 
-.dropdown-toggle[id^="patientSuffixDropdownBtn-"][disabled] {
+#patientSexDropdownBtn-1:disabled,
+#patientSuffixDropdownBtn-1:disabled {
     background-color: var(--disabled-bg-color-2);
     border-color: var(--disabled-border-color-2);
 }
@@ -473,15 +474,26 @@ input[type="number"]::-webkit-outer-spin-button {
     border-color: #545b62;
 }
 
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #fff;
+#checkbox {
+    width: 40px;
+    height: 40px;
+    margin: 4px 4px 7px 12px;
+    cursor: pointer;
+    border: 1px solid var(--input-border);
 }
 
-.btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
+#removePatientBtnContainer {
+    height: 79px;
+}
+
+#removePatientBtn {
+    height: 50px;
+    font-size: 20px;
+}
+
+.delete-account-modal {
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
 }
 
 .modal-content {
@@ -494,110 +506,6 @@ input[type="number"]::-webkit-outer-spin-button {
     border-color: var(--input-border, #ccc);
 }
 
-.btn-close {
-    filter: var(--dark-mode-invert);
-}
-
-.alert-danger ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.profile-pic-wrapper {
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.profile-pic-container {
-    position: relative;
-}
-
-.profile-pic,
-.avatar-placeholder {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid var(--primary-color, var(--primary-color));
-    cursor: pointer;
-}
-
-.avatar-placeholder {
-    background: var(--primary-color, var(--primary-color));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.edit-icon {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background-color: var(--primary-color, var(--primary-color));
-    border: 2px solid var(--primary-color, var(--primary-color));
-    color: white;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.edit-icon:hover {
-    background-color: var(--primary-hover, var(--primary-color-hover));
-    border: 2px solid var(--primary-color, var(--primary-color-hover));
-}
-
-.form-label,
-.modal-label {
-    font-weight: bold !important;
-    color: var(--input-text);
-    margin-bottom: 0.5rem;
-}
-
-.profile-grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    align-items: end;
-}
-
-.profile-grid-container .form-group {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-}
-
-.profile-grid-container .form-control,
-.profile-grid-container .form-select {
-    width: 100%;
-}
-
-.profile-grid-container .button-container {
-    display: flex;
-    align-items: flex-end;
-    height: 100%;
-}
-
-.profile-grid-container .btn {
-    width: 100%;
-    height: 50px;
-    font-weight: bold;
-    padding: 0;
-}
-
-.change-password-modal,
-.delete-account-modal {
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
-}
-
 .modal-header {
     border-radius: 8px 8px 0 0;
 }
@@ -607,8 +515,10 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .modal-label {
-    font-size: 18px;
+    font-weight: 500 !important;
+    color: var(--input-text);
     margin-bottom: 1rem;
+    font-size: 18px;
 }
 
 #formControl {

@@ -1,160 +1,152 @@
-(function () {
-    function init() {
-        window.openCreateModal = function () {
-            if (window.Livewire && typeof Livewire.dispatch === 'function') {
-                Livewire.dispatch('openCreateModal');
-            }
-        };
-        window.openEditModal = function (tariffListId) {
-            if (window.Livewire && typeof Livewire.dispatch === 'function') {
-                Livewire.dispatch('openEditModal', { tariffListId: tariffListId });
-            }
-        };
-        window.openDeleteModal = function (tariffListId) {
-            if (window.Livewire && typeof Livewire.dispatch === 'function') {
-                Livewire.dispatch('openDeleteModal', { tariffListId: tariffListId });
-            }
-        };
-        window.openApplyModal = function (tariffListId) {
-            if (window.Livewire && typeof Livewire.dispatch === 'function') {
-                Livewire.dispatch('openApplyModal', { tariffListId: tariffListId });
-            }
-        };
-        function initServiceCheckboxes() {
-            const checkboxes = document.querySelectorAll('.selector-checkbox');
-            checkboxes.forEach(function (cb) {
-                cb.addEventListener('change', function (e) {
-                    const checkedIds = Array.from(document.querySelectorAll('.selector-checkbox:checked')).map(function (el) {
-                        return el.value;
-                    });
-                    if (window.Livewire && typeof Livewire.emit === 'function') {
-                        Livewire.emit('syncSelectedServices', checkedIds);
-                    }
-                    updateCarouselSlidesState();
-                });
-            });
-            const serviceLabels = document.querySelectorAll('.service-label');
-            serviceLabels.forEach(function (label) {
-                label.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const sid = label.getAttribute('data-service-id');
-                    if (!sid) return;
-                    const carouselEl = document.getElementById('edit-tariffCarousel');
-                    if (!carouselEl) return;
-                    const items = Array.from(carouselEl.querySelectorAll('.carousel-item'));
-                    const targetIndex = items.findIndex(function (itm) {
-                        return itm.getAttribute('data-service-id') === sid;
-                    });
-                    if (targetIndex === -1) return;
-                    const carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
-                    carousel.to(targetIndex);
-                    carouselEl.focus();
-                });
-            });
-        }
-        function updateCarouselSlidesState() {
-            const carouselEl = document.getElementById('edit-tariffCarousel');
-            if (!carouselEl) return;
-            const items = Array.from(carouselEl.querySelectorAll('.carousel-item'));
-            items.forEach(function (item) {
-                const sid = item.getAttribute('data-service-id');
-                const checkbox = document.querySelector('.selector-checkbox[value="' + sid + '"]');
-                const disabled = !(checkbox && checkbox.checked);
-                if (disabled) {
-                    item.classList.add('disabled-slide');
-                    const inputs = item.querySelectorAll('input, button');
-                    inputs.forEach(function (el) {
-                        if (el.classList.contains('nav-arrow')) return;
-                        el.setAttribute('disabled', 'disabled');
-                    });
-                    item.style.opacity = '0.5';
-                    item.style.pointerEvents = 'none';
-                    const navPrev = item.querySelector('.carousel-control-prev');
-                    const navNext = item.querySelector('.carousel-control-next');
-                    if (navPrev) navPrev.style.pointerEvents = 'auto';
-                    if (navNext) navNext.style.pointerEvents = 'auto';
-                } else {
-                    item.classList.remove('disabled-slide');
-                    const inputs2 = item.querySelectorAll('input, button');
-                    inputs2.forEach(function (el) {
-                        if (el.classList.contains('nav-arrow')) return;
-                        el.removeAttribute('disabled');
-                    });
-                    item.style.opacity = '';
-                    item.style.pointerEvents = '';
+document.addEventListener('DOMContentLoaded', function () {
+    function setupDropdown(buttonId, inputId, formId = null) {
+        const dropdownButton = document.getElementById(buttonId);
+        const hiddenInput = document.getElementById(inputId);
+        const dropdownItems = document.querySelectorAll(`#${buttonId} + .dropdown-menu .dropdown-item`);
+
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                const value = this.getAttribute('data-value');
+                const text = this.textContent.trim();
+
+                hiddenInput.value = value;
+                dropdownButton.textContent = text;
+                dropdownItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                if (formId) {
+                    document.getElementById(formId).submit();
                 }
             });
-        }
-        function initAddRemoveButtons(scope) {
-            scope = scope || document;
-            const addBtns = scope.querySelectorAll('.row-add-btn');
-            addBtns.forEach(function (btn) {
-                btn.removeEventListener('click', handleAddClick);
-                btn.addEventListener('click', handleAddClick);
-            });
-            const removeBtns = scope.querySelectorAll('.row-remove-btn');
-            removeBtns.forEach(function (btn) {
-                btn.removeEventListener('click', handleRemoveClick);
-                btn.addEventListener('click', handleRemoveClick);
-            });
-        }
-        function handleAddClick(e) {
-            e.preventDefault();
-            const btn = e.currentTarget;
-            const row = btn.closest('.money-amount-row');
-            if (!row) return;
-            const indexAttr = row.getAttribute('data-range-index');
-            const index = parseInt(indexAttr, 10);
-            const serviceId = btn.closest('.carousel-item')?.getAttribute('data-service-id') || null;
-            if (isNaN(index) || !serviceId) return;
-            if (window.Livewire && typeof Livewire.emit === 'function') {
-                Livewire.emit('addRangeAt', index, serviceId);
-            }
-        }
-        function handleRemoveClick(e) {
-            e.preventDefault();
-            const btn = e.currentTarget;
-            const row = btn.closest('.money-amount-row');
-            if (!row) return;
-            const indexAttr = row.getAttribute('data-range-index');
-            const index = parseInt(indexAttr, 10);
-            const serviceId = btn.closest('.carousel-item')?.getAttribute('data-service-id') || null;
-            if (isNaN(index) || !serviceId) return;
-            if (window.Livewire && typeof Livewire.emit === 'function') {
-                Livewire.emit('removeRange', index, serviceId);
-            }
-        }
-        function initTariffEditModalFunctions(scope) {
-            scope = scope || document;
-            initServiceCheckboxes();
-            initAddRemoveButtons(scope);
-            updateCarouselSlidesState();
-        }
-        document.addEventListener('livewire:load', function () {
-            initTariffEditModalFunctions(document);
         });
-        if (window.Livewire && Livewire.hook) {
-            Livewire.hook('message.processed', function () {
-                initTariffEditModalFunctions(document);
-            });
+
+        const initialValue = hiddenInput.value;
+        const initialTextElement = Array.from(dropdownItems).find(item => item.getAttribute('data-value') === initialValue);
+
+        if (initialTextElement) {
+            dropdownButton.textContent = initialTextElement.textContent.trim();
+            initialTextElement.classList.add('active');
+        } else if (dropdownItems.length > 0) {
+            dropdownButton.textContent = dropdownItems[0].textContent.trim();
+            dropdownItems[0].classList.add('active');
+            hiddenInput.value = dropdownItems[0].getAttribute('data-value');
         }
-        window.addEventListener('tariff-edit-opened', function () {
-            initTariffEditModalFunctions(document);
-            setTimeout(function () {
-                updateCarouselSlidesState();
-            }, 50);
+
+        dropdownButton.addEventListener('show.bs.dropdown', function () {
+            this.classList.add('rotated');
         });
-        window.addEventListener('tariff-ranges-updated', function () {
-            initTariffEditModalFunctions(document);
+
+        dropdownButton.addEventListener('hide.bs.dropdown', function () {
+            this.classList.remove('rotated');
         });
-        window.addEventListener('tariff-edit-closed', function () {
-            initTariffEditModalFunctions(document);
-        });
+    }
+
+    setupDropdown('sortDropdownBtn', 'filter-sort-by', 'tariff-filter-form');
+    setupDropdown('perPageDropdownBtn', 'filter-per-page', 'tariff-filter-form');
+
+    window.openCreateModal = function () {
+        window.showCreateTariffModal();
+    };
+
+    window.openViewModal = function (tariffListId) {
+        window.showViewTariffModal(tariffListId);
+    };
+
+    window.openDeleteModal = function (tariffListId) {
+        window.showDeleteTariffModal(tariffListId);
+    };
+
+    window.refreshTariffTable = function () {
+        window.location.reload();
+    };
+
+    window.addRange = function (serviceId) {
+        document.dispatchEvent(new CustomEvent('add-range-request', { detail: { serviceId: serviceId } }));
+    };
+
+    window.removeRange = function (serviceId, expRangeId) {
+        document.dispatchEvent(new CustomEvent('remove-range-request', { detail: { serviceId: serviceId, expRangeId: expRangeId } }));
+    };
+
+    document.addEventListener('tariff-view-edit-opened', function () {
         initTariffEditModalFunctions(document);
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
+    });
+
+    document.addEventListener('tariff-ranges-updated', function () {
+        initTariffEditModalFunctions(document);
+    });
+
+    window.formatNumber = function (n) {
+        const num = String(n).replace(/[^0-9]/g, '');
+        const parts = num.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return parts.join('.');
+    };
+
+    window.stripCommas = function (n) {
+        return String(n).replace(/,/g, '');
+    };
+
+    window.initRangeInputMasks = function (scope) {
+        scope.querySelectorAll('.money-amount-input, .coverage-percent-input').forEach(input => {
+            if (!input.hasAttribute('data-mask-initialized')) {
+                input.addEventListener('input', function (e) {
+                    let value = e.target.value;
+                    const maxDigits = parseInt(e.target.getAttribute('data-max-digits'), 10) || 7;
+                    const isCoverage = e.target.classList.contains('coverage-percent-input');
+
+                    value = value.replace(/[^0-9]/g, '');
+
+                    if (value.length > maxDigits) {
+                        value = value.substring(0, maxDigits);
+                    }
+
+                    if (isCoverage) {
+                        e.target.value = value;
+                    } else {
+                        e.target.value = window.formatNumber(value);
+                    }
+
+                    if (window.checkAllRangeOverlaps) {
+                        window.checkAllRangeOverlaps();
+                    }
+                });
+
+                input.setAttribute('data-mask-initialized', 'true');
+            }
+        });
+    };
+
+    window.initAddRemoveButtons = function (scope) {
+        scope.querySelectorAll('.add-range-button').forEach(button => {
+            if (!button.hasAttribute('data-event-initialized')) {
+                button.addEventListener('click', function () {
+                    const serviceId = this.getAttribute('data-service-id');
+
+                    if (serviceId && window.addRange) {
+                        window.addRange(serviceId);
+                    }
+                });
+
+                button.setAttribute('data-event-initialized', 'true');
+            }
+        });
+
+        scope.querySelectorAll('.remove-range-button').forEach(button => {
+            if (!button.hasAttribute('data-event-initialized')) {
+                button.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const serviceId = row.closest('.service-group').getAttribute('data-service-id');
+                    const expRangeId = row.getAttribute('data-exp-range-id');
+
+                    if (serviceId && expRangeId && window.removeRange) {
+                        window.removeRange(serviceId, expRangeId, row);
+                    }
+                });
+
+                button.setAttribute('data-event-initialized', 'true');
+            }
+        });
+    };
+});

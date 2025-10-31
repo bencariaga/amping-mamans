@@ -162,15 +162,3 @@
 .alert-danger .icon {
     color: #a82a2a;
 }
-
-@media (max-width: 576px) {
-    #feedback-message-container {
-        left: 12px;
-        right: 12px;
-        max-width: calc(100% - 24px);
-    }
-
-    .alert-message {
-        padding: 10px;
-    }
-}

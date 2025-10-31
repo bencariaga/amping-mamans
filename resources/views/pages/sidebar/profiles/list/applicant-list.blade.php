@@ -131,20 +131,19 @@
                                 $name = trim(implode(' ', $parts));
                                 $phone = optional($client->contacts->firstWhere('contact_type', 'Application'))->phone_number ?? optional($client->contacts->first())->phone_number ?? '';
                                 $occupation = optional($client->occupation)->occupation;
-                                $income = number_format($client->monthly_income, 2);
+                                $income = number_format($client->monthly_income, 0);
                             @endphp
 
                             @if($app)
                                 <tr class="{{ $loop->even ? 'bg-light' : '' }}">
-                                    <td class="px-4 py-2 text-center">{{ $name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 text-left">{{ $name ?? 'N/A' }}</td>
                                     <td class="px-3 py-2 text-center">{{ $phone ?? 'N/A' }}</td>
                                     <td class="px-3 py-2 text-center">{{ $occupation ?? 'N/A' }}</td>
-                                    <td class="px-3 py-2 text-center">₱ {{ $income ?? 'N/A' }}</td>
+                                    <td class="text-left" style="padding: 8px 28px;">₱ {{ $income ?? 'N/A' }}</td>
+
                                     <td class="px-0 py-2 text-center action-buttons">
                                         <div class="gap-3 d-flex justify-content-center">
-                                            <button class="copy-symbol btn btn-success" data-phone-number="{{ $phone }}" aria-hidden="true">
-                                                <i class="fa fa-copy"><span class="copy-word"">&nbsp;&nbsp;&nbsp;Copy Phone Number</span></i>
-                                            </button>
+                                            <a href="{{ route('request-service-assistance', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-success px-3 py-2">Request Service Assistance</a>
                                             <a href="{{ route('profiles.applicants.show', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-primary px-3 py-2">Manage Applicant</a>
                                         </div>
                                     </td>
@@ -160,5 +159,5 @@
 
 @section('footer')
     @include('components.layouts.footer.list-applicant')
-    @include('components.layouts.footer.profile-buttons-3')
+    @include('components.layouts.footer.profile-buttons-2')
 @endsection

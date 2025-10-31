@@ -2,31 +2,34 @@
 
 namespace App\Models\User;
 
+use App\Actions\DatabaseTableIdGeneration\GenerateClientId;
+use App\Models\Authentication\Occupation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\Member;
-use App\Models\User\Applicant;
-use App\Models\User\Contact;
-use App\Models\User\Household;
-use App\Models\Authentication\Occupation;
 
 class Client extends Model
 {
     use HasFactory;
 
     protected $table = 'clients';
+
     protected $primaryKey = 'client_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [
         'client_id',
         'member_id',
         'occupation_id',
+        'client_type',
         'birthdate',
+        'age',
         'sex',
         'civil_status',
         'monthly_income',
@@ -38,14 +41,20 @@ class Client extends Model
 
         static::creating(function ($client) {
             if (empty($client->client_id)) {
-                $year = Carbon::now()->year;
-                $base = "CLIENT-{$year}";
-                $latest = static::where('client_id', 'like', "{$base}%")->latest('client_id')->first();
-                $last = $latest ? (int) Str::substr($latest->client_id, -9) : 0;
-                $next = Str::padLeft($last + 1, 9, '0');
-                $client->client_id = "{$base}-{$next}";
+                $client->client_id = GenerateClientId::execute();
             }
         });
+    }
+
+    public static function generateSequentialId(string $prefix = 'CLIENT'): string
+    {
+        $year = Carbon::now()->year;
+        $base = "{$prefix}-{$year}";
+        $latest = static::where('client_id', 'like', "{$base}%")->latest('client_id')->first();
+        $lastNumber = $latest ? (int) Str::substr($latest->client_id, -9) : 0;
+        $nextNumber = Str::padLeft($lastNumber + 1, 9, '0');
+
+        return "{$base}-{$nextNumber}";
     }
 
     public function member()
@@ -63,9 +72,14 @@ class Client extends Model
         return $this->hasMany(Contact::class, 'client_id', 'client_id');
     }
 
-    public function households()
+    public function patient()
     {
-        return $this->hasMany(Household::class, 'client_id', 'client_id');
+        return $this->hasOne(Patient::class, 'client_id', 'client_id');
+    }
+
+    public function householdMembers()
+    {
+        return $this->hasMany(HouseholdMember::class, 'client_id', 'client_id');
     }
 
     public function occupation()

@@ -2,57 +2,63 @@
 
 namespace App\Livewire\Modal;
 
-use Livewire\Component;
+use App\Models\Operation\Data;
 use App\Models\Operation\Service;
-use App\Models\Storage\Data;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Livewire\Component;
 
 class ModalServices extends Component
 {
     public $services = [];
+
     public $newServiceType = '';
+
     public $newAssistScope = [];
+
     public $editingServiceId = null;
+
     public $editingServiceType = '';
+
     public $editingAssistScope = [];
+
     public $isOpen = false;
 
     protected $listeners = [
         'loadServices' => 'loadServices',
         'openServicesModal' => 'openModal',
-        'closeServicesModal' => 'closeModal'
+        'closeServicesModal' => 'closeModal',
     ];
 
     private function assistScopeOptions(): array
     {
         return [
-            "Inpatient Care",
-            "Outpatient Care",
-            "Generic Drug",
-            "Branded Drug",
-            "Biopsy",
-            "CT Scan",
-            "MRI",
-            "Pap Test",
-            "PET Scan",
-            "Ultrasound",
-            "X-Ray Scan",
-            "Endoscopy",
-            "Electrolyte Imbalance",
-            "End-Stage Renal Disease",
-            "Drug Overdose",
-            "Liver Dialysis",
-            "Hypervolemia",
-            "Peritoneal Dialysis",
-            "Poisoning",
-            "Uremia",
-            "Anemia",
-            "Blood Transfusion",
-            "Childbirth",
-            "Hemorrhage"
+            'Inpatient Care',
+            'Outpatient Care',
+            'Generic Drug',
+            'Branded Drug',
+            'Biopsy',
+            'CT Scan',
+            'MRI',
+            'Pap Test',
+            'PET Scan',
+            'Ultrasound',
+            'X-Ray Scan',
+            'Endoscopy',
+            'Electrolyte Imbalance',
+            'End-Stage Renal Disease',
+            'Drug Overdose',
+            'Liver Dialysis',
+            'Hypervolemia',
+            'Peritoneal Dialysis',
+            'Poisoning',
+            'Uremia',
+            'Anemia',
+            'Blood Transfusion',
+            'Childbirth',
+            'Hemorrhage',
         ];
     }
 
@@ -72,6 +78,7 @@ class ModalServices extends Component
                 $result[] = $opt;
             }
         }
+
         return $result;
     }
 
@@ -94,12 +101,13 @@ class ModalServices extends Component
             ->get()
             ->map(function ($svc) use ($options) {
                 $assist = $svc->assist_scope ?? '';
+
                 return [
                     'service_id' => $svc->service_id,
                     'data_id' => $svc->data_id,
                     'service_type' => $svc->service_type ?? '',
                     'assist_scope' => $assist,
-                    'assist_scope_list' => $this->matchOptionsFromString($assist, $options)
+                    'assist_scope_list' => $this->matchOptionsFromString($assist, $options),
                 ];
             })
             ->toArray();
@@ -115,13 +123,13 @@ class ModalServices extends Component
                 'data_id' => $dataId,
                 'data_status' => 'Unarchived',
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
             Service::create([
                 'service_id' => $this->generateNextId('SERVICE', 'services', 'service_id'),
                 'data_id' => $dataId,
                 'service_type' => $this->newServiceType,
-                'assist_scope' => Arr::join($this->newAssistScope, ', ') ?: null
+                'assist_scope' => Arr::join($this->newAssistScope, ', ') ?: null,
             ]);
             DB::commit();
             $this->newServiceType = '';
@@ -130,7 +138,7 @@ class ModalServices extends Component
             $this->dispatch('showToast', ['message' => 'Service added', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error adding service: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error adding service: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -161,7 +169,7 @@ class ModalServices extends Component
             if ($service) {
                 $service->update([
                     'service_type' => $this->editingServiceType,
-                    'assist_scope' => Arr::join($this->editingAssistScope, ', ') ?: null
+                    'assist_scope' => Arr::join($this->editingAssistScope, ', ') ?: null,
                 ]);
                 DB::commit();
                 $this->cancelEdit();
@@ -170,7 +178,7 @@ class ModalServices extends Component
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error updating service: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error updating service: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -181,11 +189,13 @@ class ModalServices extends Component
             $svc = Service::where('service_id', $serviceId)->first();
             if (! $svc) {
                 $this->dispatch('showToast', ['message' => 'Service not found', 'type' => 'error']);
+
                 return;
             }
             $expenseCount = DB::table('expense_ranges')->where('service_id', $svc->service_id)->count();
             if ($expenseCount > 0) {
                 $this->dispatch('showToast', ['message' => "Cannot delete service '{$svc->service_type}' because {$expenseCount} expense range(s) reference it.", 'type' => 'error']);
+
                 return;
             }
             $dataId = $svc->data_id;
@@ -199,7 +209,7 @@ class ModalServices extends Component
             $this->dispatch('showToast', ['message' => 'Service deleted', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('showToast', ['message' => 'Error deleting service: ' . $e->getMessage(), 'type' => 'error']);
+            $this->dispatch('showToast', ['message' => 'Error deleting service: '.$e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -211,6 +221,7 @@ class ModalServices extends Component
         $lastNum = $max ? (int) Str::afterLast($max, '-') : 0;
         $next = $lastNum + 1;
         $padded = Str::padLeft($next, 9, '0');
+
         return "{$base}-{$padded}";
     }
 
@@ -222,7 +233,7 @@ class ModalServices extends Component
     public function render()
     {
         return view('livewire.modal.modal-services', [
-            'assistScopeOptions' => $this->assistScopeOptions()
+            'assistScopeOptions' => $this->assistScopeOptions(),
         ]);
     }
 }

@@ -1,0 +1,297 @@
+-- FORMAT NOTES:
+-- YEAR = 2000, 2025 | MON = JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC
+-- N = 000000000, 00000, 0000, 000, 00, 0 (incremental, but reusable)
+
+-- 1. data table
+-- Format: DATA-YEAR-MON-000000000
+CREATE TABLE data (
+    data_id varchar(23) NOT NULL,
+    archive_status enum('Archived','Unarchived') NOT NULL,
+    created_at datetime NOT NULL,
+    updated_at datetime NOT NULL,
+    archived_at datetime DEFAULT NULL
+);
+
+-- 2. accounts table
+-- Format: ACCOUNT-YEAR-MON-0000
+CREATE TABLE accounts (
+    account_id varchar(21) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    account_status enum('Active','Deactivated') NOT NULL
+);
+
+-- 3. members table
+-- Format: MEMBER-YEAR-MON-0000
+CREATE TABLE members (
+    member_id varchar(20) NOT NULL,
+    account_id varchar(21) NOT NULL,
+    member_type enum('Client','Staff','Signer','Third-Party') NOT NULL,
+    last_name varchar(20) NOT NULL,
+    middle_name varchar(20) DEFAULT NULL,
+    first_name varchar(20) NOT NULL,
+    suffix enum('Jr.','Sr.','II','III','IV','V') DEFAULT NULL
+);
+
+-- 4. roles table
+-- Format: ROLE-YEAR-0
+CREATE TABLE roles (
+    role_id varchar(11) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    role varchar(20) NOT NULL,
+    allowed_actions text,
+    access_scope text
+);
+
+-- 5. staff table
+-- Format: STAFF-YEAR-00
+CREATE TABLE staff (
+    staff_id varchar(13) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    role_id varchar(11) NOT NULL,
+    file_name text,
+    file_extension enum('.jpg','.jpeg','jfif','.png') DEFAULT NULL,
+    password text NOT NULL
+);
+
+-- 6. third_parties table
+-- Format: TP-YEAR-000
+CREATE TABLE third_parties (
+    tp_id varchar(11) NOT NULL,
+    account_id varchar(21) NOT NULL,
+    tp_type enum('Affiliate Partner','Sponsor') NOT NULL
+);
+
+-- 7. affiliate_partners table
+-- Format: AP-YEAR-00
+CREATE TABLE affiliate_partners (
+    ap_id varchar(10) NOT NULL,
+    tp_id varchar(21) NOT NULL,
+    ap_name varchar(60) NOT NULL,
+    ap_type enum('Hospital / Clinic','Pharmacy / Drugstore','Funeral Company') NOT NULL
+);
+
+-- 8. sponsors table
+-- Format: SPONSOR-YEAR-00
+CREATE TABLE sponsors (
+    sponsor_id varchar(15) NOT NULL,
+    tp_id varchar(11) NOT NULL,
+    sponsor_type enum('Politician','Business Owner','Other') DEFAULT NULL,
+    designation varchar(30) DEFAULT NULL,
+    organization_name varchar(60) DEFAULT NULL
+);
+
+-- 9. signers table
+-- Format: SIGNER-YEAR-0
+CREATE TABLE signers (
+    signer_id varchar(13) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    post_nominal_letters varchar(20) DEFAULT NULL
+);
+
+-- 10. occupations table
+-- Format: OCCUPATION-YEAR-00
+CREATE TABLE occupations (
+    occupation_id varchar(18) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    occupation varchar(20) NOT NULL
+);
+
+-- 11. clients table
+-- Format: CLIENT-YEAR-MON-0000
+CREATE TABLE clients (
+    client_id varchar(20) NOT NULL,
+    member_id varchar(20) NOT NULL,
+    occupation_id varchar(21) DEFAULT NULL,
+    client_type enum('Applicant','Household Member') NOT NULL,
+    birthdate date DEFAULT NULL,
+    age INT(3) UNSIGNED ZEROFILL NOT NULL, -- age int(3) NOT NULL,
+    sex enum('Male','Female') DEFAULT NULL,
+    civil_status enum('Single','Married','Separated','Widowed') DEFAULT NULL,
+    monthly_income INT(7) UNSIGNED ZEROFILL DEFAULT NULL -- monthly_income int(7) DEFAULT NULL
+);
+
+-- 12. applicants table
+-- Format: APPLICANT-YEAR-MON-0000
+CREATE TABLE applicants (
+    applicant_id varchar(23) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    province enum('South Cotabato') NOT NULL,
+    city enum('General Santos') NOT NULL,
+    municipality enum('N / A') DEFAULT NULL,
+    barangay enum('Apopong','Baluan','Batomelong','Buayan','Bula','Calumpang','City Heights','Conel','Dadiangas East','Dadiangas North','Dadiangas South','Dadiangas West','Fatima','Katangawan','Labangal','Lagao','Ligaya','Mabuhay','Olympog','San Isidro','San Jose','Siguel','Sinawal','Tambler','Tinagacan','Upper Labay') NOT NULL,
+    subdivision varchar(20) DEFAULT NULL,
+    purok varchar(20) DEFAULT NULL,
+    sitio varchar(20) DEFAULT NULL,
+    street varchar(20) DEFAULT NULL,
+    phase varchar(10) DEFAULT NULL,
+    block_number varchar(10) DEFAULT NULL,
+    house_number varchar(10) DEFAULT NULL,
+    job_status enum('Permanent','Contractual','Casual','Retired') NOT NULL,
+    house_occupation_status enum('Owner','Renter','House Sharer') NOT NULL,
+    lot_occupation_status enum('Owner','Renter','Lot Sharer','Informal Settler') NOT NULL,
+    phic_affiliation enum('Affiliated','Unaffiliated') NOT NULL,
+    phic_category enum('Self-Employed','Sponsored / Indigent','Employed') DEFAULT NULL,
+    is_also_patient enum('yes','no') NOT NULL,
+    patient_quantity INT(10) UNSIGNED ZEROFILL NOT NULL -- patient_quantity int(10) NOT NULL
+);
+
+-- 13. patients table
+-- Format: PATIENT-YEAR-MON-00000
+CREATE TABLE patients (
+    patient_id varchar(22) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    applicant_id varchar(23) NOT NULL,
+    patient_category enum('PWD','Senior') DEFAULT NULL
+);
+
+-- 14. households table
+-- Format: HOUSEHOLD-YEAR-MON-000
+CREATE TABLE households (
+    household_id varchar(22) NOT NULL,
+    household_name varchar(20) NOT NULL
+);
+
+-- 15. household_members table
+-- Format: HM-YEAR-MON-00000
+CREATE TABLE household_members (
+    household_member_id varchar(17) NOT NULL,
+    household_id varchar(22) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    educational_attainment enum('Elementary','High School','College') DEFAULT NULL,
+    relationship_to_applicant enum('Self','Friend','Wife','Husband','Daughter','Son','Sister','Brother','Mother','Father','Granddaughter','Grandson','Grandmother','Grandfather','Aunt','Uncle','Nephew','Niece','Cousin') NOT NULL
+);
+
+-- 16. contacts table
+-- Format: CONTACT-YEAR-MON-0000
+CREATE TABLE contacts (
+    contact_id varchar(21) NOT NULL,
+    client_id varchar(20) NOT NULL,
+    contact_type enum('Application','Emergency') NOT NULL,
+    contact_number varchar(17) NOT NULL
+);
+
+-- 17. services table
+-- Format: SERVICE-YEAR-00
+CREATE TABLE services (
+    service_id varchar(15) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    service varchar(20) NOT NULL
+);
+
+-- 18. budget_updates table
+-- Format: BDG-UPD-YEAR-MON-00000
+CREATE TABLE budget_updates (
+    budget_update_id varchar(22) NOT NULL,
+    sponsor_id varchar(15) NOT NULL,
+    possessor enum('AMPING','Sponsor') DEFAULT NULL,
+    amount_accum INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_accum int(16) DEFAULT NULL,
+    amount_spent INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_spent int(16) DEFAULT NULL,
+    amount_recent INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_recent int(16) DEFAULT NULL,
+    amount_before INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_before int(16) DEFAULT NULL,
+    amount_change INT(16) UNSIGNED ZEROFILL DEFAULT NULL, -- amount_change int(16) DEFAULT NULL,
+    direction enum('Positive','Negative') DEFAULT NULL,
+    reason enum('Yearly Budget Provision','Supplementary Budget','GL Release','Sponsor Donation','Budget Manipulation') DEFAULT NULL
+);
+
+-- 19. tariff_lists table
+-- Format: TL-YEAR-MON-0
+CREATE TABLE tariff_lists (
+    tariff_list_id varchar(13) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    tl_status enum('Draft','Scheduled','Active','Inactive') NOT NULL,
+    effectivity_date date NOT NULL
+);
+
+-- 20. expense_ranges table
+-- Format: EXP-RANGE-YEAR-MON-00000
+CREATE TABLE expense_ranges (
+    exp_range_id varchar(24) NOT NULL,
+    tariff_list_id varchar(13) NOT NULL,
+    service_id varchar(15) NOT NULL,
+    exp_range_min INT(7) UNSIGNED ZEROFILL NOT NULL, -- exp_range_min int(7) NOT NULL,
+    exp_range_max INT(7) UNSIGNED ZEROFILL NOT NULL, -- exp_range_max int(7) NOT NULL,
+    coverage_percent INT(3) UNSIGNED ZEROFILL NOT NULL -- coverage_percent int(3) NOT NULL
+);
+
+-- 21. message_templates table
+-- Format: MSG-TMP-YEAR-MON-0
+CREATE TABLE message_templates (
+    msg_tmp_id varchar(18) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    msg_tmp_title varchar(30) NOT NULL,
+    msg_tmp_text text NOT NULL
+);
+
+-- 22. messages table
+-- Format: MESSAGE-YEAR-MON-0000
+CREATE TABLE messages (
+    message_id varchar(21) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    contact_id varchar(21) NOT NULL,
+    message_text text NOT NULL,
+    sent_at datetime NOT NULL
+);
+
+-- 23. applications table
+-- Format: APPLICATION-YEAR-MON-0000
+CREATE TABLE applications (
+    application_id varchar(25) NOT NULL,
+    patient_id varchar(22) NOT NULL,
+    ap_id varchar(10) NOT NULL,
+    exp_range_id varchar(24) NOT NULL,
+    message_id varchar(21) NOT NULL,
+    billed_amount INT(7) UNSIGNED ZEROFILL DEFAULT NULL, -- billed_amount int(7) DEFAULT NULL,
+    assistance_amount INT(7) UNSIGNED ZEROFILL NOT NULL, -- assistance_amount int(7) NOT NULL,
+    application_date datetime DEFAULT NULL,
+    reapplication_date date NOT NULL
+);
+
+-- 24. guarantee_letters table
+-- Format: GL-YEAR-MON-0000
+CREATE TABLE guarantee_letters (
+    gl_id varchar(16) NOT NULL,
+    data_id varchar(23) NOT NULL,
+    application_id varchar(25) NOT NULL,
+    sponsor_id varchar(15) NOT NULL,
+    is_sponsored enum('Yes','No') NOT NULL
+);
+
+-- 25. audit_logs table
+-- Format: LOG-YEAR-MON-000000000
+CREATE TABLE audit_logs (
+    al_id varchar(22) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    al_type enum('Login','Logout','Page Access','Data Creation','Data Update','Data Deletion') DEFAULT NULL,
+    al_text text NOT NULL
+);
+
+-- 26. reports table
+-- Format: REPORT-YEAR-000
+CREATE TABLE reports (
+    report_id varchar(15) NOT NULL,
+    staff_id varchar(13) NOT NULL,
+    report_type enum('Daily','Weekly','Monthly','Ad Hoc') DEFAULT NULL
+);
+
+-- Additional tables present in the current SQL dump (generated by Laravel):
+
+-- 27. cache table
+CREATE TABLE cache (
+    `key` varchar(255) NOT NULL,
+    `value` mediumtext NOT NULL,
+    `expiration` int NOT NULL
+);
+
+-- 28. cache_locks table
+CREATE TABLE cache_locks (
+    `key` varchar(255) NOT NULL,
+    `owner` varchar(255) NOT NULL,
+    `expiration` int NOT NULL
+);
+
+-- 29. migrations table
+CREATE TABLE migrations (
+    id int UNSIGNED NOT NULL,
+    migration varchar(255) NOT NULL,
+    batch int NOT NULL
+);
