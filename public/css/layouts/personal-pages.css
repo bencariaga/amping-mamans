@@ -230,6 +230,20 @@ input[type="number"]::-webkit-outer-spin-button {
     object-fit: contain;
 }
 
+#editBtn,
+#submitBtn,
+#addUserBtn,
+#themeToggle,
+#editRoleBtn,
+#sponsorsBtn,
+#addSmsTmpBtn,
+#backToListBtn,
+#updateSmsTmpBtn,
+#addApplicantBtn,
+#addTariffListVersionBtn {
+    background-color: #243040;
+}
+
 .footer-btn {
     display: flex;
     align-items: center;
@@ -421,8 +435,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .navbar-top,
 .navbar-bottom {
-    background-color: var(--header-footer-bg);
-    box-shadow: 0 2px 5px var(--box-shadow);
     color: var(--sidebar-text);
     z-index: 900;
     width: 100%;
@@ -430,18 +442,22 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .navbar-top {
-    top: 0;
+    background-color: var(--header-footer-bg);
+    box-shadow: 0 2px 5px var(--box-shadow);
     height: var(--navbar-top-height);
+    top: 0;
 }
 
 .navbar-bottom {
+    background-color: transparent;
+    box-shadow: none;
     height: var(--navbar-bottom-height);
     bottom: 0;
 }
 
 #navbar-bottom {
     gap: 20px;
-    width: 1240px;
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     height: var(--navbar-bottom-height);
@@ -549,7 +565,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .card-footer {
     background-color: var(--card-header-bg);
-    border-top: 1px solid var(--border-color);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     padding: 1rem 1.5rem;

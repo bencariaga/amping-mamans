@@ -98,8 +98,8 @@
                 <div class="sidebar-content">
                     <nav class="d-flex flex-column mt-3 px-3 sidebar-nav">
                         <a class="nav-link @if(request()->routeIs('dashboard')) active @endif" href="{{ route('dashboard') }}">
-                            <div class="nav-icon"><i class="fas fa-th-large"></i></div>
-                            <div class="nav-text">Dashboard</div>
+                            <div class="nav-icon"><i class="fas fa-home"></i></div>
+                            <div class="nav-text">Home</div>
                         </a>
 
                         <a class="nav-link" href="{{ route('profiles.users.list') }}">
