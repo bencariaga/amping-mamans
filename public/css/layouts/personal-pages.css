@@ -242,15 +242,16 @@ input[type="number"]::-webkit-outer-spin-button {
 #themeToggle,
 #editRoleBtn,
 #sponsorsBtn,
+#householdBtn,
 #addSmsTmpBtn,
 #backToListBtn,
-#updateUserBtn,
 #clearCacheBtn,
 #saveChangesBtn,
 #updateSmsTmpBtn,
 #addApplicantBtn,
 #addHouseholdBtn,
 #backToDashboardBtn,
+#updateHouseholdBtn,
 #addTariffListVersionBtn {
     background-color: #243040;
 }
@@ -441,12 +442,12 @@ input[type="number"]::-webkit-outer-spin-button {
     margin-left: 1.25rem;
     text-align: center;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 15px;
 }
 
 .collapse .nav-link {
     background-color: var(--sub-nav-link-bg);
-    font-size: 1rem;
+    font-size: 15px;
 }
 
 .collapse .nav-link:hover {

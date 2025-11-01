@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 02:12 PM
+-- Generation Time: Nov 01, 2025 at 05:35 PM
 -- Server version: 8.0.43
 -- PHP Version: 8.4.13
 
@@ -38,7 +38,8 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`account_id`, `data_id`, `account_status`) VALUES
-('ACCOUNT-2025-AUG-0001', 'DATA-2025-AUG-000000001', 'Active');
+('ACCOUNT-2025-AUG-0001', 'DATA-2025-AUG-000000001', 'Active'),
+('ACCOUNT-2025-NOV-0001', 'DATA-2025-NOV-000000001', 'Active');
 
 -- --------------------------------------------------------
 
@@ -230,9 +231,11 @@ INSERT INTO `data` (`data_id`, `archive_status`, `created_at`, `updated_at`, `ar
 ('DATA-2025-AUG-000000023', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-AUG-000000024', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
 ('DATA-2025-AUG-000000025', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-10-28 08:10:52', NULL),
+('DATA-2025-AUG-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-11-01 22:50:51', NULL),
 ('DATA-2025-AUG-000000038', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000041', 'Unarchived', '2025-10-28 11:40:00', '2025-10-28 11:40:00', NULL);
+('DATA-2025-AUG-000000041', 'Unarchived', '2025-10-28 11:40:00', '2025-10-28 11:40:00', NULL),
+('DATA-2025-NOV-000000001', 'Unarchived', '2025-11-01 07:06:20', '2025-11-01 07:06:20', NULL),
+('DATA-2025-NOV-000000002', 'Archived', '2025-11-01 20:37:45', '2025-11-01 20:37:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -503,6 +506,13 @@ CREATE TABLE `households` (
   `household_name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `households`
+--
+
+INSERT INTO `households` (`household_id`, `household_name`) VALUES
+('HOUSEHOLD-2025-NOV-001', 'Cariaga');
+
 -- --------------------------------------------------------
 
 --
@@ -538,7 +548,8 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`member_id`, `account_id`, `member_type`, `last_name`, `middle_name`, `first_name`, `suffix`) VALUES
-('MEMBER-2025-AUG-0001', 'ACCOUNT-2025-AUG-0001', 'Staff', 'Cariaga', 'Leproso', 'Benhur', NULL);
+('MEMBER-2025-AUG-0001', 'ACCOUNT-2025-AUG-0001', 'Staff', 'Cariaga', 'Leproso', 'Benhur', NULL),
+('MEMBER-2025-NOV-0001', 'ACCOUNT-2025-NOV-0001', 'Staff', 'Dela Cruz', 'Santos', 'Maria', NULL);
 
 -- --------------------------------------------------------
 
@@ -748,7 +759,8 @@ CREATE TABLE `staff` (
 --
 
 INSERT INTO `staff` (`staff_id`, `member_id`, `role_id`, `file_name`, `file_extension`, `password`) VALUES
-('STAFF-2025-01', 'MEMBER-2025-AUG-0001', 'ROLE-2025-1', 'profile_pictures/dRGNkHAAEqiMTUWPdeQlzbgWagXuFnaoQc4zjzqL.png', '.png', '$2y$10$LfnfOs8unDeUIS5BGIxQ9uJWb/O2XW3Hy/5iqBytMyCI6A0qkL12y');
+('STAFF-2025-01', 'MEMBER-2025-AUG-0001', 'ROLE-2025-1', 'profile_pictures/dRGNkHAAEqiMTUWPdeQlzbgWagXuFnaoQc4zjzqL.png', '.png', '$2y$10$LfnfOs8unDeUIS5BGIxQ9uJWb/O2XW3Hy/5iqBytMyCI6A0qkL12y'),
+('STAFF-2025-02', 'MEMBER-2025-NOV-0001', 'ROLE-2025-2', 'profile_pictures/EUsGF1xWUh6ZiKgYVtpE8N5z8QErtRqxHaTB1uvB.png', '.png', '$2y$10$11k3067e1gdlosL5oEk0gesttEhy5.MechWXX6mOxWWH8SVAWulku');
 
 -- --------------------------------------------------------
 

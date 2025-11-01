@@ -12,7 +12,6 @@
 
 @section('breadcrumbs')
     <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
-    <a href="{{ route('profiles.applicants.list') }}" class="text-decoration-none text-white">Applicants</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('profiles.households.list') }}" class="text-decoration-none text-white">Households</a>
 @endsection
 

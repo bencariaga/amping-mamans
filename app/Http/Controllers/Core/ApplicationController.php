@@ -9,7 +9,6 @@ use App\Http\Controllers\Communication\MessageController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Financial\BudgetUpdateController;
 use App\Models\Communication\MessageTemplate;
-use App\Models\Operation\Application;
 use App\Models\Operation\ExpenseRange;
 use App\Models\Operation\Service;
 use App\Models\User\AffiliatePartner;
@@ -19,7 +18,6 @@ use App\Services\TextBeeService;
 use App\Support\Number;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -57,8 +55,8 @@ class ApplicationController extends Controller
 
     public function showAssistanceRequest(Request $request)
     {
-        $services = Service::orderBy('service_type')->get();
-        $affiliate_partners = AffiliatePartner::orderBy('affiliate_partner_name')->get();
+        $services = Service::orderBy('service')->get();
+        $affiliate_partners = AffiliatePartner::orderBy('ap_name')->get();
         $message_templates = MessageTemplate::orderBy('msg_tmp_title')->get();
 
         $applicantId = $request->query('applicant');
@@ -84,7 +82,7 @@ class ApplicationController extends Controller
             }
         }
 
-        return view('pages.sidebar.application-entry.request-service-assistance', [
+        return view('pages.sidebar.application-entry.request-assistance', [
             'services' => $services,
             'affiliate_partners' => $affiliate_partners,
             'message_templates' => $message_templates,
@@ -101,13 +99,13 @@ class ApplicationController extends Controller
 
             $applicant = $verifyPhoneNumber->execute($phoneNumber, $clientCandidates);
 
-            if (!$applicant) {
+            if (! $applicant) {
                 return response()->json(['error' => 'Applicant with this phone number does not exist.'], 404);
             }
 
             $member = $applicant->client->member ?? null;
 
-            if (!$member) {
+            if (! $member) {
                 Log::error('Applicant found but related member is missing.', ['applicant_id' => $applicant->applicant_id]);
 
                 return response()->json(['error' => 'Applicant profile is incomplete.'], 404);
@@ -134,8 +132,6 @@ class ApplicationController extends Controller
         }
     }
 
-
-
     public function calculateAssistanceAmount(Request $request, GetLatestActiveTariff $getLatestActiveTariff)
     {
         try {
@@ -146,20 +142,15 @@ class ApplicationController extends Controller
 
             $serviceId = $request->input('service_id');
             $billedAmount = $request->input('billed_amount');
-
             $tariffList = $getLatestActiveTariff->execute($serviceId);
 
-            if (!$tariffList) {
+            if (! $tariffList) {
                 return response()->json(['error' => 'No active tariff list found for this service.'], 404);
             }
 
-            $expenseRange = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
-                ->where('service_id', $serviceId)
-                ->where('exp_range_min', '<=', $billedAmount)
-                ->where('exp_range_max', '>=', $billedAmount)
-                ->first();
+            $expenseRange = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)->where('service_id', $serviceId)->where('exp_range_min', '<=', $billedAmount)->where('exp_range_max', '>=', $billedAmount)->first();
 
-            if (!$expenseRange) {
+            if (! $expenseRange) {
                 return response()->json(['error' => 'The expense ranges of this service type for this amount does not exist.'], 404);
             }
 
@@ -179,7 +170,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function store(Request $request, MessageController $messageController, BudgetUpdateController $budgetUpdateController, GLController $glController, TextBeeService $textBeeService, FakeSmsService $fakeSmsService)
+    public function store(Request $request, BudgetUpdateController $budgetUpdateController, MessageController $messageController, TextBeeService $textBeeService, FakeSmsService $fakeSmsService)
     {
         DB::beginTransaction();
 
@@ -200,37 +191,8 @@ class ApplicationController extends Controller
                 'message_text' => 'required|string|max:1000',
             ]);
 
-            $billedAmount = (int) Str::replace(',', '', $request->input('billed_amount'));
-            $assistanceAmount = (int) Str::replace(',', '', $request->input('assistance_amount'));
-            $serviceId = $request->input('service_id');
-            $tariffListVersion = $request->input('tariff_list_version');
-            
-            // Find the correct expense range based on the tariff list version and service
-            $expRange = ExpenseRange::where('tariff_list_id', $tariffListVersion)
-                ->where('service_id', $serviceId)
-                ->where('exp_range_min', '<=', $billedAmount)
-                ->where('exp_range_max', '>=', $billedAmount)
-                ->first();
-
-            $data = [
-                'applicant_id' => $request->input('applicant_id'),
-                'patient_id' => $request->input('patient_id'),
-                'affiliate_partner_id' => $request->input('affiliate_partner_id'),
-                'exp_range_id' => $expRange->exp_range_id ?? null,
-                'billed_amount' => $billedAmount,
-                'assistance_amount' => $assistanceAmount,
-                'applied_at' => $request->input('applied_at'),
-                'reapply_at' => $request->input('reapply_at'),
-            ];
-
-            $application = Application::create($data);
-
-            $budgetUpdate = $budgetUpdateController->createForApplication($application, $assistanceAmount);
-            $guaranteeLetter = $glController->createForApplication($application, $budgetUpdate);
-
-            $request->merge(['application_id' => $application->application_id]);
-            $messageId = $messageController->sendMessage($request, $textBeeService, $fakeSmsService);
-            $application->update(['message_id' => $messageId]);
+            $createApplication = app(\App\Actions\Application\CreateApplication::class);
+            $createApplication->execute($request, $budgetUpdateController, $messageController, $textBeeService, $fakeSmsService);
 
             DB::commit();
 
@@ -240,14 +202,13 @@ class ApplicationController extends Controller
             ]);
         } catch (ValidationException $e) {
             DB::rollBack();
-            Log::error('Store application validation error: '.$e->getMessage(), ['errors' => $e->errors(), 'trace' => $e->getTraceAsString()]);
 
-            return response()->json(['error' => 'Validation failed: Please check your inputs.', 'errors' => $e->errors()], 422);
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Store application error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Application creation failed: '.$e->getMessage());
 
-            return response()->json(['error' => 'An unexpected error occurred while creating the application.'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -285,7 +246,7 @@ class ApplicationController extends Controller
                 'm.last_name as client_last_name',
                 'er.exp_range_min',
                 'er.exp_range_max',
-                's.service_type',
+                's.service as service_type',
                 'apn.affiliate_partner_name'
             )
             ->where('a.application_id', $applicationId)
@@ -296,20 +257,32 @@ class ApplicationController extends Controller
         }
 
         $applicationAlias = $this->aliasId($application->application_id, 'APPLICATION');
-        $middleInitial = $application->client_middle_name ? Str::substr($application->client_middle_name, 0, 1).'.' : '';
-        $applicantName = Str::of("{$application->client_last_name}, {$application->client_first_name} {$middleInitial}")->trim();
-        $patientName = '';
 
+        $applicantParts = collect([
+            $application->client_last_name ? $application->client_last_name.',' : null,
+            $application->client_first_name,
+            $application->client_middle_name,
+        ])->filter()->implode(' ');
+
+        $applicantName = trim($applicantParts);
+
+        $patientName = '';
         if ($application->patient_id) {
             $patient = DB::table('patients as p')
                 ->join('clients as c', 'p.client_id', '=', 'c.client_id')
                 ->join('members as m', 'c.member_id', '=', 'm.member_id')
                 ->where('p.patient_id', $application->patient_id)
-                ->select('m.first_name as patient_first_name', 'm.middle_name as patient_middle_name', 'm.last_name as patient_last_name')
+                ->select('m.first_name as patient_first_name', 'm.middle_name as patient_middle_name', 'm.last_name as patient_last_name', 'm.suffix as patient_suffix')
                 ->first();
 
-            $middleInitial = $patient->patient_middle_name ? Str::substr($patient->patient_middle_name, 0, 1).'.' : '';
-            $patientName = Str::of("{$patient->patient_last_name}, {$patient->patient_first_name} {$middleInitial}")->trim();
+            $patientParts = collect([
+                $patient->patient_last_name ? $patient->patient_last_name.',' : null,
+                $patient->patient_first_name,
+                $patient->patient_middle_name,
+                $patient->patient_suffix,
+            ])->filter()->implode(' ');
+
+            $patientName = trim($patientParts);
         }
 
         $html = '<div class="details-grid">';

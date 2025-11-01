@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupFormSubmissionCleanup();
     formatExistingMonthlyIncomes();
     setClientFieldReadonlyState();
+    initializeAddRemoveButtons();
 
     document.querySelectorAll('.select-client-btn').forEach(button => {
         button.addEventListener('click', function () {
@@ -15,15 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.activeRowIndex = parseInt(index);
             }
         });
-    });
-
-    Livewire.hook('element.updated', () => {
-        initializeDatePickers();
-        updateRemoveButtonsState();
-        initializeCustomDropdowns();
-        initializeVerificationButtons();
-        formatExistingMonthlyIncomes();
-        setClientFieldReadonlyState();
     });
 });
 
@@ -131,6 +123,16 @@ function initializeClientSelectionModal() {
     const selectClientModal = document.getElementById('selectClientModal');
     let searchTimeout = null;
 
+    selectClientModal.addEventListener('show.bs.modal', function () {
+        this.removeAttribute('aria-hidden');
+    });
+
+    selectClientModal.addEventListener('hidden.bs.modal', function () {
+        this.setAttribute('aria-hidden', 'true');
+        searchInput.value = '';
+        searchResults.innerHTML = '<li class="list-group-item text-center muted-text fw-semibold py-3">Start typing to see results.<br>(Minimum: 2 characters)</li>';
+    });
+
     searchInput.addEventListener('input', function () {
         clearTimeout(searchTimeout);
         const query = this.value.trim();
@@ -153,17 +155,12 @@ function initializeClientSelectionModal() {
             handleClientSelection(listItem);
         }
     });
-
-    selectClientModal.addEventListener('hidden.bs.modal', function () {
-        searchInput.value = '';
-        searchResults.innerHTML = '<li class="list-group-item text-center muted-text fw-semibold py-3">Start typing to see results.<br>(Minimum: 2 characters)</li>';
-    });
 }
 
 function performClientSearch(query) {
     const searchResults = document.getElementById('clientSearchResults');
 
-    fetch(`${MEMBER_SEARCH_URL}?search=${encodeURIComponent(query)}`, {
+    fetch(`${MEMBER_SEARCH_URL}?q=${encodeURIComponent(query)}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -183,22 +180,28 @@ function performClientSearch(query) {
 
             const resultsHtml = data.results.map(client => {
                 const clientTypeBadge = client.is_applicant ? '<span class="badge bg-primary ms-2">APPLICANT</span>' : client.is_patient ? '<span class="badge bg-secondary ms-2">PATIENT</span>' : '';
-                const formattedName = formatFullName(client);
+                const parts = [];
+                if (client.last_name) parts.push(client.last_name + ',');
+                const nameParts = [client.first_name, client.middle_name, client.suffix].filter(Boolean);
+                if (nameParts.length) parts.push(nameParts.join(' '));
+                const formattedName = parts.join(' ');
 
                 return `
                     <li class="list-group-item list-group-item-action client-search-item"
-                        data-client-id="${client.client_id}"
-                        data-member-id="${client.member_id}"
+                        data-client-id="${client.id}"
                         data-first-name="${client.first_name}"
                         data-middle-name="${client.middle_name || ''}"
                         data-last-name="${client.last_name}"
                         data-suffix="${client.suffix || ''}"
                         data-full-name="${formattedName}"
-                        data-gender="${client.gender}"
-                        data-birth-date="${client.birth_date}"
+                        data-birthdate="${client.birthdate || ''}"
+                        data-age="${client.age || ''}"
+                        data-civil-status="${client.civil_status || ''}"
+                        data-occupation="${client.occupation || ''}"
                         data-monthly-income="${client.monthly_income || 0}"
-                        data-is-applicant="${client.is_applicant}"
-                        data-is-patient="${client.is_patient}"
+                        data-is-applicant="${client.is_applicant ? '1' : '0'}"
+                        data-is-patient="${client.is_patient ? '1' : '0'}"
+                        data-is-verified="${client.is_verified ? '1' : '0'}"
                     >
                         <div class="w-100" style="cursor: pointer;">
                             <h6 class="mb-1 fw-bold d-flex justify-content-between">${formattedName} ${clientTypeBadge}</h6>
@@ -216,51 +219,65 @@ function performClientSearch(query) {
 }
 
 function handleClientSelection(listItem) {
-    const memberId = listItem.getAttribute('data-member-id');
     const clientId = listItem.getAttribute('data-client-id');
-    const fullName = listItem.getAttribute('data-full-name');
     const firstName = listItem.getAttribute('data-first-name');
     const middleName = listItem.getAttribute('data-middle-name');
     const lastName = listItem.getAttribute('data-last-name');
     const suffix = listItem.getAttribute('data-suffix');
-    const gender = listItem.getAttribute('data-gender');
-    const birthDate = listItem.getAttribute('data-birth-date');
+    const birthdate = listItem.getAttribute('data-birthdate');
+    const age = listItem.getAttribute('data-age');
+    const civilStatus = listItem.getAttribute('data-civil-status');
+    const occupation = listItem.getAttribute('data-occupation');
     const monthlyIncome = listItem.getAttribute('data-monthly-income');
     const isApplicant = listItem.getAttribute('data-is-applicant') === '1';
     const isPatient = listItem.getAttribute('data-is-patient') === '1';
     const clientType = isApplicant ? 'APPLICANT' : isPatient ? 'PATIENT' : 'HOUSEHOLD_MEMBER';
 
     if (window.activeRowIndex !== null) {
-        const row = document.querySelector(`[wire\\:key="member-${window.activeRowIndex}"]`);
+        const row = document.querySelector(`tr[data-index="${window.activeRowIndex}"]`);
 
         if (row) {
             row.querySelector('.client-id-input').value = clientId;
-            row.querySelector('.member-id-input').value = memberId;
+            row.querySelector('input[name*="[client_type]"]').value = clientType;
+            row.querySelector('input[name*="[is_client]"]').value = '1';
+            row.setAttribute('data-client-type', clientType);
 
             row.querySelector('.last-name-input').value = lastName;
             row.querySelector('.first-name-input').value = firstName;
             row.querySelector('.middle-name-input').value = middleName;
-            row.querySelector('.suffix-hidden-input').value = suffix;
 
-            const suffixBtn = row.querySelector('.suffix-dropdown button');
-            if (suffixBtn) {
-                suffixBtn.textContent = suffix || '—';
+            const suffixDropdown = row.querySelector('.suffix-dropdown');
+            const suffixHiddenInput = suffixDropdown.querySelector('.suffix-hidden-input');
+            const suffixBtn = suffixDropdown.querySelector('button');
+            if (suffixHiddenInput) suffixHiddenInput.value = suffix || '';
+            if (suffixBtn) suffixBtn.textContent = suffix || '—';
+
+            row.querySelector('.birthdate-input').value = birthdate || '';
+            row.querySelector('.age-input').value = age || '';
+
+            const civilStatusDropdown = row.querySelector('.civil-status-dropdown');
+            const civilStatusHiddenInput = civilStatusDropdown.querySelector('.civil-status-hidden-input');
+            const civilStatusBtn = civilStatusDropdown.querySelector('button');
+            if (civilStatusHiddenInput) civilStatusHiddenInput.value = civilStatus || '';
+            if (civilStatusBtn) civilStatusBtn.textContent = civilStatus || '— Select —';
+
+            const occupationDropdown = row.querySelector('.occupation-dropdown');
+            const occupationHiddenInput = occupationDropdown.querySelector('.occupation-hidden-input');
+            const occupationBtn = occupationDropdown.querySelector('button');
+            if (occupationHiddenInput) occupationHiddenInput.value = occupation || '';
+            if (occupationBtn) occupationBtn.textContent = occupation || '— Select —';
+
+            const monthlyIncomeInput = row.querySelector('.monthly-income-input');
+            if (monthlyIncomeInput && monthlyIncome) {
+                monthlyIncomeInput.value = formatNumber(parseInt(monthlyIncome));
             }
 
-            row.querySelector('.birthdate-input').value = birthDate;
-            row.querySelector('.monthly-income-input').value = monthlyIncome;
-
-            const birthDateInput = row.querySelector('.birthdate-input');
-            if (birthDateInput) {
-                calculateAge(birthDateInput);
-            }
-
-            row.querySelectorAll('input:not([type="hidden"]), select').forEach(input => {
-                input.disabled = false;
+            row.querySelectorAll('input:not([type="hidden"]), button').forEach(input => {
                 input.removeAttribute('readonly');
-                input.closest('.custom-select-wrapper')?.querySelectorAll('.dropdown').forEach(d => {
-                    d.removeAttribute('data-readonly');
-                });
+                input.removeAttribute('disabled');
+            });
+            row.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+                dropdown.removeAttribute('data-readonly');
             });
 
             let readOnlyFields = [];
@@ -275,6 +292,7 @@ function handleClientSelection(listItem) {
                 if (input) {
                     if (input.tagName === 'INPUT' && input.type !== 'hidden') {
                         input.setAttribute('readonly', true);
+                        input.readOnly = true;
                     } else if (input.classList.contains('suffix-hidden-input') || input.classList.contains('civil-status-hidden-input') || input.classList.contains('occupation-hidden-input')) {
                         const dropdownWrapper = input.closest('.custom-dropdown');
                         const dropdownBtn = dropdownWrapper ? dropdownWrapper.querySelector('button') : null;
@@ -287,25 +305,18 @@ function handleClientSelection(listItem) {
                 }
             });
 
-            row.querySelector('.select-client-btn').setAttribute('disabled', true);
+            const selectClientBtn = row.querySelector('.select-client-btn');
+            if (selectClientBtn) {
+                selectClientBtn.setAttribute('disabled', true);
+            }
 
-            initializeVerificationButtons();
-            formatExistingMonthlyIncomes();
+            const useHouseholdNameCheckbox = row.querySelector('.use-household-name-checkbox');
+            if (useHouseholdNameCheckbox) {
+                useHouseholdNameCheckbox.disabled = true;
+            }
 
-            Livewire.dispatch('clientSelected', {
-                index: window.activeRowIndex, clientData: {
-                    client_id: clientId,
-                    client_type: clientType,
-                    member: {
-                        last_name: lastName,
-                        first_name: firstName,
-                        middle_name: middleName,
-                        suffix: suffix,
-                    },
-                    birthdate: birthDate,
-                    monthly_income: monthlyIncome,
-                }
-            });
+            const verifyButtons = row.querySelectorAll('.verify-first-name-btn, .verify-middle-name-btn');
+            verifyButtons.forEach(btn => btn.disabled = true);
         }
     }
 
@@ -314,7 +325,7 @@ function handleClientSelection(listItem) {
 }
 
 function setClientFieldReadonlyState() {
-    document.querySelectorAll('[wire\\:key^="member-"]').forEach(row => {
+    document.querySelectorAll('tr[data-index]').forEach(row => {
         const isClient = row.querySelector('.client-id-input')?.value !== '';
         if (!isClient) return;
 
@@ -332,6 +343,7 @@ function setClientFieldReadonlyState() {
             if (input) {
                 if (input.tagName === 'INPUT' && input.type !== 'hidden') {
                     input.setAttribute('readonly', true);
+                    input.readOnly = true;
                 } else if (input.classList.contains('suffix-hidden-input') || input.classList.contains('civil-status-hidden-input') || input.classList.contains('occupation-hidden-input')) {
                     const dropdownWrapper = input.closest('.custom-dropdown');
                     const dropdownBtn = dropdownWrapper ? dropdownWrapper.querySelector('button') : null;
@@ -348,6 +360,14 @@ function setClientFieldReadonlyState() {
         if (selectClientBtn) {
             selectClientBtn.setAttribute('disabled', true);
         }
+
+        const useHouseholdNameCheckbox = row.querySelector('.use-household-name-checkbox');
+        if (useHouseholdNameCheckbox) {
+            useHouseholdNameCheckbox.disabled = true;
+        }
+
+        const verifyButtons = row.querySelectorAll('.verify-first-name-btn, .verify-middle-name-btn');
+        verifyButtons.forEach(btn => btn.disabled = true);
     });
 }
 
@@ -444,5 +464,105 @@ function formSubmissionCleanup(e) {
     document.querySelectorAll('.monthly-income-input').forEach(input => {
         const rawValue = input.value.replace(/[^0-9]/g, '');
         input.value = rawValue;
+    });
+}
+
+function initializeAddRemoveButtons() {
+    const tbody = document.getElementById('household-members-tbody');
+    if (!tbody) return;
+
+    tbody.addEventListener('click', function(e) {
+        if (e.target.closest('.add-member-btn')) {
+            e.preventDefault();
+            const btn = e.target.closest('.add-member-btn');
+            const currentRow = btn.closest('tr');
+            const currentIndex = parseInt(currentRow.getAttribute('data-index'));
+            const newRow = createNewMemberRow(currentIndex + 1);
+            currentRow.after(newRow);
+            reindexRows();
+            updateRemoveButtonsState();
+            initializeDatePickers();
+            initializeVerificationButtons();
+        }
+
+        if (e.target.closest('.remove-member-btn')) {
+            e.preventDefault();
+            const btn = e.target.closest('.remove-member-btn');
+            const row = btn.closest('tr');
+            const rowCount = tbody.querySelectorAll('tr').length;
+            if (rowCount > 1) {
+                row.remove();
+                reindexRows();
+                updateRemoveButtonsState();
+            }
+        }
+    });
+}
+
+function createNewMemberRow(index) {
+    const template = document.querySelector('#household-members-tbody tr:first-child');
+    if (!template) return null;
+
+    const newRow = template.cloneNode(true);
+    newRow.setAttribute('data-index', index);
+    newRow.setAttribute('data-client-type', 'HOUSEHOLD_MEMBER');
+
+    newRow.querySelectorAll('input[type="text"], input[type="date"], input[type="hidden"]').forEach(input => {
+        const name = input.getAttribute('name');
+        if (name) {
+            input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+        }
+        if (input.type !== 'hidden' || !input.classList.contains('client-id-input')) {
+            input.value = '';
+        }
+        if (input.classList.contains('client-id-input')) {
+            input.value = '';
+        }
+        input.removeAttribute('readonly');
+        input.readOnly = false;
+    });
+
+    newRow.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+        const hiddenInput = dropdown.querySelector('input[type="hidden"]');
+        const button = dropdown.querySelector('button');
+        if (hiddenInput) hiddenInput.value = '';
+        if (button) {
+            button.textContent = button.textContent.includes('—') ? '—' : '— Select —';
+            button.removeAttribute('disabled');
+        }
+        dropdown.removeAttribute('data-readonly');
+    });
+
+    newRow.querySelectorAll('button').forEach(btn => {
+        btn.removeAttribute('disabled');
+        if (btn.classList.contains('select-client-btn')) {
+            btn.setAttribute('data-index', index);
+        }
+        if (btn.classList.contains('add-member-btn')) {
+            btn.setAttribute('data-index', index);
+        }
+        if (btn.classList.contains('remove-member-btn')) {
+            btn.setAttribute('data-index', index);
+        }
+    });
+
+    newRow.querySelector('.use-household-name-checkbox')?.removeAttribute('disabled');
+
+    return newRow;
+}
+
+function reindexRows() {
+    const rows = document.querySelectorAll('#household-members-tbody tr');
+    rows.forEach((row, index) => {
+        row.setAttribute('data-index', index);
+        row.querySelectorAll('input, select, button').forEach(element => {
+            const name = element.getAttribute('name');
+            if (name) {
+                element.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+            }
+            if (element.hasAttribute('data-index')) {
+                element.setAttribute('data-index', index);
+            }
+        });
     });
 }

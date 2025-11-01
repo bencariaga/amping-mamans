@@ -152,14 +152,28 @@
     background-color: var(--primary-color);
 }
 
-#household-pagination-controls a {
-    border-color: #666;
-}
-
-#household-pagination-controls .btn {
-    border-width: 1.5px;
+#household-pagination-controls .btn-outline-secondary {
+    border: 1.5px solid #666;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 6px;
     font-size: 16px;
     height: 40px;
+}
+
+#household-pagination-controls .btn-outline-secondary:hover:not(.disabled),
+#household-pagination-controls .btn-outline-secondary.active:not(.disabled) {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color-hover);
+    color: #fff;
+}
+
+#household-pagination-controls .btn-outline-secondary.disabled {
+    border-color: var(--primary-border-color);
+    color: var(--primary-border-color);
+    background-color: transparent;
+    cursor: not-allowed;
+    opacity: 0.8;
 }
 
 .common-pagination-info-buttons .btn-outline-secondary {
@@ -172,7 +186,7 @@
 .common-pagination-info-buttons .btn-outline-secondary:hover,
 .common-pagination-info-buttons .btn-outline-secondary.active {
     border-color: var(--primary-color);
-    background-color: var(--light-blue-color);
+    background-color: var(--primary-color-hover);
     color: #fff;
 }
 
@@ -242,9 +256,24 @@
     background-color: rgba(0, 0, 0, 0.075);
 }
 
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+#household_name {
+    position: relative;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-weight: normal;
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
+    transition: all 0.1s ease;
+    text-align: left;
+    padding: 0 1rem;
+    height: 50px;
+    width: 100%;
+}
+
+#household_name:hover,
+#household_name:focus {
+    border: 1px solid var(--primary-border-color);
+    border-radius: 6px;
 }
 
 .custom-dropdown-btn {

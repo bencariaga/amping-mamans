@@ -1,18 +1,18 @@
 @extends('layouts.personal-pages')
 
-@section('title', 'Request Service Assistance')
+@section('title', 'Request Assistance')
 
 @push('styles')
-    <link href="{{ asset('css/pages/sidebar/application-entry/request-service-assistance.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pages/sidebar/application-entry/request-assistance.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/pages/sidebar/application-entry/request-service-assistance.js') }}"></script>
+    <script src="{{ asset('js/pages/sidebar/application-entry/request-assistance.js') }}"></script>
 @endpush
 
 @section('breadcrumbs')
     <a href="{{ route('dashboard') }}" class="text-decoration-none text-reset">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
-    <a href="{{ route('request-service-assistance') }}" class="text-decoration-none text-reset">Request Service Assistance</a>
+    <a href="{{ route('request-assistance') }}" class="text-decoration-none text-reset">Request Assistance</a>
 @endsection
 
 @section('content')
@@ -68,7 +68,7 @@
                                 <ul class="dropdown-menu w-100" aria-labelledby="serviceTypeDropdownBtn">
                                     <li><a class="dropdown-item" href="#" data-value="">Select a service.</a></li>
                                     @foreach($services as $service)
-                                    <li><a class="dropdown-item" href="#" data-value="{{ $service->service_id }}">{{ $service->service_type }}</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="{{ $service->service_id }}">{{ $service->service }}</a></li>
                                     @endforeach
                                 </ul>
                                 <input type="hidden" id="serviceType" name="service_id">

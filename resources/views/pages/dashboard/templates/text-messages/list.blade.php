@@ -160,5 +160,5 @@
 
 @section('footer')
     @include('components.layouts.footer.list-sms-tmp')
-    @include('components.layouts.footer.profile-buttons-2')
+    @include('components.layouts.footer.profile-buttons-3')
 @endsection

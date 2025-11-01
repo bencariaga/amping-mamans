@@ -73,9 +73,9 @@
 
     <body class="d-flex flex-column min-vh-100 bg-transition">
         @php
-$authUser = Auth::user();
-$authProfileImage = $authUser->staff?->file_name;
-$role = optional(optional($authUser->staff)->role)->role;
+            $authUser = Auth::user();
+            $authProfileImage = $authUser->staff?->file_name;
+            $role = optional(optional($authUser->staff)->role)->role;
         @endphp
 
         <div class="d-flex flex-grow-1">
@@ -110,11 +110,11 @@ $role = optional(optional($authUser->staff)->role)->role;
                                 <div class="nav-icon"><i class="fas fa-list-ol" aria-hidden="true"></i></div>
                                 <div class="nav-text">Multi-Step Form<br>(New Applicants)</div>
                             </a>
-                            <a class="nav-link sub-nav-link" id="special-buttons" href="{{ route('request-service-assistance') }}">
+                            <a class="nav-link sub-nav-link" id="special-buttons" href="{{ route('request-assistance') }}">
                                 <div class="nav-icon"><i class="fas fa-list-ol" aria-hidden="true"></i></div>
                                 <div class="nav-text">Multi-Step Form<br>(Existing Applicants)</div>
                             </a>
-                            <a class="nav-link sub-nav-link" href="{{ route('request-service-assistance') }}">
+                            <a class="nav-link sub-nav-link" href="{{ route('request-assistance') }}">
                                 <div class="nav-icon"><i class="fas fa-envelope-open-text" aria-hidden="true"></i></div>
                                 <div class="nav-text">Request Assistance</div>
                             </a>
@@ -148,10 +148,6 @@ $role = optional(optional($authUser->staff)->role)->role;
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.applicants.list') }}">
                                 <div class="nav-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
                                 <div class="nav-text">Applicants</div>
-                            </a>
-                            <a class="nav-link sub-nav-link" href="{{ route('profiles.households.list') }}">
-                                <div class="nav-icon"><i class="fas fa-home" aria-hidden="true"></i></div>
-                                <div class="nav-text">Households</div>
                             </a>
                         </div>
 
@@ -210,7 +206,6 @@ $role = optional(optional($authUser->staff)->role)->role;
             <main class="d-flex flex-column flex-grow-1 main-content-v2" id="main-content">
                 <header class="d-flex justify-content-between align-items-center px-4 py-3 navbar-top" id="navbar-top" style="position: sticky; top: 0;">
                     <h2 class="dashboard-title">@yield('breadcrumbs')</h2>
-
                     @include('components.feedback.alert')
                 </header>
 
@@ -221,7 +216,6 @@ $role = optional(optional($authUser->staff)->role)->role;
                 <footer class="navbar-bottom" style="position: sticky; bottom: 0;">
                     <div class="d-flex justify-content-evenly align-items-center px-4 py-3" id="navbar-bottom">
                         @yield('footer')
-
                         @include('components.buttons.clear-cache-button')
                         @include('components.buttons.theme-toggler.theme-toggler-personal-pages')
                     </div>

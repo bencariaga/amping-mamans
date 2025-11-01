@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Financial;
 
+use App\Actions\ExpenseRange\ValidateAndFormatExpenseRanges;
 use App\Actions\Financial\CreateTariffList;
 use App\Actions\Financial\DeleteTariffList;
 use App\Actions\Financial\UpdateAllTariffStatuses;
@@ -207,16 +208,10 @@ class TariffListController extends Controller
         try {
             $ranges = $this->collectAllRanges($request);
 
-            if ($this->expenseRangeController->checkOverlap($ranges)) {
-                throw ValidationException::withMessages([
-                    'general' => ['One or more expense ranges overlap. Please correct them before saving.'],
-                ]);
-            }
-
             DB::beginTransaction();
 
             try {
-                $validatedAndFormattedRanges = $this->expenseRangeController->validateAndFormatRanges($tariffListId, $ranges);
+                $validatedAndFormattedRanges = app(ValidateAndFormatExpenseRanges::class)->execute($tariffListId, $ranges);
 
                 $updateTariffList->execute($tariffListId, $validatedAndFormattedRanges);
 

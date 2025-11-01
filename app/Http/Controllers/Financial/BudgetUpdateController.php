@@ -2,36 +2,34 @@
 
 namespace App\Http\Controllers\Financial;
 
+use App\Actions\DatabaseTableIdGeneration\GenerateBudgetUpdateId;
+use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
 use App\Http\Controllers\Controller;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\Data;
 use App\Models\User\Sponsor;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class BudgetUpdateController extends Controller
 {
     public function createForApplication($application, $assistanceAmount)
     {
-        $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')
-            ->orderBy('data.created_at', 'desc')
-            ->select('budget_updates.*')
-            ->first();
+        $prevBudget = BudgetUpdate::join('data', 'budget_updates.data_id', '=', 'data.data_id')->orderBy('data.created_at', 'desc')->select('budget_updates.*')->first();
 
         $amount_accum = $prevBudget->amount_accum ?? 0;
         $prevAmountRecent = $prevBudget->amount_recent ?? 0;
-        $prevAmountSpent = $prevBudget->amount_spent ?? 0;
 
         $amount_before = $prevAmountRecent;
         $amount_change = $assistanceAmount;
         $amount_recent = $amount_before - $amount_change;
-        $amount_spent = $prevAmountSpent + $amount_change;
+        $amount_spent = $amount_change;
 
-        $dataId = $this->generateDataId();
-        $budgetUpdateId = $this->generateBudgetUpdateId();
+        $dataId = GenerateDataId::execute();
+        $budgetUpdateId = GenerateBudgetUpdateId::execute();
 
         $budgetData = Data::create([
             'data_id' => $dataId,
@@ -104,9 +102,9 @@ class BudgetUpdateController extends Controller
     {
         try {
             DB::beginTransaction();
-            $dataId = $this->generateDataId();
 
-            $budgetUpdateId = $this->generateBudgetUpdateId();
+            $dataId = GenerateDataId::execute();
+            $budgetUpdateId = GenerateBudgetUpdateId::execute();
 
             Data::create([
                 'data_id' => $dataId,
@@ -136,7 +134,7 @@ class BudgetUpdateController extends Controller
                 'success' => false,
                 'error' => $e->errors(),
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json([
@@ -155,15 +153,14 @@ class BudgetUpdateController extends Controller
         $increases = BudgetUpdate::where('direction', 'Increase')->sum('amount_change');
         $manipulations = BudgetUpdate::where('direction', 'Decrease')->where('reason', 'Budget Manipulation')->sum('amount_change');
         $allocated = (float) $increases - (float) $manipulations;
-
         $expenses = BudgetUpdate::where('direction', 'Decrease')->where('reason', '<>', 'Budget Manipulation')->sum('amount_change');
         $remaining = $allocated - $expenses;
 
         try {
             DB::beginTransaction();
 
-            $dataId = $this->generateDataId();
-            $budgetUpdateId = $this->generateBudgetUpdateId();
+            $dataId = GenerateDataId::execute();
+            $budgetUpdateId = GenerateBudgetUpdateId::execute();
 
             Data::create([
                 'data_id' => $dataId,
@@ -190,7 +187,7 @@ class BudgetUpdateController extends Controller
             DB::commit();
 
             return response()->json(['success' => true, 'budget_update_id' => $budgetUpdateId]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
@@ -213,8 +210,8 @@ class BudgetUpdateController extends Controller
         try {
             DB::beginTransaction();
 
-            $dataId = $this->generateDataId();
-            $budgetUpdateId = $this->generateBudgetUpdateId();
+            $dataId = GenerateDataId::execute();
+            $budgetUpdateId = GenerateBudgetUpdateId::execute();
 
             Data::create([
                 'data_id' => $dataId,
@@ -256,7 +253,7 @@ class BudgetUpdateController extends Controller
             DB::commit();
 
             return response()->json(['success' => true, 'budget_update_id' => $budgetUpdateId]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
@@ -290,7 +287,7 @@ class BudgetUpdateController extends Controller
             DB::commit();
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
@@ -337,7 +334,7 @@ class BudgetUpdateController extends Controller
             DB::commit();
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
@@ -367,7 +364,6 @@ class BudgetUpdateController extends Controller
         $contributions = $contributions->map(function ($item) use (&$runningTotal) {
             $runningTotal += $item->amount_change;
             $item->total_amount = $runningTotal;
-
             $item->amount_spent = 0.00;
             $item->amount_accum = $item->amount_change;
 
@@ -393,11 +389,12 @@ class BudgetUpdateController extends Controller
 
             $dataId = $budgetUpdate->data_id;
             $budgetUpdate->delete();
+
             Data::where('data_id', $dataId)->delete();
             DB::commit();
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
@@ -430,25 +427,5 @@ class BudgetUpdateController extends Controller
         }
 
         return true;
-    }
-
-    private function generateDataId(): string
-    {
-        $year = Carbon::now()->year;
-        $base = "DATA-{$year}";
-        $last = Data::where('data_id', 'like', "{$base}-%")->latest('data_id')->value('data_id');
-        $seq = $last ? (int) Str::substr($last, -9) : 0;
-
-        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
-    }
-
-    private function generateBudgetUpdateId(): string
-    {
-        $year = Carbon::now()->year;
-        $base = "BDG-UPD-{$year}";
-        $last = BudgetUpdate::where('budget_update_id', 'like', "{$base}-%")->latest('budget_update_id')->value('budget_update_id');
-        $seq = $last ? (int) Str::substr($last, -9) : 0;
-
-        return "{$base}-".Str::padLeft($seq + 1, 9, '0');
     }
 }

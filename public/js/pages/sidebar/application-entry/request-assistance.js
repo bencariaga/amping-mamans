@@ -94,8 +94,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const appliedAt = dateAppliedInput.value;
         const reapplyAt = dateToReapplyInput.value;
 
-        const applicantFullName = [applicantFirstName, applicantMiddleName, applicantLastName, applicantSuffix].filter(Boolean).join(' ');
-        const patientFullName = [patientFirstName, patientMiddleName, patientLastName, patientSuffix].filter(Boolean).join(' ');
+        const applicantNameParts = [];
+        if (applicantLastName) applicantNameParts.push(applicantLastName + ',');
+        if (applicantFirstName) applicantNameParts.push(applicantFirstName);
+        if (applicantMiddleName) applicantNameParts.push(applicantMiddleName);
+        if (applicantSuffix) applicantNameParts.push(applicantSuffix);
+        const applicantFullName = applicantNameParts.join(' ');
+
+        const patientNameParts = [];
+        if (patientLastName) patientNameParts.push(patientLastName + ',');
+        if (patientFirstName) patientNameParts.push(patientFirstName);
+        if (patientMiddleName) patientNameParts.push(patientMiddleName);
+        if (patientSuffix) patientNameParts.push(patientSuffix);
+        const patientFullName = patientNameParts.join(' ');
 
         previewText = previewText.replace(/\[\$application->applicant->client->member->first_name\]/g, applicantFirstName);
         previewText = previewText.replace(/\[\$application->applicant->client->member->middle_name\]/g, applicantMiddleName);
@@ -435,13 +446,26 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`/applications/calculate-amount?service_id=${encodeURIComponent(serviceId)}&billed_amount=${encodeURIComponent(billedAmount)}`);
             const data = await response.json();
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (response.ok) {
                     assistanceAmountInput.value = formatNumberWithCommas(data.assistance_amount);
                     assistanceAmountRawInput.value = Number(data.assistance_amount);
                     tariffListVersionInput.value = data.tariff_list_version;
                     tariffListVersionRawInput.value = data.tariff_list_version;
-                    showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
+                    
+                    try {
+                        const budgetResponse = await fetch('/budget-updates/latest');
+                        const budgetData = await budgetResponse.json();
+                        
+                        if (budgetResponse.ok && budgetData.amount_recent < data.assistance_amount) {
+                            showMessage(billedAmountMessage, 'Allocate budget or provide supplementary budget first. The AMPING budget is currently lower than the assistance amount needed.', 'error');
+                        } else {
+                            showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
+                        }
+                    } catch (budgetError) {
+                        showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
+                    }
+                    
                     updateMessagePreview();
                 } else {
                     assistanceAmountInput.value = '';
@@ -459,6 +483,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    function showLoadingOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'loadingOverlay';
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+        
+        const spinner = document.createElement('div');
+        spinner.style.cssText = 'text-align: center; color: white;';
+        spinner.innerHTML = '<div style="font-size: 48px; margin-bottom: 20px;"><i class="fas fa-spinner fa-spin"></i></div><div style="font-size: 20px; font-weight: bold;">Submitting Application...</div>';
+        
+        overlay.appendChild(spinner);
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    function hideLoadingOverlay(overlay) {
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+    }
+
     async function handleAssistanceSubmission(form) {
         const formData = new FormData(form);
         const payload = {};
@@ -473,6 +517,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        const loadingOverlay = showLoadingOverlay();
+
         try {
             const response = await fetch('/applications/store', {
                 method: 'POST',
@@ -485,6 +531,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const result = await response.json();
 
+            hideLoadingOverlay(loadingOverlay);
+
             if (response.ok) {
                 alert(result.message || 'Application submitted successfully!');
                 if (result.redirect) {
@@ -495,6 +543,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert(errMsg);
             }
         } catch (error) {
+            hideLoadingOverlay(loadingOverlay);
             alert('An error occurred while submitting the application.');
         }
     }

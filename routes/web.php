@@ -29,6 +29,7 @@ Route::get('/about', fn () => view('about'))->name('about');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/deactivated-account', fn () => view('pages.authentication.deactivated-account'))->name('deactivated-account');
 });
 
 Route::middleware('auth')->group(function () {
@@ -37,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/clear-cache', [DashboardController::class, 'clearCache'])->name('clear-cache');
 
     Route::get('/tariff-lists', [SearchController::class, 'listTariffs'])->name('tariff-lists');
-    Route::get('/request-service-assistance', [ApplicationController::class, 'showAssistanceRequest'])->name('request-service-assistance');
+    Route::get('/request-assistance', [ApplicationController::class, 'showAssistanceRequest'])->name('request-assistance');
     Route::get('/guarantee-letter', [DashboardController::class, 'guaranteeLetter'])->name('guarantee-letter');
 
     Route::prefix('message-templates')->group(function () {
@@ -56,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('profile/')->group(function () {
         Route::get('/', [UserProfileController::class, 'show'])->name('user.profile.show');
         Route::put('/', [UserProfileController::class, 'update'])->name('user.profile.update');
+        Route::put('deactivate', [UserProfileController::class, 'updateDeactivate'])->name('user.profile.deactivate');
         Route::delete('/', [UserProfileController::class, 'destroy'])->name('user.profile.destroy');
     });
 
@@ -65,10 +67,10 @@ Route::middleware('auth')->group(function () {
             Route::put('roles', [RoleController::class, 'update'])->name('roles.update');
             Route::get('add', [UserRegistrationController::class, 'create'])->name('create');
             Route::post('/', [UserRegistrationController::class, 'store'])->name('store');
-            Route::get('{user}', [UserProfileController::class, 'show'])->name('show');
-            Route::put('{user}', [UserProfileController::class, 'update'])->name('update');
-            Route::put('{user}/deactivate', [UserProfileController::class, 'deactivate'])->name('deactivate');
-            Route::delete('{user}', [UserProfileController::class, 'destroy'])->name('destroy');
+            Route::get('{staffId}', [UserProfileController::class, 'show'])->name('show');
+            Route::put('{staffId}', [UserProfileController::class, 'update'])->name('update');
+            Route::put('{staffId}/deactivate', [UserProfileController::class, 'updateDeactivate'])->name('deactivate');
+            Route::delete('{staffId}', [UserProfileController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('applicants')->name('applicants.')->group(function () {

@@ -8,9 +8,7 @@ class CheckUserDuplication
 {
     public function execute(array $data, ?string $excludeMemberId = null): bool
     {
-        $query = Member::where('member_type', 'Staff')
-            ->where('first_name', $data['first_name'])
-            ->where('last_name', $data['last_name']);
+        $query = Member::where('member_type', 'Staff')->where('first_name', $data['first_name'])->where('last_name', $data['last_name']);
 
         if (isset($data['middle_name'])) {
             $query->where('middle_name', $data['middle_name']);

@@ -78,13 +78,13 @@ class SearchController extends Controller
         $sortBy = $request->input('sort_by', 'latest');
         $perPage = $request->input('per_page', 5);
 
-        $baseQuery = Household::with(['client.member']);
+        $baseQuery = Household::with(['householdMembers.client.member']);
 
         if ($search) {
             $term = "%{$search}%";
             $baseQuery->where(function ($query) use ($term) {
                 $query->where('household_name', 'like', $term)
-                    ->orWhereHas('client.member', function ($q) use ($term) {
+                    ->orWhereHas('householdMembers.client.member', function ($q) use ($term) {
                         $q->where('first_name', 'like', $term)
                             ->orWhere('middle_name', 'like', $term)
                             ->orWhere('last_name', 'like', $term)
@@ -94,11 +94,13 @@ class SearchController extends Controller
         }
 
         $baseQuery->when($sortBy === 'oldest', fn ($q) => $q->orderBy('household_id', 'asc'))
-            ->when($sortBy === 'last_name_asc', fn ($q) => $q->join('clients', 'households.client_id', '=', 'clients.client_id')
+            ->when($sortBy === 'last_name_asc', fn ($q) => $q->join('household_members', 'households.household_id', '=', 'household_members.household_id')
+                ->join('clients', 'household_members.client_id', '=', 'clients.client_id')
                 ->join('members', 'clients.member_id', '=', 'members.member_id')
                 ->orderBy('members.last_name', 'asc')
-                ->select('households.*'))
-            ->when(! Collection::make(['oldest', 'last_name_asc'])->contains($sortBy), fn ($q) => $q->orderBy('household_id', 'desc'));
+                ->select('households.*')
+                ->distinct())
+            ->when(!Collection::make(['oldest', 'last_name_asc'])->contains($sortBy), fn ($q) => $q->orderBy('household_id', 'desc'));
 
         $households = $perPage === 'all' ? $baseQuery->get() : $baseQuery->paginate($perPage);
 

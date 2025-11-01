@@ -17,7 +17,7 @@ class MatchesUsername implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! $this->validator->execute($value, $this->user)) {
-            $fail('Your confirmation input does not match the expected value.');
+            $fail('Your confirmation input does not match the expected value for '.$attribute.'.');
         }
     }
 }

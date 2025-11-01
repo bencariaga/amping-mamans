@@ -120,7 +120,6 @@
                                 $suffix = optional($m)->suffix ?: '';
 
                                 $middleInitial = $middle !== '' ? strtoupper(substr(trim($middle), 0, 1)) . '.' : '';
-
                                 $parts = [];
 
                                 if ($last !== '') $parts[] = $last . ',';
@@ -143,7 +142,7 @@
 
                                     <td class="px-0 py-2 text-center action-buttons">
                                         <div class="gap-3 d-flex justify-content-center">
-                                            <a href="{{ route('request-service-assistance', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-success px-3 py-2">Request Service Assistance</a>
+                                            <a href="{{ route('request-assistance', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-success px-3 py-2">Request Service Assistance</a>
                                             <a href="{{ route('profiles.applicants.show', ['applicant' => $app->applicant_id]) }}" class="btn btn-sm btn-primary px-3 py-2">Manage Applicant</a>
                                         </div>
                                     </td>

@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const firstNameInput = document.querySelector('input[name="first_name"]');
     const middleNameInput = document.querySelector('input[name="middle_name"]');
     const lastNameInput = document.querySelector('input[name="last_name"]');
-    const deactivateActivateBtn = document.getElementById('deactivateActivateBtn');
-    const deactivateActivateForm = document.getElementById('deactivateActivateForm');
-    const updateUserBtn = document.getElementById('updateUserBtn');
-    const profileForm = document.querySelector('.profile-right-section');
+    const profileForm = document.querySelector('#profileForm');
 
     if (removeProfilePictureBtn) {
         removeProfilePictureBtn.addEventListener('click', function () {
@@ -118,17 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (firstNameInput) validateNameInput(firstNameInput);
     if (middleNameInput) validateNameInput(middleNameInput);
     if (lastNameInput) validateNameInput(lastNameInput);
-
-    if (deactivateActivateBtn && deactivateActivateForm) {
-        const memberId = deactivateActivateBtn.getAttribute('data-member-id');
-        const status = deactivateActivateBtn.getAttribute('data-status');
-        
-        const deactivateRoute = window.location.pathname.includes('/profile') 
-            ? `/profile/deactivate` 
-            : `/profiles/users/${memberId}/deactivate`;
-        
-        deactivateActivateForm.setAttribute('action', deactivateRoute);
-    }
 
     if (updateUserBtn && profileForm) {
         updateUserBtn.addEventListener('click', function (e) {

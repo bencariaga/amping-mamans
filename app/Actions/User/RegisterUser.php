@@ -41,12 +41,14 @@ class RegisterUser
 
             if (! empty($validatedData['custom_role'])) {
                 $roleDataId = GenerateDataId::execute();
+
                 $roleData = Data::create([
                     'data_id' => $roleDataId,
                     'archive_status' => 'Unarchived',
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
+
                 $roleModel = Role::create([
                     'role_id' => GenerateRoleId::execute(),
                     'data_id' => $roleData->data_id,

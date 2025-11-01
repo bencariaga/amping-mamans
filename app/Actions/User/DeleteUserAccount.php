@@ -22,6 +22,7 @@ class DeleteUserAccount
             $user->staff()->delete();
             $user->delete();
             $user->account()->delete();
+
             Data::where('data_id', $mainDataId)->delete();
         });
     }
