@@ -220,8 +220,8 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .sidebar-footer {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
     position: sticky;
     width: 100%;
     bottom: 0;
@@ -237,14 +237,20 @@ input[type="number"]::-webkit-outer-spin-button {
 
 #editBtn,
 #submitBtn,
+#exportBtn,
 #addUserBtn,
 #themeToggle,
 #editRoleBtn,
 #sponsorsBtn,
 #addSmsTmpBtn,
 #backToListBtn,
+#updateUserBtn,
+#clearCacheBtn,
+#saveChangesBtn,
 #updateSmsTmpBtn,
 #addApplicantBtn,
+#addHouseholdBtn,
+#backToDashboardBtn,
 #addTariffListVersionBtn {
     background-color: #243040;
 }
@@ -267,7 +273,7 @@ input[type="number"]::-webkit-outer-spin-button {
         var(--nav-link-hover-bg)
     );
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 1rem rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     position: relative;
     margin-top: 4px;
@@ -333,7 +339,7 @@ input[type="number"]::-webkit-outer-spin-button {
     margin-top: 4px;
 }
 
-#multiStepFormBtn {
+#special-buttons {
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
@@ -432,15 +438,15 @@ input[type="number"]::-webkit-outer-spin-button {
 .nav-text {
     flex-grow: 1;
     color: var(--sidebar-text);
-    margin-left: 1.5rem;
+    margin-left: 1.25rem;
     text-align: center;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 1rem;
 }
 
 .collapse .nav-link {
     background-color: var(--sub-nav-link-bg);
-    font-size: 15px;
+    font-size: 1rem;
 }
 
 .collapse .nav-link:hover {
@@ -535,7 +541,7 @@ input[type="number"]::-webkit-outer-spin-button {
     object-fit: cover;
     border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
     aspect-ratio: 1 / 1;
 }
 
@@ -551,7 +557,7 @@ input[type="number"]::-webkit-outer-spin-button {
     align-items: center;
     justify-content: center;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
 }
 
 .custom-dropdown-border {
@@ -626,7 +632,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .card-budget:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 1rem rgba(0, 0, 0, 0.1);
 }
 
 .card-budget .title {

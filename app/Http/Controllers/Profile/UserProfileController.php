@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Profile;
 use App\Actions\User\DeactivateUserAccount;
 use App\Actions\User\DeleteUserAccount;
 use App\Actions\User\UpdateUserProfile;
+use App\Actions\User\ValidateUsernameConfirmation;
 use App\Http\Controllers\Controller;
 use App\Models\User\Member;
+use App\Rules\MatchesUsername;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Throwable;
 
@@ -19,12 +19,13 @@ class UserProfileController extends Controller
     public function __construct(
         private UpdateUserProfile $updateUserProfile,
         private DeactivateUserAccount $deactivateUserAccount,
-        private DeleteUserAccount $deleteUserAccount
+        private DeleteUserAccount $deleteUserAccount,
+        private ValidateUsernameConfirmation $validateUsernameConfirmation
     ) {}
 
     public function show(?Member $user = null)
     {
-        if (!$user || Auth::id() === $user->member_id) {
+        if (! $user || Auth::id() === $user->member_id) {
             $user = Auth::user();
         }
 
@@ -35,17 +36,15 @@ class UserProfileController extends Controller
 
     public function update(Request $request, ?Member $user = null)
     {
-        $target = $user && Auth::id() !== $user->member_id 
-            ? $user->load('account.data', 'staff') 
-            : Auth::user()->load('account.data', 'staff');
+        $target = $user && Auth::id() !== $user->member_id ? $user->load('account.data', 'staff') : Auth::user()->load('account.data', 'staff');
 
         if ($request->input('action') === 'change_password') {
             $request->validate([
-                'username_confirmation_change' => ['required', 'string', function ($v, $f) use ($target) {
-                    if ($v !== $target->first_name . ' ' . $target->last_name) {
-                        $f('Your confirmation input does not match with the actual one. Please try again.');
-                    }
-                }],
+                'username_confirmation_change' => [
+                    'required',
+                    'string',
+                    new MatchesUsername($target, $this->validateUsernameConfirmation),
+                ],
                 'new_password' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
             ]);
 
@@ -88,17 +87,28 @@ class UserProfileController extends Controller
         $auth = Auth::user();
         $target = $user->member_id !== $auth->member_id ? $user : $auth;
 
+        $request->validate([
+            'username_confirmation_deactivate' => [
+                'required',
+                'string',
+                new MatchesUsername($target, $this->validateUsernameConfirmation),
+            ],
+        ]);
+
+        $wasActive = $target->account->account_status === 'Active';
+
         $this->deactivateUserAccount->execute($target);
 
-        if ($auth->member_id === $target->member_id) {
+        if ($auth->member_id === $target->member_id && $wasActive) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
+            return redirect('/login')->with('success', 'Your account has been deactivated successfully.');
         }
 
-        return response()->json(['message' => 'User account has been deactivated successfully.'], 200);
+        return redirect()->route('profiles.users.list')
+            ->with('success', 'User account has been '.($wasActive ? 'deactivated' : 'activated').' successfully.');
     }
 
     public function destroy(Request $request, Member $user)
@@ -107,20 +117,11 @@ class UserProfileController extends Controller
         $target = $user->member_id !== $auth->member_id ? $user : $auth;
 
         $request->validate([
-            'username_confirmation_delete' => ['required', 'string', function ($v, $f) use ($target) {
-                $expectedRaw = Str::of($target->first_name . ' ' . $target->last_name)->trim();
-
-                $normalize = function (string $s): string {
-                    return Str::of($s)->trim()->replace('/\s+/', ' ')->lower();
-                };
-
-                $match = $normalize($v) === $normalize($expectedRaw);
-                Log::debug('Delete Confirmation', ['submitted' => $v, 'expected' => $expectedRaw, 'match' => $match]);
-
-                if (!$match) {
-                    $f("Your confirmation input \"{$v}\" does not match \"{$expectedRaw}\".");
-                }
-            }],
+            'username_confirmation_delete' => [
+                'required',
+                'string',
+                new MatchesUsername($target, $this->validateUsernameConfirmation),
+            ],
         ]);
 
         try {
@@ -131,13 +132,13 @@ class UserProfileController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect('/')->with('success', 'Your account has been deleted successfully.');
+                return redirect('/login')->with('success', 'Your account has been deleted successfully.');
             }
 
             return redirect()->route('profiles.users.list')
                 ->with('success', 'User account has been deleted successfully.');
         } catch (Throwable $e) {
-            return back()->with('error', 'Failed to delete user account: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete user account: '.$e->getMessage());
         }
     }
 }

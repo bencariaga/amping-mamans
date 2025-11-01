@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Registration;
 
+use App\Actions\Core\Role\GetRolesWithData;
+use App\Actions\User\CheckUserDuplication;
 use App\Actions\User\RegisterUser;
 use App\Http\Controllers\Controller;
-use App\Models\Authentication\Role;
-use App\Models\User\Member;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Throwable;
@@ -13,12 +13,14 @@ use Throwable;
 class UserRegistrationController extends Controller
 {
     public function __construct(
-        private RegisterUser $registerUser
+        private RegisterUser $registerUser,
+        private GetRolesWithData $getRolesWithData,
+        private CheckUserDuplication $checkUserDuplication
     ) {}
 
     public function create()
     {
-        $roles = Role::join('data', 'roles.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get();
+        $roles = $this->getRolesWithData->execute();
 
         return view('pages.sidebar.profiles.register.user', ['roles' => $roles]);
     }
@@ -36,13 +38,7 @@ class UserRegistrationController extends Controller
             'profile_picture' => ['nullable', 'image', 'max:8192', 'mimes:jpg,jpeg,jfif,png,webp'],
         ]);
 
-        $existsUser = Member::where('member_type', 'Staff')
-            ->where('first_name', $validated['first_name'])
-            ->where('middle_name', $validated['middle_name'] ?? null)
-            ->where('last_name', $validated['last_name'])
-            ->exists();
-
-        if ($existsUser) {
+        if ($this->checkUserDuplication->execute($validated)) {
             return back()->withInput()->withErrors([
                 'duplicate_user' => 'This user account already exists with the same name.',
             ]);
@@ -55,7 +51,7 @@ class UserRegistrationController extends Controller
                 ->with('success', 'User account has been added successfully.');
         } catch (Throwable $e) {
             return back()->withInput()->withErrors([
-                'error' => 'Registration failed: ' . $e->getMessage()
+                'error' => 'Registration failed: '.$e->getMessage()
             ]);
         }
     }

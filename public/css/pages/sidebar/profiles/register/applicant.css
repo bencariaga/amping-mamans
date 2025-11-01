@@ -181,6 +181,8 @@ input[type="number"]::-webkit-outer-spin-button,
 .form-control[id^="patientFirstNameInput-"],
 .form-control[id^="patientMiddleNameInput-"],
 .form-control[id^="patientLastNameInput-"],
+.form-control[id^="patientAgeInput"],
+.form-control[id^="patientNumberInput"],
 .dropdown-toggle[id^="patientSuffixDropdownBtn-"],
 .dropdown-toggle[id^="patientSexDropdownBtn-"],
 .dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
@@ -246,6 +248,8 @@ input[type="number"]::-webkit-outer-spin-button,
 [data-theme="dark"] .form-control[id^="patientFirstNameInput-"],
 [data-theme="dark"] .form-control[id^="patientMiddleNameInput-"],
 [data-theme="dark"] .form-control[id^="patientLastNameInput-"],
+[data-theme="dark"] .form-control[id^="patientAgeInput"],
+[data-theme="dark"] .form-control[id^="patientNumberInput"],
 [data-theme="dark"] .dropdown-toggle[id^="patientSuffixDropdownBtn-"],
 [data-theme="dark"] .dropdown-toggle[id^="patientSexDropdownBtn-"],
 [data-theme="dark"] .dropdown-toggle[id^="patientCategoryDropdownBtn-"] {
@@ -282,10 +286,12 @@ input[type="number"]::-webkit-outer-spin-button,
 .form-control[id^="patientFirstNameInput-"]:hover,
 .form-control[id^="patientMiddleNameInput-"]:hover,
 .form-control[id^="patientLastNameInput-"]:hover,
+.form-control[id^="patientAgeInput"]:hover,
+.form-control[id^="patientNumberInput"]:hover,
 .dropdown-toggle[id^="patientSuffixDropdownBtn-"]:hover,
 .dropdown-toggle[id^="patientSexDropdownBtn-"]:hover,
 .dropdown-toggle[id^="patientCategoryDropdownBtn-"]:hover {
-    background-color: var(--input-bg-focus);
+    background-color: var(--input-bg-focus) !important;
 }
 
 #applicantFirstNameInput:focus,
@@ -318,13 +324,15 @@ input[type="number"]::-webkit-outer-spin-button,
 .form-control[id^="patientFirstNameInput-"]:focus,
 .form-control[id^="patientMiddleNameInput-"]:focus,
 .form-control[id^="patientLastNameInput-"]:focus,
+.form-control[id^="patientAgeInput"]:focus,
+.form-control[id^="patientNumberInput"]:focus,
 .dropdown-toggle[id^="patientSuffixDropdownBtn-"]:focus,
 .dropdown-toggle[id^="patientSexDropdownBtn-"]:focus,
 .dropdown-toggle[id^="patientCategoryDropdownBtn-"]:focus {
-    background-color: var(--input-bg-focus);
-    color: var(--input-text);
+    background-color: var(--input-bg-focus) !important;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+    color: var(--input-text);
 }
 
 #applicantSuffixDropdownBtn::after,

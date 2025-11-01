@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Client;
+namespace App\Actions\Applicant;
 
 use App\Actions\DatabaseTableIdGeneration\GenerateAccountId;
 use App\Actions\DatabaseTableIdGeneration\GenerateApplicantId;

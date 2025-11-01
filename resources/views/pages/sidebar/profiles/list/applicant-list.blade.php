@@ -159,5 +159,4 @@
 
 @section('footer')
     @include('components.layouts.footer.list-applicant')
-    @include('components.layouts.footer.profile-buttons-2')
 @endsection

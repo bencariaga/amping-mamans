@@ -26,12 +26,6 @@
     --dark-mode-invert: 1;
 }
 
-#commonBtn,
-#updateProfileBtn,
-#removeProfilePictureBtn {
-    font-size: 16px;
-}
-
 .form-control::placeholder {
     color: var(--placeholder-color);
 }
@@ -125,10 +119,19 @@
     margin-bottom: 1rem;
 }
 
+#deleteAccountBtn,
+#changePasswordBtn,
+#deactivateActivateBtn,
+#removeProfilePictureBtn {
+    font-size: 20px;
+}
+
 #form-input,
-#removeProfilePictureBtn,
-#updateProfileBtn,
-#suffixDropdownBtn {
+#deleteAccountBtn,
+#changePasswordBtn,
+#suffixDropdownBtn,
+#deactivateActivateBtn,
+#removeProfilePictureBtn {
     height: 50px;
 }
 
@@ -183,9 +186,16 @@
 
 .form-label,
 .modal-label {
-    font-weight: 500 !important;
     color: var(--input-text);
     margin-bottom: 0.5rem;
+}
+
+.form-label {
+    font-weight: bold !important;
+}
+
+.modal-label {
+    font-weight: 500 !important;
 }
 
 .required-asterisk {
@@ -221,17 +231,17 @@
 .form-select:hover,
 #form-input:hover,
 #suffixDropdownBtn:hover {
-    background-color: var(--input-bg-focus);
+    background-color: var(--input-bg-focus) !important;
 }
 
 .form-control:focus,
 .form-select:focus,
 #form-input:focus,
 #suffixDropdownBtn:focus {
-    background-color: var(--input-bg-focus);
-    color: var(--input-text);
-    border-color: var(--primary-color);
+    background-color: var(--input-bg-focus) !important;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+    border-color: var(--primary-color);
+    color: var(--input-text);
 }
 
 #suffixDropdownBtn::after {

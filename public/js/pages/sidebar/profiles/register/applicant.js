@@ -389,7 +389,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const applicantSuffixHidden = document.getElementById("suffixHidden");
         const applicantSexBtn = document.getElementById("applicantSexDropdownBtn");
         const applicantSexHidden = document.getElementById("sexHidden");
-        const applicantAge = document.getElementById("applicantAgeInput").value;
 
         document.getElementById("patientLastNameInput-1").value =
             applicantLastName;
@@ -405,11 +404,10 @@ document.addEventListener("DOMContentLoaded", () => {
             applicantSexBtn.textContent.trim();
         document.getElementById("patientSexHidden-1").value =
             applicantSexHidden.value;
-        document.getElementById("patientAgeInput-1").value = applicantAge;
 
         document
             .querySelectorAll(
-                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1"
+                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1"
             )
             .forEach((field) => {
                 field.readOnly = true;

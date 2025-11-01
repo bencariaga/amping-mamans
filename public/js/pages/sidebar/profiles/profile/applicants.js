@@ -326,8 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const applicantBirthdateInput = document.getElementById(
         "applicantBirthdateInput"
     );
-    const applicantAgeInput = document.getElementById("applicantAgeInput");
-    const applicantAgeHidden = document.getElementById("applicantAgeHidden");
     const checkbox = document.getElementById("checkbox");
     const patientNumberInput = document.getElementById("patientNumberInput");
 
@@ -348,30 +346,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateApplicantAge() {
-        if (applicantBirthdateInput.value) {
-            const age = calculateAge(applicantBirthdateInput.value);
-            applicantAgeInput.value = age;
-            applicantAgeHidden.value = age;
-
-            const event = new Event("input", { bubbles: true });
-            applicantAgeHidden.dispatchEvent(event);
-
-            if (checkbox.checked) {
-                copyApplicantToPatient1();
-            }
-        } else {
-            applicantAgeInput.value = "";
-            applicantAgeHidden.value = "";
+        if (checkbox.checked) {
+            copyApplicantToPatient1();
         }
     }
 
-    if (applicantBirthdateInput && applicantAgeInput && applicantAgeHidden) {
+    if (applicantBirthdateInput) {
         applicantBirthdateInput.addEventListener("change", updateApplicantAge);
         applicantBirthdateInput.addEventListener("input", updateApplicantAge);
-
-        if (applicantBirthdateInput.value) {
-            updateApplicantAge();
-        }
     }
 
     function copyApplicantToPatient1() {
@@ -392,7 +374,6 @@ document.addEventListener("DOMContentLoaded", () => {
             "applicantSexDropdownBtn"
         );
         const applicantSexHidden = document.getElementById("sexHidden");
-        const applicantAge = document.getElementById("applicantAgeInput").value;
 
         document.getElementById("patientLastNameInput-1").value =
             applicantLastName;
@@ -408,11 +389,10 @@ document.addEventListener("DOMContentLoaded", () => {
             applicantSexBtn.textContent.trim();
         document.getElementById("patientSexHidden-1").value =
             applicantSexHidden.value;
-        document.getElementById("patientAgeInput-1").value = applicantAge;
 
         document
             .querySelectorAll(
-                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1"
+                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1"
             )
             .forEach((field) => {
                 field.readOnly = true;

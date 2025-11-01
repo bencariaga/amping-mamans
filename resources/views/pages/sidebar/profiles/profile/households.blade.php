@@ -58,5 +58,5 @@
 
 @section('footer')
     @include('components.layouts.footer.edit-household')
-    @include('components.layouts.footer.profile-buttons-3')
+    @include('components.layouts.footer.profile-buttons-4')
 @endsection

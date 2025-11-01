@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Core\CreateOccupation;
-use App\Actions\Core\DeleteOccupation;
-use App\Actions\Core\UpdateOccupation;
+use App\Actions\Core\Occupation\CreateOccupation;
+use App\Actions\Core\Occupation\DeleteOccupation;
+use App\Actions\Core\Occupation\UpdateOccupation;
 use App\Http\Controllers\Controller;
 use App\Models\Authentication\Occupation;
 use Exception;

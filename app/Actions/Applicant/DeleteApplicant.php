@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Client;
+namespace App\Actions\Applicant;
 
 use App\Models\Authentication\Account;
 use App\Models\Operation\Data;

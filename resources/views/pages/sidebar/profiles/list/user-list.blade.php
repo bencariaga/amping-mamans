@@ -145,5 +145,4 @@
 
 @section('footer')
     @include('components.layouts.footer.list-user')
-    @include('components.layouts.footer.profile-buttons-3')
 @endsection

@@ -21,7 +21,6 @@
         <form action="{{ route('profiles.applicants.update', ['applicant' => $applicant->applicant_id]) }}" method="POST" class="profile-section" id="profileSection">
         @csrf
         @method('PUT')
-
             <div class="profile-container">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
@@ -63,13 +62,12 @@
                     </div>
                 </div>
             </div>
-
             <div class="profile-container">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fa fa-info-circle fa-fw"></i><span class="header-title">PERSONAL INFORMATION</span>
                     </legend>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Gender / Sex <span class="required-asterisk">*</span></label>
                         <input type="hidden" name="sex" id="sexHidden" value="{{ old('sex', $applicantData['sex']) }}">
                         <div class="dropdown">
@@ -84,15 +82,10 @@
                         </div>
                         @error('sex') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Birthdate <span class="required-asterisk">*</span></label>
                         <input type="date" name="birth_date" value="{{ old('birth_date', $applicantData['birth_date']) }}" class="form-control" id="applicantBirthdateInput">
                         @error('birth_date') <span class="text-danger mt-3">{{ $message }}</span> @enderror
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label class="form-label fw-bold">Age (Read-Only)</label>
-                        <input type="text" class="form-control" id="applicantAgeInput" value="{{ old('applicant_age', $applicantData['applicant_age']) }}" readonly>
-                        <input type="hidden" name="applicant_age" id="applicantAgeHidden" value="{{ old('applicant_age', $applicantData['applicant_age']) }}">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Phone Number <span class="required-asterisk">*</span></label>
@@ -118,7 +111,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="profile-container">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
@@ -175,7 +167,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="profile-container">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
@@ -213,7 +204,7 @@
                         <input type="text" name="subdivision" value="{{ old('subdivision', $applicantData['subdivision']) }}" class="form-control" id="applicantSubdivisionInput" placeholder="Ex: Doña Soledad">
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="form-label">Barangay <span class="fw-normal">(if applicable)</span></label>
+                        <label class="form-label">Barangay <span class="required-asterisk">*</span></label>
                         <input type="hidden" name="barangay" id="barangayHidden" value="{{ old('barangay', $applicantData['barangay']) }}">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="applicantBarangayDropdownBtn">
@@ -226,6 +217,7 @@
                                 @endforeach
                             </ul>
                         </div>
+                        @error('barangay') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">House Occupancy Status <span class="required-asterisk">*</span></label>
@@ -262,7 +254,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="profile-container">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
@@ -310,19 +301,16 @@
                     </div>
                 </div>
             </div>
-
             <div id="patientsContainer">
                 @php
                     $patientCount = old('patient_number', $applicantData['patient_number']);
                     $oldPatients = old('patients', $applicantData['patients']);
                 @endphp
-
                 @for($index = 1; $index <= $patientCount; $index++)
                     @php
                         $defaultPatient = ['last_name' => '', 'first_name' => '', 'middle_name' => '', 'suffix' => '', 'sex' => '', 'age' => '', 'patient_category' => ''];
                         $patient = isset($oldPatients[$index]) ? array_merge($defaultPatient, $oldPatients[$index]) : $defaultPatient;
                     @endphp
-
                     <div class="profile-container patient-section" data-patient-index="{{ $index }}">
                         <div class="col-md-12">
                             <div class="row gx-3 gy-3 mb-3">
@@ -409,7 +397,6 @@
                 @endfor
             </div>
         </form>
-
         <div class="modal fade" id="deleteAccountModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -417,18 +404,15 @@
                         <h5 class="modal-title">Delete Account</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
                     <form action="{{ route('profiles.applicants.destroy', ['applicant' => $applicant->applicant_id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
-
                         <div class="modal-body" id="modal-body">
                             <label class="modal-label">This action cannot be undone.<br>To confirm account deletion, type the following.</label>
                             <div class="mb-2">
                                 <input type="text" name="deleteConfirmationText" class="form-control" id="formControl" required placeholder="{{ $applicantData['first_name'] . ' ' . $applicantData['last_name'] }}">
                             </div>
                         </div>
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" id="commonBtn" data-bs-dismiss="modal">CANCEL</button>
                             <button type="submit" class="btn btn-danger" id="commonBtn">DELETE</button>

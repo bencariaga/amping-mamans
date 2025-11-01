@@ -1,17 +1,25 @@
 <?php
 
-namespace App\Actions\Core;
+namespace App\Actions\Core\Role;
 
 use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
 use App\Actions\DatabaseTableIdGeneration\GenerateRoleId;
 use App\Models\Authentication\Role;
 use App\Models\Operation\Data;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class CreateRole
 {
+    public function __construct(
+        private CheckRoleDuplication $checkRoleDuplication
+    ) {}
     public function execute(array $roleData): Role
     {
+        if ($this->checkRoleDuplication->execute($roleData['role'])) {
+            throw new InvalidArgumentException('A role with this name already exists.');
+        }
+
         return DB::transaction(function () use ($roleData) {
             $dataId = GenerateDataId::execute();
 

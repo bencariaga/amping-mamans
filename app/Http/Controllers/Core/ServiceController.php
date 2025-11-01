@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Core\CreateService;
-use App\Actions\Core\DeleteService;
-use App\Actions\Core\UpdateService;
+use App\Actions\Core\Service\CreateService;
+use App\Actions\Core\Service\DeleteService;
+use App\Actions\Core\Service\UpdateService;
 use App\Http\Controllers\Controller;
 use App\Models\Operation\Service;
 use Exception;
@@ -14,74 +14,14 @@ use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
-
-    private function assistScopeOptions(): array
-    {
-        return [
-            'Inpatient Care',
-            'Outpatient Care',
-            'Generic Drug',
-            'Branded Drug',
-            'Biopsy',
-            'CT Scan',
-            'MRI',
-            'Pap Test',
-            'PET Scan',
-            'Ultrasound',
-            'X-Ray Scan',
-            'Endoscopy',
-            'Electrolyte Imbalance',
-            'End-Stage Renal Disease',
-            'Drug Overdose',
-            'Liver Dialysis',
-            'Hypervolemia',
-            'Peritoneal Dialysis',
-            'Poisoning',
-            'Uremia',
-            'Anemia',
-            'Blood Transfusion',
-            'Childbirth',
-            'Hemorrhage',
-        ];
-    }
-
-    private function matchOptionsFromString(?string $stored, array $options): array
-    {
-        $result = [];
-
-        if ($stored === null || $stored === '') {
-            return $result;
-        }
-
-        $hay = mb_strtolower($stored);
-
-        foreach ($options as $opt) {
-            if ($opt === null) {
-                continue;
-            }
-
-            $needle = mb_strtolower($opt);
-
-            if (mb_strpos($hay, $needle) !== false) {
-                $result[] = $opt;
-            }
-        }
-
-        return $result;
-    }
-
     public function index()
     {
-        $options = $this->assistScopeOptions();
-        $services = Service::join('data', 'services.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get()->map(function ($svc) use ($options) {
-            $assist = $svc->assist_scope ?? '';
+        $services = Service::join('data', 'services.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get()->map(function ($svc) {
 
             return [
                 'service_id' => $svc->service_id,
                 'data_id' => $svc->data_id,
-                'service_type' => $svc->service_type ?? '',
-                'assist_scope' => $assist,
-                'assist_scope_list' => $this->matchOptionsFromString($assist, $options),
+                'service' => $svc->service ?? '',
             ];
         });
 
@@ -99,7 +39,7 @@ class ServiceController extends Controller
 
         try {
             foreach ($creates as $svcData) {
-                if (!is_array($svcData) || empty($svcData['service_type'])) {
+                if (! is_array($svcData) || empty($svcData['service_type'])) {
                     continue;
                 }
 
@@ -109,11 +49,11 @@ class ServiceController extends Controller
                     continue;
                 }
 
-                $createService->execute($svcName, $svcData['assist_scope'] ?? null);
+                $createService->execute($svcName);
             }
 
             foreach ($updates as $svcData) {
-                if (!is_array($svcData) || empty($svcData['service_id']) || empty($svcData['service_type'])) {
+                if (! is_array($svcData) || empty($svcData['service_id']) || empty($svcData['service_type'])) {
                     continue;
                 }
 
@@ -123,11 +63,11 @@ class ServiceController extends Controller
                     continue;
                 }
 
-                $updateService->execute($svcData['service_id'], $svcName, $svcData['assist_scope'] ?? null);
+                $updateService->execute($svcData['service_id'], $svcName);
             }
 
             foreach ($deletes as $svcId) {
-                if (!is_string($svcId) || Str::of($svcId)->trim() === '') {
+                if (! is_string($svcId) || Str::of($svcId)->trim() === '') {
                     continue;
                 }
 
@@ -136,17 +76,11 @@ class ServiceController extends Controller
 
             DB::commit();
 
-            $options = $this->assistScopeOptions();
-
-            $updatedServices = Service::join('data', 'services.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get()->map(function ($svc) use ($options) {
-                $assist = $svc->assist_scope ?? '';
-
+            $updatedServices = Service::join('data', 'services.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get()->map(function ($svc) {
                 return [
                     'service_id' => $svc->service_id,
                     'data_id' => $svc->data_id,
-                    'service_type' => $svc->service_type ?? '',
-                    'assist_scope' => $assist,
-                    'assist_scope_list' => $this->matchOptionsFromString($assist, $options),
+                    'service' => $svc->service ?? '',
                 ];
             });
 

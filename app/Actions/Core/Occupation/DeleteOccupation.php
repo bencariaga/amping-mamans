@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Core;
+namespace App\Actions\Core\Occupation;
 
 use App\Models\Authentication\Occupation;
 use App\Models\Operation\Data;

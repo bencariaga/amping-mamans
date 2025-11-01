@@ -1,18 +1,26 @@
 <?php
 
-namespace App\Actions\Core;
+namespace App\Actions\Core\Service;
 
 use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
 use App\Actions\DatabaseTableIdGeneration\GenerateServiceId;
 use App\Models\Operation\Data;
 use App\Models\Operation\Service;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class CreateService
 {
-    public function execute(string $serviceName, ?string $assistScope = null): Service
+    public function __construct(
+        private CheckServiceDuplication $checkServiceDuplication
+    ) {}
+    public function execute(string $serviceName): Service
     {
-        return DB::transaction(function () use ($serviceName, $assistScope) {
+        if ($this->checkServiceDuplication->execute($serviceName)) {
+            throw new InvalidArgumentException('A service with this name already exists.');
+        }
+
+        return DB::transaction(function () use ($serviceName) {
             $dataId = GenerateDataId::execute();
 
             Data::create([
@@ -25,8 +33,7 @@ class CreateService
             return Service::create([
                 'service_id' => GenerateServiceId::execute(),
                 'data_id' => $dataId,
-                'service_type' => $serviceName,
-                'assist_scope' => $assistScope,
+                'service' => $serviceName,
             ]);
         });
     }

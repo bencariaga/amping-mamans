@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Core;
+namespace App\Actions\Core\Role;
 
 use App\Models\Authentication\Role;
 use App\Models\Operation\Data;

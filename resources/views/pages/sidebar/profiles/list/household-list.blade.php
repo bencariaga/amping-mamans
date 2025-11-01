@@ -175,5 +175,4 @@
 
 @section('footer')
     @include('components.layouts.footer.list-household')
-    @include('components.layouts.footer.profile-buttons-3')
 @endsection

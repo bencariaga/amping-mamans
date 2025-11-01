@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const roleAvatarImg = document.getElementById('roleAvatarImg');
     const roleAvatarPlaceholder = document.getElementById('roleAvatarPlaceholder');
     const roleAvatarRemoveBtn = document.getElementById('roleAvatarRemoveBtn');
+    const removeProfilePictureBtn = document.getElementById('removeProfilePictureBtn');
 
     function readURL(input) {
         if (!input) return;
@@ -225,6 +226,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (roleAvatarRemoveBtn) {
         roleAvatarRemoveBtn.addEventListener('click', function (e) {
             e.stopPropagation();
+            removeUpload();
+        });
+    }
+
+    if (removeProfilePictureBtn) {
+        removeProfilePictureBtn.addEventListener('click', function (e) {
+            e.preventDefault();
             removeUpload();
         });
     }

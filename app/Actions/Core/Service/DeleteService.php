@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Core;
+namespace App\Actions\Core\Service;
 
 use App\Models\Operation\Data;
 use App\Models\Operation\ExpenseRange;

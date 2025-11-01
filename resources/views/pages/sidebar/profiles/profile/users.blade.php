@@ -53,26 +53,26 @@
 
                 <div class="profile-grid-container">
                     <div class="form-group">
-                        <label class="form-label">First Name <span class="required-asterisk">*</span></label>
-                        <input id="form-input" type="text" name="first_name" class="form-control" value="{{ old('first_name', $user->first_name) }}" required pattern="[A-Za-z ]+" title="Letters and spaces only">
+                        <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
+                        <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->last_name) }}" required pattern="[A-Za-z ]+" title="Letters and spaces only">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
-                        <input id="form-input" type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->last_name) }}" required pattern="[A-Za-z ]+" title="Letters and spaces only">
+                        <label class="form-label">First Name <span class="required-asterisk">*</span></label>
+                        <input type="text" name="first_name" class="form-control" value="{{ old('first_name', $user->first_name) }}" required pattern="[A-Za-z ]+" title="Letters and spaces only">
                     </div>
                     <div class="form-group button-container">
-                        <button type="button" class="btn btn-primary" id="commonBtn" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                            CHANGE PASSWORD
+                        <button type="button" class="btn btn-primary" id="changePasswordBtn" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            Change Password
                         </button>
                     </div>
                     <div class="form-group button-container">
-                        <button type="button" class="btn btn-danger" id="commonBtn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            DELETE ACCOUNT
+                        <button type="button" class="btn btn-danger" id="deleteAccountBtn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            Delete Account
                         </button>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Middle Name</label>
-                        <input id="form-input" type="text" name="middle_name" class="form-control" value="{{ old('middle_name', $user->middle_name) }}" pattern="[A-Za-z ]*" title="Letters and spaces only">
+                        <input type="text" name="middle_name" class="form-control" value="{{ old('middle_name', $user->middle_name) }}" pattern="[A-Za-z ]*" title="Letters and spaces only">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Suffix</label>
@@ -90,22 +90,17 @@
                         </div>
                     </div>
                     <div class="form-group button-container">
-                        <button type="button" class="btn btn-secondary" id="deactivateUser" data-member-id="{{ $user->member_id }}" data-status="{{ $user->account->account_status === 'Active' ? 'DEACTIVATE' : 'ACTIVATE' }}">
+                        <button type="button" class="btn btn-{{ $user->account->account_status === 'Active' ? 'danger' : 'success' }}" id="deactivateActivateBtn" data-bs-toggle="modal" data-bs-target="#deactivateActivateModal" data-member-id="{{ $user->member_id }}" data-status="{{ $user->account->account_status === 'Active' ? 'DEACTIVATE' : 'ACTIVATE' }}">
                             @if($user->account->account_status === 'Active')
-                                DEACTIVATE USER
+                                Deactivate Account
                             @else
-                                ACTIVATE USER
+                                Activate Account
                             @endif
                         </button>
                     </div>
-                    <div class="form-group button-container d-none">
-                        <button type="button" class="btn btn-danger" id="removeProfilePictureBtn">
-                            REMOVE PICTURE
-                        </button>
-                    </div>
                     <div class="form-group button-container">
-                        <button type="submit" class="btn btn-primary" id="updateProfileBtn">
-                            UPDATE PROFILE
+                        <button type="button" class="btn btn-secondary" id="removeProfilePictureBtn">
+                            Remove Picture
                         </button>
                     </div>
                 </div>
@@ -128,20 +123,20 @@
                     <div class="modal-body" id="modal-body">
                         <div class="mb-3">
                             <label class="modal-label">To confirm password change, type the following.</label>
-                            <input type="text" name="username_confirmation_change" class="form-control" id="formControl" required placeholder="{{ $fullName }}">
+                            <input type="text" name="username_confirmation_change" class="form-control" required placeholder="{{ $fullName }}">
                         </div>
                         <div class="mb-3">
                             <label class="modal-label">Provide the new password.</label>
-                            <input type="password" name="new_password" class="form-control" id="formControl" required>
+                            <input type="password" name="new_password" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="modal-label">Confirm the new password.</label>
-                            <input type="password" name="new_password_confirmation" class="form-control" id="formControl" required>
+                            <input type="password" name="new_password_confirmation" class="form-control" required>
                         </div>
                     </div>
                     <div class="modal-footer" id="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
-                        <button type="submit" class="btn btn-primary">CHANGE PASSWORD</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
                     </div>
                 </form>
             </div>
@@ -162,12 +157,56 @@
                     <div class="modal-body" id="modal-body">
                         <label class="modal-label">This action cannot be undone.<br>To confirm account deletion, type the following.</label>
                         <div class="mb-3">
-                            <input type="text" name="username_confirmation_delete" class="form-control" id="formControl" required placeholder="{{ $fullName }}">
+                            <input type="text" name="username_confirmation_delete" class="form-control" required placeholder="{{ $fullName }}">
                         </div>
                     </div>
                     <div class="modal-footer" id="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
-                        <button type="submit" class="btn btn-danger">DELETE</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deactivateActivateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" id="deactivateActivateForm" class="deactivate-activate-modal">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header" id="modal-header">
+                        <h5 class="modal-title" id="deactivateActivateModalTitle">
+                            @if($user->account->account_status === 'Active')
+                                Deactivate Account
+                            @else
+                                Activate Account
+                            @endif
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <label class="modal-label" id="deactivateActivateModalLabel">
+                            @if($user->account->account_status === 'Active')
+                                To confirm account deactivation, type the following.
+                            @else
+                                To confirm account activation, type the following.
+                            @endif
+                        </label>
+                        <div class="mb-3">
+                            <input type="text" name="username_confirmation_deactivate" class="form-control" required placeholder="{{ $fullName }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-{{ $user->account->account_status === 'Active' ? 'danger' : 'success' }}" id="deactivateActivateSubmitBtn">
+                            @if($user->account->account_status === 'Active')
+                                Deactivate
+                            @else
+                                Activate
+                            @endif
+                        </button>
                     </div>
                 </form>
             </div>
@@ -177,5 +216,5 @@
 
 @section('footer')
     @include('components.layouts.footer.edit-user')
-    @include('components.layouts.footer.profile-buttons-2')
+    @include('components.layouts.footer.profile-buttons-3')
 @endsection

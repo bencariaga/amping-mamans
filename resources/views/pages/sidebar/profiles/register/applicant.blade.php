@@ -68,7 +68,7 @@
                     <legend class="form-legend">
                         <i class="fa fa-info-circle fa-fw"></i><span class="header-title">PERSONAL INFORMATION</span>
                     </legend>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Gender / Sex <span class="required-asterisk">*</span></label>
                         <input type="hidden" name="sex" id="sexHidden" value="{{ old('sex', '') }}">
                         <div class="dropdown">
@@ -83,15 +83,10 @@
                         </div>
                         @error('sex') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Birthdate <span class="required-asterisk">*</span></label>
                         <input type="date" name="birth_date" value="{{ old('birth_date') }}" class="form-control" id="applicantBirthdateInput">
                         @error('birth_date') <span class="text-danger mt-3">{{ $message }}</span> @enderror
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label class="form-label fw-bold">Age (Read-Only)</label>
-                        <input type="text" class="form-control" id="applicantAgeInput" readonly>
-                        <input type="hidden" name="applicant_age" id="applicantAgeHidden" value="{{ old('applicant_age', 0) }}">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Phone Number <span class="required-asterisk">*</span></label>
@@ -212,7 +207,7 @@
                         <input type="text" name="subdivision" value="{{ old('subdivision') }}" class="form-control" id="applicantSubdivisionInput" placeholder="Ex: Doña Soledad">
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="form-label">Barangay <span class="fw-normal">(if applicable)</span></label>
+                        <label class="form-label">Barangay <span class="required-asterisk">*</span></label>
                         <input type="hidden" name="barangay" id="barangayHidden" value="{{ old('barangay', '') }}">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="applicantBarangayDropdownBtn">
@@ -225,6 +220,7 @@
                                 @endforeach
                             </ul>
                         </div>
+                        @error('barangay') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">House Occupancy Status <span class="required-asterisk">*</span></label>

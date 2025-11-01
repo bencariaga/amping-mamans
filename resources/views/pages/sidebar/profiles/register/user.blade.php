@@ -24,18 +24,18 @@
 
                 <div class="row gx-3 gy-3 mb-3">
                     <div class="form-group col-md-3">
+                        <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
+                        <input type="text" name="last_name" class="form-control" value="{{ old('last_name') }}" placeholder="Example: Dela Cruz" required>
+                    </div>
+
+                    <div class="form-group col-md-3">
                         <label class="form-label">First Name <span class="required-asterisk">*</span></label>
-                        <input id="form-input-first" type="text" name="first_name" class="form-control" value="{{ old('first_name') }}" placeholder="Example: Juan" required>
+                        <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}" placeholder="Example: Juan" required>
                     </div>
 
                     <div class="form-group col-md-3">
                         <label class="form-label">Middle Name</label>
-                        <input id="form-input-middle" type="text" name="middle_name" class="form-control" value="{{ old('middle_name') }}" placeholder="Example: Pablo">
-                    </div>
-
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
-                        <input id="form-input-last" type="text" name="last_name" class="form-control" value="{{ old('last_name') }}" placeholder="Example: Dela Cruz" required>
+                        <input type="text" name="middle_name" class="form-control" value="{{ old('middle_name') }}" placeholder="Example: Pablo">
                     </div>
 
                     <div class="form-group col-md-3">
@@ -80,13 +80,15 @@
                         <label class="form-label">Role <span class="fw-normal">(if "Other", please specify)</span></label>
                         <input id="customRoleInput" class="form-control" type="text" name="custom_role" value="{{ old('custom_role') }}" placeholder="Type to add a new role.">
                     </div>
+
                     <div class="form-group col-md-3">
                         <label class="form-label">Set Password <span class="required-asterisk">*</span></label>
-                        <input id="form-input" type="password" name="password" class="form-control" placeholder="Write with at least 8 characters." required>
+                        <input type="password" name="password" class="form-control" placeholder="Write with at least 8 characters." required>
                     </div>
+
                     <div class="form-group col-md-3">
                         <label class="form-label">Confirm Password <span class="required-asterisk">*</span></label>
-                        <input id="form-input" type="password" name="password_confirmation" class="form-control" placeholder="Write the password again." required>
+                        <input type="password" name="password_confirmation" class="form-control" placeholder="Write the password again." required>
                     </div>
                 </div>
 
@@ -94,11 +96,13 @@
                     <div class="col-md-6">
                         <div class="row gx-3 gy-3">
                             <div class="form-group col-md-6 button-container">
-                                <a href="{{ route('profiles.users.list') }}" class="btn btn-secondary" id="backToListBtn">BACK TO LIST</a>
+                                <button type="submit" class="btn btn-primary btn-action-update-profile">Confirm to Add User</button>
                             </div>
+
                             <div class="form-group col-md-6 button-container">
-                                <button type="submit" class="btn btn-primary btn-action-update-profile" id="addUserBtn">ADD USER</button>
+                                <button type="button" class="btn btn-secondary" id="removeProfilePictureBtn">Remove Picture</button>
                             </div>
+
                             <div class="col-12">
                                 <p class="form-text">Acceptable file extensions: JPG, JPEG, JFIF, PNG, WEBP; maximum file size: 8 MB</p>
                             </div>
@@ -123,6 +127,7 @@
                 <div class="col-md-3 text-center">
                     <div class="role-avatar-wrap mx-auto d-flex align-items-center justify-content-center">
                         <img id="roleAvatarImg" class="role-avatar-image d-none" src="#">
+
                         <div id="roleAvatarPlaceholder" class="role-avatar-placeholder d-flex justify-content-center">
                             <div id="wrapPlaceholder" class="wrap-placeholder">
                                 <i class="fa fa-user" aria-hidden="true"></i>
@@ -134,10 +139,12 @@
                 <div class="col-md-9">
                     <div id="roleInfoBox" class="role-info-box">
                         <p id="roleInfoName" class="fw-bold fs-5 mb-4">Select a role to view details</p>
+
                         <div id="roleAllowedActionsArea" class="mb-3">
                             <p class="fw-semibold mb-1">Allowed Actions:</p>
                             <div id="roleAllowedActionsList" class="role-info-list"><span class="text-muted">N/A</span></div>
                         </div>
+
                         <div id="roleAccessScopeArea">
                             <p class="fw-semibold mb-1">Access Scope:</p>
                             <div id="roleAccessScopeList" class="role-info-list"><span class="text-muted">N/A</span></div>
@@ -151,5 +158,6 @@
 @endsection
 
 @section('footer')
-    @include('components.layouts.footer.profile-buttons-1')
+    @include('components.layouts.footer.add-user')
+    @include('components.layouts.footer.profile-buttons-2')
 @endsection

@@ -10,9 +10,21 @@ class DeactivateUserAccount
     public function execute(Member $user): Member
     {
         $account = $user->account;
-        $account->account_status = $account->account_status === 'Deactivated' ? 'Active' : 'Deactivated';
+        $data = $account->data;
+        
+        if ($account->account_status === 'Deactivated') {
+            $account->account_status = 'Active';
+            $data->archive_status = 'Unarchived';
+            $data->archived_at = null;
+        } else {
+            $account->account_status = 'Deactivated';
+            $data->archive_status = 'Archived';
+            $data->archived_at = Carbon::now();
+        }
+        
         $account->save();
+        $data->save();
 
-        return $user->fresh(['account']);
+        return $user->fresh(['account', 'account.data']);
     }
 }
