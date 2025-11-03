@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Registration;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateHouseholdId;
+use App\Actions\IdGeneration\GenerateHouseholdId;
 use App\Http\Controllers\Controller;
 use App\Models\User\Household;
 use Illuminate\Http\Request;

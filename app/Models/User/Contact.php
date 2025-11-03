@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateContactId;
+use App\Actions\IdGeneration\GenerateContactId;
 use App\Models\Communication\Message;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

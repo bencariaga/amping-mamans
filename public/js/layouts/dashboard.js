@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 remainingElement.innerText = formatCurrency(data.amount_recent);
 
             if (supplementaryElement) {
-                supplementaryElement.innerText = data.has_supplementary_budget
-                    ? "YES"
-                    : "NO";
+                const status = data.has_supplementary_budget ? "YES" : "NO";
+                supplementaryElement.innerText = status;
+                supplementaryElement.style.color = status === "YES" ? "#80ff00" : "#ff2400";
             }
         } else {
             handleBudgetError("N/A");

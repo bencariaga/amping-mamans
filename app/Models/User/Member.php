@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateMemberId;
+use App\Actions\IdGeneration\GenerateMemberId;
 use App\Models\Authentication\Account;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;

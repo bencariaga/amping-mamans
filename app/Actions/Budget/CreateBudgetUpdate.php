@@ -2,8 +2,8 @@
 
 namespace App\Actions\Budget;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateBudgetUpdateId;
-use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
+use App\Actions\IdGeneration\GenerateBudgetUpdateId;
+use App\Actions\IdGeneration\GenerateDataId;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\Data;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +47,7 @@ class CreateBudgetUpdate
                 'reason' => $budgetData['reason'],
             ];
 
-            if ($budgetData['possessor'] === 'Sponsor' && !empty($budgetData['sponsor_id'])) {
+            if ($budgetData['possessor'] === 'Sponsor' && ! empty($budgetData['sponsor_id'])) {
                 $payload['sponsor_id'] = $budgetData['sponsor_id'];
             }
 

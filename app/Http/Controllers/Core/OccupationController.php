@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Core\Occupation\CreateOccupation;
-use App\Actions\Core\Occupation\DeleteOccupation;
-use App\Actions\Core\Occupation\UpdateOccupation;
+use App\Actions\Occupation\CreateOccupation;
+use App\Actions\Occupation\DeleteOccupation;
+use App\Actions\Occupation\UpdateOccupation;
 use App\Http\Controllers\Controller;
 use App\Models\Authentication\Occupation;
 use Exception;
@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 
 class OccupationController extends Controller
 {
-
     public function index()
     {
         return response()->json(Occupation::join('data', 'occupations.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get());

@@ -122,7 +122,7 @@
 #updateUserBtn,
 #deleteAccountBtn,
 #changePasswordBtn,
-#removeProfilePictureBtn {
+#deactivateAccountBtn {
     font-size: 20px;
 }
 
@@ -131,7 +131,7 @@
 #deleteAccountBtn,
 #changePasswordBtn,
 #suffixDropdownBtn,
-#removeProfilePictureBtn {
+#deactivateAccountBtn {
     height: 50px;
 }
 

@@ -2,7 +2,7 @@
 
 namespace App\Models\Authentication;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateOccupationId;
+use App\Actions\IdGeneration\GenerateOccupationId;
 use App\Models\Operation\Data;
 use App\Models\User\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

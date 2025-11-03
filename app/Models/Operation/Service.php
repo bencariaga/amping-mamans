@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateServiceId;
+use App\Actions\IdGeneration\GenerateServiceId;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model

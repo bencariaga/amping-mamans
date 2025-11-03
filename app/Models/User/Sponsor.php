@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateSponsorId;
+use App\Actions\IdGeneration\GenerateSponsorId;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\GuaranteeLetter;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +26,6 @@ class Sponsor extends Model
         'designation',
         'organization_name',
     ];
-
 
     protected static function boot()
     {

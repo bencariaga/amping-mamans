@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateTariffListId;
+use App\Actions\IdGeneration\GenerateTariffListId;
 use Illuminate\Database\Eloquent\Model;
 
 class TariffList extends Model

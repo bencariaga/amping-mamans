@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
+use App\Actions\IdGeneration\GenerateDataId;
 use App\Models\Authentication\Account;
 use App\Models\Authentication\Occupation;
 use App\Models\Authentication\Role;
@@ -84,5 +84,10 @@ class Data extends Model
     public function occupations()
     {
         return $this->hasMany(Occupation::class, 'data_id', 'data_id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'data_id', 'data_id');
     }
 }

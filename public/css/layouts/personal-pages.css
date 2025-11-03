@@ -242,16 +242,22 @@ input[type="number"]::-webkit-outer-spin-button {
 #themeToggle,
 #editRoleBtn,
 #sponsorsBtn,
+#addGlTmpBtn,
 #householdBtn,
 #addSmsTmpBtn,
 #backToListBtn,
 #clearCacheBtn,
 #saveChangesBtn,
 #updateSmsTmpBtn,
+#editServicesBtn,
+#saveServicesBtn,
 #addApplicantBtn,
 #addHouseholdBtn,
+#editExpRangesBtn,
+#saveExpRangesBtn,
 #backToDashboardBtn,
 #updateHouseholdBtn,
+#removeProfilePictureBtn,
 #addTariffListVersionBtn {
     background-color: #243040;
 }

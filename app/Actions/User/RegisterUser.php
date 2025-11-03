@@ -2,11 +2,11 @@
 
 namespace App\Actions\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateAccountId;
-use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
-use App\Actions\DatabaseTableIdGeneration\GenerateMemberId;
-use App\Actions\DatabaseTableIdGeneration\GenerateRoleId;
-use App\Actions\DatabaseTableIdGeneration\GenerateStaffId;
+use App\Actions\IdGeneration\GenerateAccountId;
+use App\Actions\IdGeneration\GenerateDataId;
+use App\Actions\IdGeneration\GenerateMemberId;
+use App\Actions\IdGeneration\GenerateRoleId;
+use App\Actions\IdGeneration\GenerateStaffId;
 use App\Models\Authentication\Account;
 use App\Models\Authentication\Role;
 use App\Models\Operation\Data;

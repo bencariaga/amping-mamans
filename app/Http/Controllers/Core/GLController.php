@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\GL\CreateGuaranteeLetter;
-use App\Actions\GL\GenerateGLPDF;
+use App\Actions\GuaranteeLetter\CreateGuaranteeLetter;
+use App\Actions\GuaranteeLetter\GenerateGLPDF;
 use App\Http\Controllers\Controller;
 
 class GLController extends Controller

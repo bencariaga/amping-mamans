@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateExpenseRangeId;
+use App\Actions\IdGeneration\GenerateExpenseRangeId;
 use Illuminate\Database\Eloquent\Model;
 
 class ExpenseRange extends Model

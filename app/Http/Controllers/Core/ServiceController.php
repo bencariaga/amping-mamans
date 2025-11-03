@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Core\Service\CreateService;
-use App\Actions\Core\Service\DeleteService;
-use App\Actions\Core\Service\UpdateService;
+use App\Actions\Service\CreateService;
+use App\Actions\Service\DeleteService;
+use App\Actions\Service\UpdateService;
 use App\Http\Controllers\Controller;
 use App\Models\Operation\Service;
 use Exception;

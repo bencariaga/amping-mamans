@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateBudgetUpdateId;
+use App\Actions\IdGeneration\GenerateBudgetUpdateId;
 use App\Models\User\Sponsor;
 use Illuminate\Database\Eloquent\Model;
 

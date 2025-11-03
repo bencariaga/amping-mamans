@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Core\Role\DeleteRole;
-use App\Actions\Core\Role\FormatRolesWithOptions;
-use App\Actions\Core\Role\GetRolesWithData;
-use App\Actions\Core\Role\ProcessRoleChanges;
-use App\Actions\Core\Role\UpdateUserRoles;
+use App\Actions\Role\DeleteRole;
+use App\Actions\Role\FormatRolesWithOptions;
+use App\Actions\Role\GetRolesWithData;
+use App\Actions\Role\ProcessRoleChanges;
+use App\Actions\Role\UpdateUserRoles;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,7 +20,6 @@ class RoleController extends Controller
         private ProcessRoleChanges $processRoleChanges,
         private DeleteRole $deleteRole
     ) {}
-
 
     public function edit(Request $request)
     {

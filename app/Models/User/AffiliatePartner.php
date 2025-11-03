@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateAffiliatePartnerId;
+use App\Actions\IdGeneration\GenerateAffiliatePartnerId;
 use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
 

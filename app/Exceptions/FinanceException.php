@@ -55,4 +55,29 @@ class FinanceException extends Exception
     {
         return new self("Affiliate partner {$partnerId} not found.");
     }
+
+    public static function invalidEffectivityDate(string $date): self
+    {
+        return new self("Effectivity date must be at least tomorrow. Provided: {$date}");
+    }
+
+    public static function effectivityDateTaken(string $date): self
+    {
+        return new self("The effectivity date {$date} is already taken by another tariff list.");
+    }
+
+    public static function invalidCoveragePercent(float $percent): self
+    {
+        return new self("Coverage percent must be between 0 and 100. Provided: {$percent}%");
+    }
+
+    public static function cannotRemoveLastService(): self
+    {
+        return new self("Cannot remove the last service. A tariff list must have at least one service.");
+    }
+
+    public static function serviceAlreadyExists(string $serviceId): self
+    {
+        return new self("Service {$serviceId} already exists in this tariff list.");
+    }
 }

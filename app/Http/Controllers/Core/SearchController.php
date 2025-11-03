@@ -26,7 +26,11 @@ class SearchController extends Controller
         $sortBy = $request->input('sort_by', 'latest');
         $perPage = $request->input('per_page', 4);
 
-        $baseQuery = Member::with(['staff.role'])->whereHas('staff');
+        $baseQuery = Member::with(['staff.role'])
+            ->whereHas('staff')
+            ->whereHas('account', function ($query) {
+                $query->where('account_status', 'Active');
+            });
 
         if ($search) {
             $term = "%{$search}%";
@@ -100,7 +104,7 @@ class SearchController extends Controller
                 ->orderBy('members.last_name', 'asc')
                 ->select('households.*')
                 ->distinct())
-            ->when(!Collection::make(['oldest', 'last_name_asc'])->contains($sortBy), fn ($q) => $q->orderBy('household_id', 'desc'));
+            ->when(! Collection::make(['oldest', 'last_name_asc'])->contains($sortBy), fn ($q) => $q->orderBy('household_id', 'desc'));
 
         $households = $perPage === 'all' ? $baseQuery->get() : $baseQuery->paginate($perPage);
 
@@ -142,7 +146,7 @@ class SearchController extends Controller
         foreach ($tariffModels as $tariffModel) {
             $servicesList = ExpenseRange::where('tariff_list_id', $tariffModel->tariff_list_id)
                 ->join('services', 'expense_ranges.service_id', '=', 'services.service_id')
-                ->pluck('services.service_type')
+                ->pluck('services.service')
                 ->unique();
             $groupedTariffs[$tariffModel->data_id] = $servicesList;
         }
@@ -206,7 +210,7 @@ class SearchController extends Controller
 
         $sponsors = $perPage === 'all' ? $query->distinct()->get() : $query->distinct()->paginate($perPage);
 
-        return view('pages.sidebar.contribution.contributors')->with('sponsors', $sponsors);
+        return view('pages.dashboard.templates.miscellaneous')->with('sponsors', $sponsors);
     }
 
     public function listApplications(Request $request)
@@ -235,7 +239,7 @@ class SearchController extends Controller
                         $q->where('affiliate_partner_name', 'like', $term);
                     })
                     ->orWhereHas('expenseRange.service', function ($q) use ($term) {
-                        $q->where('service_type', 'like', $term);
+                        $q->where('service', 'like', $term);
                     })
                     ->orWhereRaw('CAST(billed_amount AS CHAR) LIKE ?', [$term])
                     ->orWhereRaw('CAST(assistance_amount AS CHAR) LIKE ?', [$term]);

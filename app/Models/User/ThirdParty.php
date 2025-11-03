@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateThirdPartyId;
+use App\Actions\IdGeneration\GenerateThirdPartyId;
 use App\Models\Authentication\Account;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

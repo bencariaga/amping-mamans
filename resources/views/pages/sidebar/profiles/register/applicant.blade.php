@@ -410,5 +410,5 @@
 
 @section('footer')
     @include('components.layouts.footer.add-applicant')
-    @include('components.layouts.footer.profile-buttons-3')
+    @include('components.layouts.footer.profile-buttons-2')
 @endsection

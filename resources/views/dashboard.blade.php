@@ -112,6 +112,9 @@
                 </div>
             </div>
         </div>
+
+        @include('pages.dashboard.landing.allocate-budget')
+        @include('pages.dashboard.landing.supplementary-budget')
     </div>
 @endsection
 

@@ -2,7 +2,7 @@
 
 namespace App\Models\Authentication;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateAccountId;
+use App\Actions\IdGeneration\GenerateAccountId;
 use App\Models\Operation\Data;
 use App\Models\User\Member;
 use App\Models\User\ThirdParty;

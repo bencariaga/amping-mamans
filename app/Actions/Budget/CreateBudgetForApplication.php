@@ -2,8 +2,8 @@
 
 namespace App\Actions\Budget;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateBudgetUpdateId;
-use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
+use App\Actions\IdGeneration\GenerateBudgetUpdateId;
+use App\Actions\IdGeneration\GenerateDataId;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\Data;
 use Illuminate\Support\Facades\DB;

@@ -2,7 +2,7 @@
 
 namespace App\Models\Communication;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateMessageId;
+use App\Actions\IdGeneration\GenerateMessageId;
 use App\Models\Operation\Application;
 use App\Models\User\Contact;
 use App\Models\User\Staff;

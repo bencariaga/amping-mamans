@@ -2,7 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateApplicationId;
+use App\Actions\IdGeneration\GenerateApplicationId;
 use App\Models\Communication\Message;
 use App\Models\User\AffiliatePartner;
 use App\Models\User\Patient;
@@ -22,6 +22,7 @@ class Application extends Model
 
     protected $fillable = [
         'application_id',
+        'data_id',
         'patient_id',
         'ap_id',
         'exp_range_id',
@@ -71,5 +72,10 @@ class Application extends Model
     public function guaranteeLetter()
     {
         return $this->hasOne(GuaranteeLetter::class, 'application_id', 'application_id');
+    }
+
+    public function data()
+    {
+        return $this->belongsTo(Data::class, 'data_id', 'data_id');
     }
 }

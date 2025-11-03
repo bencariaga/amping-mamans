@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Registration;
 
-use App\Actions\Core\Role\GetRolesWithData;
+use App\Actions\Role\GetRolesWithData;
 use App\Actions\User\CheckUserDuplication;
 use App\Actions\User\RegisterUser;
 use App\Http\Controllers\Controller;
@@ -51,7 +51,7 @@ class UserRegistrationController extends Controller
                 ->with('success', 'User account has been added successfully.');
         } catch (Throwable $e) {
             return back()->withInput()->withErrors([
-                'error' => 'Registration failed: '.$e->getMessage()
+                'error' => 'Registration failed: '.$e->getMessage(),
             ]);
         }
     }

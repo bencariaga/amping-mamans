@@ -1,56 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <script>
-            const storedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = storedTheme ? storedTheme : (prefersDark ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', theme);
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const themeToggle = document.getElementById('themeToggle');
-                if (!themeToggle) return;
-
-                const themeText = themeToggle.querySelector('.nav-text');
-                if (!themeText) return;
-
-                const themeIcon = themeToggle.querySelector('i');
-                if (!themeIcon) return;
-
-                let currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-
-                if (currentTheme === 'dark') {
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                    themeToggle.title = 'Switch to light mode.';
-                    themeText.textContent = 'Light Mode';
-                }
-
-                themeToggle.addEventListener('click', () => {
-                    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-                    document.documentElement.classList.add('theme-transition');
-                    document.documentElement.setAttribute('data-theme', currentTheme);
-                    localStorage.setItem('theme', currentTheme);
-
-                    setTimeout(() => {
-                        document.documentElement.classList.remove('theme-transition');
-                    }, 300);
-
-                    if (currentTheme === 'dark') {
-                        themeIcon.classList.remove('fa-moon');
-                        themeIcon.classList.add('fa-sun');
-                        themeToggle.title = 'Switch to light mode.';
-                        themeText.textContent = 'Light Mode';
-                    } else {
-                        themeIcon.classList.remove('fa-sun');
-                        themeIcon.classList.add('fa-moon');
-                        themeToggle.title = 'Switch to dark mode.';
-                        themeText.textContent = 'Dark Mode';
-                    }
-                });
-            });
-        </script>
-
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -80,7 +30,7 @@
 
         <div class="d-flex flex-grow-1">
             <aside id="sidebar" class="d-flex flex-column sidebar-v1">
-                <div class="d-flex flex-column align-items-center py-2 border-bottom sidebar-header">
+                <div class="d-flex flex-column align-items-center py-2 border-bottom sidebar-header" id="sidebar-header">
                     <div class="d-flex align-items-center gap-2">
                         <img alt="AMPING Logo" class="amping-logo" src="{{ asset('images/main/amping-logo-white.png') }}" loading="eager">
 
@@ -114,6 +64,10 @@
                                 <div class="nav-icon"><i class="fas fa-list-ol" aria-hidden="true"></i></div>
                                 <div class="nav-text">Multi-Step Form<br>(Existing Applicants)</div>
                             </a>
+                            <a class="nav-link sub-nav-link" href="{{ route('applications.list') }}">
+                                <div class="nav-icon"><i class="fas fa-list-alt" aria-hidden="true"></i></div>
+                                <div class="nav-text">Applications</div>
+                            </a>
                             <a class="nav-link sub-nav-link" href="{{ route('request-assistance') }}">
                                 <div class="nav-icon"><i class="fas fa-envelope-open-text" aria-hidden="true"></i></div>
                                 <div class="nav-text">Request Assistance</div>
@@ -122,25 +76,21 @@
                                 <div class="nav-icon"><i class="fas fa-list-alt" aria-hidden="true"></i></div>
                                 <div class="nav-text">Tariff Lists</div>
                             </a>
-                            <a class="nav-link sub-nav-link" href="{{ route('guarantee-letter') }}">
+                            <a class="nav-link sub-nav-link" href="{{ route('gl-templates.list') }}">
                                 <div class="nav-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
-                                <div class="nav-text">Guarantee Letter</div>
+                                <div class="nav-text">Guarantee Letters</div>
                             </a>
                             <a class="nav-link sub-nav-link" href="{{ route('message-templates.list') }}">
                                 <div class="nav-icon"><i class="fas fa-comment-alt" aria-hidden="true"></i></div>
                                 <div class="nav-text">SMS Templates</div>
                             </a>
-                            <a class="nav-link sub-nav-link" href="">
-                                <div class="nav-icon"><i class="fa fa-asterisk" aria-hidden="true"></i></div>
-                                <div class="nav-text">Miscellaneous</div>
-                            </a>
                         </div>
 
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#accountsMenu" role="button" aria-expanded="false" aria-controls="accountsMenu">
-                            <div class="nav-icon"><i class="fas fa-users-cog" aria-hidden="true"></i></div>
-                            <div class="nav-text">Accounts</div>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#profilesMenu" role="button" aria-expanded="false" aria-controls="profilesMenu">
+                            <div class="nav-icon"><i class="fas fa-user-gear" aria-hidden="true"></i></div>
+                            <div class="nav-text">Profiles</div>
                         </a>
-                        <div class="collapse" id="accountsMenu">
+                        <div class="collapse" id="profilesMenu">
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.users.list') }}">
                                 <div class="nav-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></div>
                                 <div class="nav-text">Users</div>
@@ -148,6 +98,9 @@
                             <a class="nav-link sub-nav-link" href="{{ route('profiles.applicants.list') }}">
                                 <div class="nav-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
                                 <div class="nav-text">Applicants</div>
+                            </a><a class="nav-link sub-nav-link" href="{{ route('miscellaneous.index') }}">
+                                <div class="nav-icon"><i class="fa fa-asterisk" aria-hidden="true"></i></div>
+                                <div class="nav-text">Miscellaneous</div>
                             </a>
                         </div>
 
@@ -156,19 +109,19 @@
                             <div class="nav-text">System</div>
                         </a>
                         <div class="collapse" id="systemMenu">
-                            <a class="nav-link sub-nav-link" href="#">
+                            <a class="nav-link sub-nav-link" href="{{ route('audit-logs.list') }}">
                                 <div class="nav-icon"><i class="fas fa-clipboard-list" aria-hidden="true"></i></div>
                                 <div class="nav-text">Audit Logs</div>
                             </a>
-                            <a class="nav-link sub-nav-link" href="#">
+                            <a class="nav-link sub-nav-link" href="{{ route('reports.index') }}">
                                 <div class="nav-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                                 <div class="nav-text">Reports</div>
                             </a>
-                            <a class="nav-link sub-nav-link" id="special-buttons" href="#">
+                            <a class="nav-link sub-nav-link" id="special-buttons" href="{{ route('accounts.deactivated') }}">
                                 <div class="nav-icon"><i class="fas fa-user-slash" aria-hidden="true"></i></div>
                                 <div class="nav-text">Deactivated<br>Accounts</div>
                             </a>
-                            <a class="nav-link sub-nav-link" href="#">
+                            <a class="nav-link sub-nav-link" href="{{ route('archives.list') }}">
                                 <div class="nav-icon"><i class="fas fa-archive" aria-hidden="true"></i></div>
                                 <div class="nav-text">Archives</div>
                             </a>
@@ -179,7 +132,7 @@
                     </nav>
                 </div>
 
-                <div class="sidebar-footer border-top">
+                <div class="border-top sidebar-footer" id="sidebar-footer">
                     <div id="profile-container">
                         <div class="profile-left">
                             @if($authProfileImage)
@@ -223,6 +176,7 @@
             </main>
         </div>
 
+        <script src="{{ asset('js/layouts/theme-toggle.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
         <script src="{{ asset('js/components/overlays/modals.js') }}"></script>
         <script src="{{ asset('js/layouts/personal-pages.js') }}"></script>

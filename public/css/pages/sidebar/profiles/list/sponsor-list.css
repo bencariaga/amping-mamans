@@ -1,0 +1,258 @@
+:root {
+    --primary-color: #00b894;
+    --primary-hover: #00a383;
+    --primary-border-color: #dfe6e9;
+    --secondary-border-color: #b2bec3;
+    --item-shadow: rgba(0, 184, 148, 0.15);
+    --item-hover-shadow: rgba(0, 184, 148, 0.3);
+    --input-bg: #f8f9fa;
+    --input-bg-hover: #ffffff;
+    --input-bg-focus: #ffffff;
+    --input-text-primary: #636e72;
+    --input-text-secondary: #2d3436;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-hover-bg: #5a6268;
+    --light-blue-color: #00b894;
+    --danger-color: #ff7675;
+    --success-color: #00cec9;
+    --text-color: #2d3436;
+    --table-header-bg: #00b894;
+    --header-text: #ffffff;
+    --odd-row-bg: #ffffff;
+    --even-row-bg: #f8fafb;
+    --disabled-bg: #cfd4d8;
+    --disabled-color: #3a3a3a;
+    --gradient-primary: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+}
+
+[data-theme="dark"] {
+    --primary-color: #00b894;
+    --primary-hover: #009879;
+    --primary-border-color: #444;
+    --secondary-border-color: #555;
+    --item-shadow: rgba(0, 0, 0, 0.5);
+    --item-hover-shadow: rgba(0, 0, 0, 0.7);
+    --input-bg: #2a2a2a;
+    --input-bg-hover: #1a1a1a;
+    --input-bg-focus: #333;
+    --input-text-primary: #ccc;
+    --input-text-secondary: #fff;
+    --text-color: #fff;
+    --table-header-bg: #1a5f56;
+    --even-row-bg: #2a2a2a;
+    --odd-row-bg: #1e1e1e;
+}
+
+.main-content-body {
+    padding-top: 30px;
+}
+
+#filter-search {
+    border: 2px solid var(--primary-border-color);
+    background-color: var(--input-bg);
+    color: var(--input-text-secondary);
+    height: 45px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#filter-search:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px var(--item-shadow);
+    background-color: var(--input-bg-focus);
+}
+
+#filter-search::placeholder {
+    color: var(--input-text-primary);
+}
+
+.filter-sort-dropdown .dropdown-menu,
+.filter-per-page-dropdown .dropdown-menu {
+    min-width: 0;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+#perPageDropdownBtn,
+#sortDropdownBtn {
+    color: var(--input-text-secondary);
+    background-color: var(--input-bg);
+    border: 2px solid var(--primary-border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    height: 45px;
+    transition: all 0.3s ease;
+}
+
+#perPageDropdownBtn:hover,
+#sortDropdownBtn:hover {
+    background-color: var(--input-bg-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+#searchBtn .btn {
+    font-size: 16px;
+    height: 45px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+}
+
+#searchBtn .btn:hover {
+    background: linear-gradient(135deg, #00cec9 0%, #00b894 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--item-hover-shadow);
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+#sponsor-pagination-controls .btn {
+    border-width: 2px;
+    font-size: 16px;
+    height: 45px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#sponsor-pagination-controls .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+.btn-outline-secondary {
+    border-color: var(--primary-border-color);
+    color: var(--input-text-secondary);
+    background-color: transparent;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary.active {
+    border-color: var(--primary-color);
+    background: var(--gradient-primary);
+    color: #fff;
+}
+
+.data-table-container {
+    margin-top: 2rem;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px var(--item-shadow);
+}
+
+.sponsor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    border: none;
+}
+
+.sponsor-table thead tr {
+    background: var(--gradient-primary);
+    color: var(--header-text);
+}
+
+.sponsor-table th {
+    padding: 18px 20px;
+    vertical-align: middle;
+    border: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sponsor-table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--primary-border-color);
+}
+
+.sponsor-table tbody tr:nth-of-type(odd) {
+    background-color: var(--odd-row-bg);
+}
+
+.sponsor-table tbody tr:nth-of-type(even) {
+    background-color: var(--even-row-bg);
+}
+
+.sponsor-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.sponsor-table tbody tr:hover {
+    background-color: rgba(0, 184, 148, 0.1);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+.sponsor-table tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+.action-buttons .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+.custom-dropdown-btn {
+    position: relative;
+    height: 45px;
+    background-color: var(--input-bg);
+    color: var(--input-text-secondary);
+    font-weight: 600;
+    border: 2px solid var(--primary-border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.custom-dropdown-btn:hover,
+.custom-dropdown-btn:focus {
+    border-color: var(--primary-color);
+    background-color: var(--input-bg-hover);
+}
+
+.dropdown-menu {
+    background-color: var(--input-bg-focus);
+    border: 2px solid var(--primary-border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--item-shadow);
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--input-text-secondary);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.dropdown-toggle::after {
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.dropdown-toggle.rotated::after {
+    transform: translateY(-50%) rotate(180deg);
+}

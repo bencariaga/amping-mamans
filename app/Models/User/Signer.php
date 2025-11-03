@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateSignerId;
+use App\Actions\IdGeneration\GenerateSignerId;
 use Illuminate\Database\Eloquent\Model;
 
 class Signer extends Model

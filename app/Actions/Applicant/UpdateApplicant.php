@@ -2,10 +2,10 @@
 
 namespace App\Actions\Applicant;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateClientId;
-use App\Actions\DatabaseTableIdGeneration\GenerateDataId;
-use App\Actions\DatabaseTableIdGeneration\GenerateMemberId;
-use App\Actions\DatabaseTableIdGeneration\GeneratePatientId;
+use App\Actions\IdGeneration\GenerateClientId;
+use App\Actions\IdGeneration\GenerateDataId;
+use App\Actions\IdGeneration\GenerateMemberId;
+use App\Actions\IdGeneration\GeneratePatientId;
 use App\Models\Authentication\Occupation;
 use App\Models\Operation\Data;
 use App\Models\User\Applicant;
@@ -90,7 +90,7 @@ class UpdateApplicant
 
     private function handleOccupation(array $validatedData): ?string
     {
-        if (!empty($validatedData['custom_occupation'])) {
+        if (! empty($validatedData['custom_occupation'])) {
             $dataId = GenerateDataId::execute();
 
             Data::create([
@@ -101,7 +101,7 @@ class UpdateApplicant
             ]);
 
             $occupation = Occupation::create([
-                'occupation_id' => app(\App\Actions\DatabaseTableIdGeneration\GenerateOccupationId::class)->execute(),
+                'occupation_id' => app(\App\Actions\IdGeneration\GenerateOccupationId::class)->execute(),
                 'data_id' => $dataId,
                 'occupation' => $validatedData['custom_occupation'],
             ]);
@@ -262,7 +262,7 @@ class UpdateApplicant
             $clean = '0'.Str::substr($clean, 2);
         } elseif (Str::startsWith($clean, '9')) {
             $clean = '0'.$clean;
-        } elseif (!Str::startsWith($clean, '0')) {
+        } elseif (! Str::startsWith($clean, '0')) {
             $clean = '0'.$clean;
         }
 

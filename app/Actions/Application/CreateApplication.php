@@ -2,7 +2,7 @@
 
 namespace App\Actions\Application;
 
-use App\Actions\GL\CreateGuaranteeLetter;
+use App\Actions\GuaranteeLetter\CreateGuaranteeLetter;
 use App\Http\Controllers\Communication\MessageController;
 use App\Http\Controllers\Financial\BudgetUpdateController;
 use App\Models\Operation\Application;

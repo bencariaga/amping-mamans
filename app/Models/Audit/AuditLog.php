@@ -2,7 +2,7 @@
 
 namespace App\Models\Audit;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateAuditLogId;
+use App\Actions\IdGeneration\GenerateAuditLogId;
 use App\Models\User\Staff;
 use Illuminate\Database\Eloquent\Model;
 

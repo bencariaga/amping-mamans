@@ -1,7 +1,7 @@
 :root {
     --primary-color: #0000bb;
     --primary-hover: #0b5ed7;
-    --border-color: #a2a9af;
+    --primary-border-color: #a2a9af;
     --header-bg: #0000bb;
     --header-text: #fff;
     --even-row-bg: #f3f3f3;
@@ -14,11 +14,11 @@
 
 [data-theme="dark"] {
     --primary-color: #4b77d0;
-    --border-color: #555;
+    --primary-border-color: #555;
     --header-bg: #4b77d0;
     --even-row-bg: #2c2c2c;
     --readonly-bg: #3a3a3a;
-    --readonly-border: #555;
+    --readonly-border: rgba(255, 255, 255, 0.1);
     --readonly-text: #aaa;
     --dropdown-border: transparent;
     --edit-button: #4b77d0;
@@ -58,21 +58,22 @@
 }
 
 .service-info h3 {
-    width: 50%;
     text-align: left;
+    font-weight: bold;
     margin: 0;
     padding: 0;
 }
 
 .service-count {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     margin: 0;
+    width: 46%;
 }
 
 .service-status {
     flex: 1 1 auto;
     margin: 0;
-    text-align: right;
+    width: 54%;
 }
 
 .edit-mode {
@@ -81,9 +82,9 @@
 
 .overlap-warning {
     position: fixed;
-    transform: translateX(50%);
+    transform: translateX(28%);
     background-color: var(--bs-warning);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-border-color);
     border-radius: 0.25rem;
     padding: 0.75rem 1.25rem;
     margin: 0 auto 1.5rem;
@@ -129,7 +130,7 @@
 }
 
 .tariff-section {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-border-color);
     background-color: var(--card-bg);
     border-radius: 8px;
     max-width: 100%;
@@ -167,8 +168,8 @@
 }
 
 .expense-table tr {
-    border-left: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--primary-border-color);
+    border-right: 1px solid var(--primary-border-color);
 }
 
 .expense-table tbody tr:nth-of-type(even) {
@@ -176,7 +177,7 @@
 }
 
 .expense-table tbody tr:last-of-type {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--primary-border-color);
 }
 
 .money-amount-container {
@@ -196,7 +197,7 @@
 }
 
 th.money-amount-header.text-center {
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--primary-border-color);
     font-size: 18px;
 }
 
@@ -209,7 +210,7 @@ th.money-amount-header.text-center {
 
 .tariff-input:not([readonly]),
 .range-input:not([readonly]) {
-    border-color: var(--border-color);
+    border-color: var(--primary-border-color);
 }
 
 .tariff-input[readonly],
@@ -288,7 +289,7 @@ th.money-amount-header.text-center {
 
 .nav-tabs .nav-link {
     color: var(--text-color);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-border-color);
     transition: all 0.2s ease-in-out;
     padding: 0.6rem 2.5rem 0.6rem 1.2rem;
     border-radius: 8px;
@@ -345,7 +346,7 @@ th.money-amount-header.text-center {
     padding: 0.6rem 1.2rem;
     border-radius: 8px;
     font-weight: 600;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-border-color);
     background: linear-gradient(
         to bottom,
         var(--button-light, #f8f9fa),
@@ -360,7 +361,7 @@ th.money-amount-header.text-center {
 }
 
 .service-type-dropdown:hover {
-    border-color: var(--border-color);
+    border-color: var(--primary-border-color);
     background: linear-gradient(
         to bottom,
         var(--button-hover-light, #e9ecef),
@@ -377,7 +378,7 @@ th.money-amount-header.text-center {
 }
 
 .nav-tabs .nav-link:hover {
-    border-color: var(--border-color);
+    border-color: var(--primary-border-color);
     color: var(--primary-hover, var(--primary-color));
     background: linear-gradient(
         to bottom,
@@ -410,6 +411,31 @@ th.money-amount-header.text-center {
 
 .tab-pane {
     animation: fadeIn 0.3s ease-in-out;
+}
+
+#alert-info {
+    position: fixed;
+    transform: translateX(38%);
+    line-height: 1.8;
+    z-index: 1000;
+    color: #000;
+    width: 40rem;
+    top: 400px;
+}
+
+#editServicesBtn,
+#saveServicesBtn {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+}
+
+#editServicesBtn .nav-text,
+#saveServicesBtn .nav-text {
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes fadeIn {

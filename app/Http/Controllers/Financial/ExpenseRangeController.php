@@ -2,42 +2,37 @@
 
 namespace App\Http\Controllers\Financial;
 
-use App\Actions\ExpenseRange\UpdateExpenseRanges;
+use App\Actions\ExpenseRange\CheckOverlap;
+use App\Actions\ExpenseRange\FormatNumericValue;
+use App\Actions\ExpenseRange\StripZerofill;
+use App\Actions\ExpenseRange\UpdateRangesForTariffList;
 use App\Actions\ExpenseRange\ValidateAndFormatExpenseRanges;
 use App\Http\Controllers\Controller;
-use App\Support\Number;
-use Illuminate\Support\Str;
 
 class ExpenseRangeController extends Controller
 {
     public function formatNumericValue(string $value): string
     {
-        $intValue = (int) $value;
-
-        return Number::format($intValue, 0);
+        return app(FormatNumericValue::class)->execute($value);
     }
 
     public function stripZerofill(string $value): string
     {
-        return (string) Number::intval($value);
+        return app(StripZerofill::class)->execute($value);
     }
 
-    protected function stripCommas(?string $value): string
+    public function checkOverlap(array $ranges): bool
     {
-        if ($value === null || $value === '') {
-            return '0';
-        }
-
-        return Str::replace(',', '', $value);
+        return app(CheckOverlap::class)->execute($ranges);
     }
 
-    public function validateAndFormatRanges(string $tariffListId, array $ranges, ValidateAndFormatExpenseRanges $validateAndFormat): array
+    public function validateAndFormatRanges(string $tariffListId, array $ranges): array
     {
-        return $validateAndFormat->execute($tariffListId, $ranges);
+        return app(ValidateAndFormatExpenseRanges::class)->execute($tariffListId, $ranges);
     }
 
-    public function updateRangesForTariffList(string $tariffListId, array $ranges, UpdateExpenseRanges $updateRanges): void
+    public function updateRangesForTariffList(string $tariffListId, array $ranges): void
     {
-        $updateRanges->execute($tariffListId, $ranges);
+        app(UpdateRangesForTariffList::class)->execute($tariffListId, $ranges);
     }
 }

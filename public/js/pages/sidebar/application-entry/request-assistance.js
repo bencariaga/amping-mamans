@@ -452,11 +452,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     assistanceAmountRawInput.value = Number(data.assistance_amount);
                     tariffListVersionInput.value = data.tariff_list_version;
                     tariffListVersionRawInput.value = data.tariff_list_version;
-                    
+
                     try {
                         const budgetResponse = await fetch('/budget-updates/latest');
                         const budgetData = await budgetResponse.json();
-                        
+
                         if (budgetResponse.ok && budgetData.amount_recent < data.assistance_amount) {
                             showMessage(billedAmountMessage, 'Allocate budget or provide supplementary budget first. The AMPING budget is currently lower than the assistance amount needed.', 'error');
                         } else {
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     } catch (budgetError) {
                         showMessage(billedAmountMessage, 'Assistance amount has been calculated.', 'success');
                     }
-                    
+
                     updateMessagePreview();
                 } else {
                     assistanceAmountInput.value = '';
@@ -487,11 +487,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const overlay = document.createElement('div');
         overlay.id = 'loadingOverlay';
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999;';
-        
+
         const spinner = document.createElement('div');
         spinner.style.cssText = 'text-align: center; color: white;';
-        spinner.innerHTML = '<div style="font-size: 48px; margin-bottom: 20px;"><i class="fas fa-spinner fa-spin"></i></div><div style="font-size: 20px; font-weight: bold;">Submitting Application...</div>';
-        
+        spinner.innerHTML = '<div style="font-size: 48px; margin-bottom: 20px;"><i class="fas fa-spinner fa-spin"></i></div><div style="font-size: 20px; font-weight: bold;">Submitting assistance request and<br>sending text message to applicant...</div>';
+
         overlay.appendChild(spinner);
         document.body.appendChild(overlay);
         return overlay;

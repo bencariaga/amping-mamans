@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Financial;
 
-use App\Actions\Financial\CreateSponsor;
-use App\Actions\Financial\DeleteSponsor;
-use App\Actions\Financial\UpdateSponsor;
+use App\Actions\Sponsor\CreateSponsor;
+use App\Actions\Sponsor\DeleteSponsor;
+use App\Actions\Sponsor\UpdateSponsor;
 use App\Http\Controllers\Controller;
 use App\Models\Operation\BudgetUpdate;
 use App\Models\Operation\Data;
@@ -18,7 +18,6 @@ use Illuminate\Validation\ValidationException;
 
 class SponsorController extends Controller
 {
-
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 'all');

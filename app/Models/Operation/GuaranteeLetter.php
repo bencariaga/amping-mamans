@@ -2,8 +2,7 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateGuaranteeLetterId;
-use App\Models\User\Sponsor;
+use App\Actions\IdGeneration\GenerateGuaranteeLetterId;
 use Illuminate\Database\Eloquent\Model;
 
 class GuaranteeLetter extends Model
@@ -20,10 +19,11 @@ class GuaranteeLetter extends Model
 
     protected $fillable = [
         'gl_id',
-        'data_id',
+        'gl_tmp_id',
         'application_id',
-        'sponsor_id',
+        'budget_update_id',
         'is_sponsored',
+        'is_cancelled',
     ];
 
     protected static function boot()
@@ -42,18 +42,18 @@ class GuaranteeLetter extends Model
         return (new static)->getKeyName();
     }
 
-    public function data()
-    {
-        return $this->belongsTo(Data::class, 'data_id', 'data_id');
-    }
-
     public function application()
     {
         return $this->belongsTo(Application::class, 'application_id', 'application_id');
     }
 
-    public function sponsor()
+    public function glTemplate()
     {
-        return $this->belongsTo(Sponsor::class, 'sponsor_id', 'sponsor_id');
+        return $this->belongsTo(GLTemplate::class, 'gl_tmp_id', 'gl_tmp_id');
+    }
+
+    public function budgetUpdate()
+    {
+        return $this->belongsTo(BudgetUpdate::class, 'budget_update_id', 'budget_update_id');
     }
 }

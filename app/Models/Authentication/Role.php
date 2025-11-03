@@ -2,7 +2,7 @@
 
 namespace App\Models\Authentication;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateRoleId;
+use App\Actions\IdGeneration\GenerateRoleId;
 use App\Models\Operation\Data;
 use App\Models\User\Staff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

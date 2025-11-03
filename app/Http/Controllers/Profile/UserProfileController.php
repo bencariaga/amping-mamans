@@ -66,7 +66,7 @@ class UserProfileController extends Controller
                 return back()->with('success', 'Your password has been updated successfully.');
             }
 
-            return redirect()->route('profiles.users.list')->with('success', 'User password has been updated successfully.');
+            return back()->with('success', 'User password has been updated successfully.');
         }
 
         $request->validate([
@@ -78,7 +78,7 @@ class UserProfileController extends Controller
 
         $this->updateUserProfile->execute($target, $request->except(['_token', '_method']));
 
-        return redirect()->route('profiles.users.list')->with('success', 'User profile has been updated successfully.');
+        return back()->with('success', 'User profile has been updated successfully.');
     }
 
     public function updateDeactivate(Request $request, ?string $staffId = null)
@@ -87,9 +87,6 @@ class UserProfileController extends Controller
         $target = $this->resolveUser($staffId);
 
         $wasActive = $target->account->account_status === 'Active';
-
-        $request->validate(['username_confirmation_deactivate' => ['required', 'string', new MatchesUsername($target, $this->validateUsernameConfirmation)]]);
-
         $this->deactivateUserAccount->execute($target);
 
         if ($auth->member_id === $target->member_id && $wasActive) {
@@ -101,14 +98,13 @@ class UserProfileController extends Controller
             return redirect('/login')->with('success', 'Your account has been deactivated successfully.');
         }
 
-        return redirect()->route('profiles.users.list')->with('success', 'User account has been '.($wasActive ? 'deactivated' : 'activated').' successfully.');
+        return redirect()->route('profiles.users.list')->with('success', 'User account has been '.($wasActive ? 'deactivated' : 'reactivated').' successfully.');
     }
 
     public function destroy(Request $request, ?string $staffId = null)
     {
         $auth = Auth::user();
         $target = $this->resolveUser($staffId);
-
         $request->validate(['username_confirmation_delete' => ['required', 'string', new MatchesUsername($target, $this->validateUsernameConfirmation)]]);
 
         try {

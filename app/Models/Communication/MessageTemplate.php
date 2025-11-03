@@ -2,7 +2,7 @@
 
 namespace App\Models\Communication;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateMessageTemplateId;
+use App\Actions\IdGeneration\GenerateMessageTemplateId;
 use App\Models\Operation\Data;
 use Illuminate\Database\Eloquent\Model;
 

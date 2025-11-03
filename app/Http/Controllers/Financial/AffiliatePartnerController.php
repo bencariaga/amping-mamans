@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Financial;
 
-use App\Actions\Financial\CreateAffiliatePartner;
-use App\Actions\Financial\DeleteAffiliatePartner;
-use App\Actions\Financial\UpdateAffiliatePartner;
+use App\Actions\AffiliatePartner\CreateAffiliatePartner;
+use App\Actions\AffiliatePartner\DeleteAffiliatePartner;
+use App\Actions\AffiliatePartner\UpdateAffiliatePartner;
 use App\Http\Controllers\Controller;
 use App\Models\User\AffiliatePartner;
 use Exception;
@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 
 class AffiliatePartnerController extends Controller
 {
-
     public function index()
     {
         return response()->json(AffiliatePartner::join('accounts', 'affiliate_partners.account_id', '=', 'accounts.account_id')->join('data', 'accounts.data_id', '=', 'data.data_id')->orderBy('data.updated_at', 'desc')->get());

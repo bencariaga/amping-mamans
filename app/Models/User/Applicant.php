@@ -2,8 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateApplicantId;
-use App\Models\Operation\Application;
+use App\Actions\IdGeneration\GenerateApplicantId;
 use Illuminate\Database\Eloquent\Model;
 
 class Applicant extends Model
@@ -75,5 +74,4 @@ class Applicant extends Model
     {
         return $this->hasMany(Patient::class, 'applicant_id', 'applicant_id');
     }
-
 }

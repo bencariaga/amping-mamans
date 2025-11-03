@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateHouseholdId;
+use App\Actions\IdGeneration\GenerateHouseholdId;
 use Illuminate\Database\Eloquent\Model;
 
 class Household extends Model

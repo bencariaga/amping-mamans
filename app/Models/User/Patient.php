@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GeneratePatientId;
+use App\Actions\IdGeneration\GeneratePatientId;
 use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
 

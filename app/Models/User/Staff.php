@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\DatabaseTableIdGeneration\GenerateStaffId;
+use App\Actions\IdGeneration\GenerateStaffId;
 use App\Models\Audit\AuditLog;
 use App\Models\Audit\Report;
 use App\Models\Authentication\Role;
