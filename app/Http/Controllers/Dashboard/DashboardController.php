@@ -39,7 +39,7 @@ class DashboardController extends Controller
 
     public function guaranteeLetter(): View
     {
-        return view('pages.dashboard.templates.guarantee-letters');
+        return view('pages.dashboard.templates.guarantee-letter');
     }
 
     public function clearCache(): RedirectResponse

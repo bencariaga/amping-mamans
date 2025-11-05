@@ -63,6 +63,7 @@
 
 .template-text {
     line-height: 2;
+    height: 70px;
     border: none !important;
     display: -webkit-box;
     line-clamp: 3;
@@ -100,6 +101,20 @@
     color: lightblue;
 }
 
+#gl_tmp_title {
+    width: 14rem;
+}
+
+#gl_tmp_title,
+#gl-formatting-toolbar {
+    height: 50px;
+}
+
+#gl-font-size,
+#gl-font-family {
+    border: 1px solid #aaa;
+}
+
 #gl-length-char {
     color: lightblue;
 }
@@ -113,15 +128,24 @@
     color: #aaa;
 }
 
-#stack-layout {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+.form-check-label {
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.form-check-input {
+    border: 1px solid #000;
+}
+
+.form-check-input:hover,
+.form-check-input:focus {
+    cursor: pointer;
 }
 
 .template-placeholder-group {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(2, auto);
     gap: 10px;
 }
@@ -331,11 +355,6 @@
     background-color: var(--even-row-bg) !important;
 }
 
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
 .custom-dropdown-btn {
     position: relative;
     height: 40px;
@@ -392,9 +411,9 @@
     transform: translateY(-50%) rotate(180deg);
 }
 
+.preview-card,
 .template-input-card,
-.placeholder-bank-card,
-.preview-card {
+.placeholder-bank-card {
     border: none;
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -417,29 +436,6 @@
     gap: 0.5rem;
 }
 
-.gl-template-textarea {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    border: 2px solid var(--card-border);
-    color: var(--input-text-secondary);
-    background-color: var(--input-bg);
-    transition: all 0.3s ease;
-    border-radius: 12px;
-    max-height: 240px;
-    margin-top: 8px;
-    line-height: 1.5;
-    resize: vertical;
-    overflow-y: auto;
-    font-size: 1rem;
-    padding: 1.5rem;
-    resize: none;
-}
-
-.gl-template-textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.3rem rgba(0, 123, 255, 0.25);
-    background-color: var(--input-bg-focus);
-}
-
 .placeholder-btn {
     border-radius: 16px;
     padding: 12px 20px;
@@ -451,17 +447,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
     height: 100%;
+    gap: 8px;
 }
 
-.placeholder-btn:hover {
+.form-label,
+.placeholder-btn {
+    font-size: 14.5px !important;
+}
+
+.placeholder-btn:hover,
+.placeholder-btn:active {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.placeholder-btn:active {
-    transform: translateY(-1px);
 }
 
 .placeholder-btn i {
@@ -473,39 +471,12 @@
     max-height: none;
 }
 
-.details-body,
-.preview-body {
-    padding: 2rem 2rem 0;
-    height: 500px;
-}
-
-#output-text-preview {
+.details-body {
+    padding: 1rem 2rem;
+    height: 72.5rem;
     display: flex;
-    flex-direction: column;
-    max-height: 394px;
-    max-width: 510px;
-    overflow-wrap: break-word;
-    overflow-y: auto;
-}
-
-.gl-preview-output {
-    background: var(--input-bg-focus);
-    border: 2px dashed var(--card-border);
-    border-radius: 16px;
-    padding: 2rem;
-    height: 100%;
-    font-size: 1rem;
-    line-height: 1.5;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--input-text-secondary);
-    transition: all 0.3s ease;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.gl-preview-output:hover,
-[data-theme="dark"] .gl-preview-output:hover {
-    border-color: var(--primary-color);
-    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.12);
+    align-items: center;
+    justify-content: center;
 }
 
 .form-label i {
@@ -526,172 +497,4 @@
 [data-theme="dark"] .gl-preview-output {
     background-color: #2a2a2a;
     border-color: #444;
-}
-
-#guarantee-letter-container {
-    border: 1px solid var(--text-color);
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-}
-
-.guarantee-letter-container {
-    font-family: Arial, Helvetica, sans-serif;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    color: #000;
-    width: 8.5in;
-    height: 11in;
-    padding: 0.5in;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #000;
-}
-
-.left-section,
-.right-section {
-    width: calc(100% / 3);
-    height: 150px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-}
-
-.left-section {
-    flex-direction: row;
-    gap: 1rem;
-}
-
-.right-section {
-    flex-direction: column;
-}
-
-.center-section {
-    width: calc(200% / 3);
-    height: 150px;
-    text-align: center;
-    line-height: 1.5;
-}
-
-.logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-.republic {
-    font-size: 14px;
-}
-
-.office-title {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.amping-title {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.program-desc {
-    font-size: 12px;
-}
-
-.city {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.email {
-    font-size: 12px;
-}
-
-.email-link {
-    color: blue;
-}
-
-.disiplina-muna {
-    width: 160px;
-    height: auto;
-    object-fit: contain;
-}
-
-.slogan {
-    font-size: 14px;
-    font-style: italic;
-    font-weight: bold;
-}
-
-.document-title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 20px 0;
-    letter-spacing: 1px;
-}
-
-.reference-box {
-    display: flex;
-    justify-content: space-between;
-    border: 2px solid black;
-    padding: 5px 10px;
-    margin-bottom: 25px;
-    font-size: 14px;
-}
-
-.date-section {
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-.addressee {
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-.body-text {
-    text-align: justify;
-    font-size: 14px;
-    line-height: 1.5rem;
-}
-
-.body-text p {
-    text-indent: 3rem;
-}
-
-.body-text .validity {
-    font-style: italic;
-    font-weight: bold;
-}
-
-.signature-section {
-    margin-top: 4.5rem;
-    font-size: 14px;
-}
-
-.mayor-signature {
-    text-align: center;
-}
-
-.mayor-name {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-.authority {
-    margin-top: 2rem;
-    font-size: 14px;
-}
-
-.assistant-signature {
-    margin-top: 4.5rem;
-}
-
-.assistant-name {
-    font-weight: bold;
 }

@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->service_type" data-label="Service Type">
+                            <button type="button" class="btn btn-outline-success text-color w-100 placeholder-btn" data-key="application->service" data-label="Service">
                                 Service<br>Type
                             </button>
                         </div>
@@ -74,8 +74,8 @@
                         </div>
 
                         <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-info text-color w-100 placeholder-btn" data-key="application->applied_at" data-label="Applied At">
-                                Applied At
+                            <button type="button" class="btn btn-outline-info text-color w-100 placeholder-btn" data-key="application->application_date" data-label="Application Date">
+                                Application Date
                             </button>
                         </div>
 
@@ -116,8 +116,8 @@
                         </div>
 
                         <div class="template-placeholder">
-                            <button type="button" class="btn btn-outline-info text-color w-100 placeholder-btn" data-key="application->reapply_at" data-label="Reapply At">
-                                Reapply At
+                            <button type="button" class="btn btn-outline-info text-color w-100 placeholder-btn" data-key="application->reapplication_date" data-label="Reapplication Date">
+                                Reapplication Date
                             </button>
                         </div>
                     </div>

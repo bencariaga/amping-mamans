@@ -4,22 +4,29 @@ namespace App\Actions\GuaranteeLetter;
 
 use App\Models\Operation\GLTemplate;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class DeleteGLTemplate
 {
     public function execute(GLTemplate $template): bool
     {
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        $data = $template->data;
-        $template->delete();
+            $data = $template->data;
+            $template->delete();
 
-        if ($data) {
-            $data->delete();
+            if ($data) {
+                $data->delete();
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        DB::commit();
-
-        return true;
     }
 }
+

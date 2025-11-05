@@ -14,7 +14,14 @@ class GenerateGLPDF
 {
     public function execute($applicationId)
     {
-        $application = Application::where('application_id', $applicationId)->first();
+        $application = Application::where('application_id', $applicationId)
+            ->with([
+                'applicant.client.member',
+                'patient.applicant.client.member',
+                'affiliate_partner',
+                'expense_range.service',
+            ])
+            ->first();
 
         if (! $application) {
             abort(404);
@@ -27,92 +34,54 @@ class GenerateGLPDF
         }
 
         $assistanceAmount = $application->assistance_amount ?? 0;
+        $billedAmount = $application->billed_amount ?? 0;
 
         $mayor = DB::table('signers')
             ->join('members', 'signers.member_id', '=', 'members.member_id')
             ->where('members.member_type', 'Mayor')
-            ->select('members.first_name', 'members.middle_name', 'members.last_name', 'members.suffix', 'signers.post_nominal_letters')
+            ->select('members.first_name', 'members.middle_name', 'members->last_name', 'members->suffix', 'signers->post_nominal_letters')
             ->first();
 
         $assistant = DB::table('signers')
             ->join('members', 'signers.member_id', '=', 'members.member_id')
             ->where('members.member_type', 'Executive Assistant')
-            ->select('members.first_name', 'members.middle_name', 'members.last_name', 'members.suffix', 'signers.post_nominal_letters')
+            ->select('members.first_name', 'members.middle_name', 'members->last_name', 'members->suffix', 'signers->post_nominal_letters')
             ->first();
 
-        $affiliatePartnerName = DB::table('affiliate_partners')->where('ap_id', $application->ap_id)->value('ap_name') ?? '[affiliate partner]';
+        $applicationDate = $application->application_date ? Carbon::parse($application->application_date)->format('m/d/Y') : '';
+        $reapplicationDate = $application->reapplication_date ? Carbon::parse($application->reapplication_date)->format('m/d/Y') : '';
+        $assistanceAmountWords = Str::upper($this->numberToWords($assistanceAmount));
 
-        $serviceType = DB::table('expense_ranges')
-            ->join('services', 'expense_ranges.service_id', '=', 'services.service_id')
-            ->where('expense_ranges.exp_range_id', $application->exp_range_id)
-            ->value('services.service') ?? '[SERVICE TYPE]';
+        $applicantMember = $application->applicant->client->member ?? null;
+        $applicantMiddleName = $applicantMember->middle_name ?? '';
+        $applicantMiddleInitial = $applicantMiddleName ? Str::limit($applicantMiddleName, 1, '').'.' : '';
 
-        $barangay = DB::table('applicants')->where('applicant_id', $application->applicant_id)->value('barangay') ?? '';
+        $patientMember = $application->patient->applicant->client->member ?? null;
+        $patientMiddleName = $patientMember->middle_name ?? '';
+        $patientMiddleInitial = $patientMiddleName ? Str::limit($patientMiddleName, 1, '').'.' : '';
 
-        $applicantMember = DB::table('applicants')
-            ->join('clients', 'applicants.client_id', '=', 'clients.client_id')
-            ->join('members', 'clients.member_id', '=', 'members.member_id')
-            ->where('applicants.applicant_id', $application->applicant_id)
-            ->select('members.first_name', 'members.middle_name', 'members.last_name', 'members.suffix')
-            ->first();
-
-        $patientMember = DB::table('patients')
-            ->join('clients', 'patients.client_id', '=', 'clients.client_id')
-            ->join('members', 'clients.member_id', '=', 'members.member_id')
-            ->where('patients.patient_id', $application->patient_id)
-            ->select('members.first_name', 'members.middle_name', 'members.last_name', 'members.suffix')
-            ->first();
-
-        $applicantParts = collect([
-            $applicantMember->last_name ?? null ? ($applicantMember->last_name).',' : null,
-            $applicantMember->first_name ?? null,
-            $applicantMember->middle_name ?? null,
-            $applicantMember->suffix ?? null,
-        ])->filter()->implode(' ');
-
-        $applicantFullName = Str::of($applicantParts)->trim()->toString();
-
-        $patientParts = collect([
-            $patientMember->last_name ?? null ? ($patientMember->last_name).',' : null,
-            $patientMember->first_name ?? null,
-            $patientMember->middle_name ?? null,
-            $patientMember->suffix ?? null,
-        ])->filter()->implode(' ');
-
-        $patientFullName = Str::of($patientParts)->trim()->toString();
-
-        $applicationAlias = $this->aliasId($application->application_id, 'APPLICATION');
-        $glAlias = $this->aliasId($gl->gl_id, 'GuaranteeLetter');
-
-        $amountInteger = (int) Number::floor($assistanceAmount);
-        $amountInWords = Str::upper(Str::of($this->numberToWords($amountInteger))->trim()->toString()).' PESOS ONLY';
-
-        $assistanceAmountFormatted = Number::format($assistanceAmount, 0);
-        $billedAmountFormatted = Number::format($application->billed_amount ?? 0, 0);
-
-        $appliedAtFormatted = $application->applied_at ? Carbon::parse($application->applied_at)->format('F j, Y') : Carbon::now()->format('F j, Y');
-
-        $data = [
-            'application' => $application,
-            'assistance_amount' => $assistanceAmount,
-            'assistance_amount_formatted' => $assistanceAmountFormatted,
-            'amount_in_words' => $amountInWords,
-            'gl_id' => $gl->gl_id,
-            'gl_alias' => $glAlias,
-            'application_alias' => $applicationAlias,
-            'mayor' => $mayor,
-            'assistant' => $assistant,
-            'pdf' => true,
-            'applied_at_formatted' => $appliedAtFormatted,
-            'affiliate_partner_name' => $affiliatePartnerName,
-            'service_type' => $serviceType,
-            'barangay' => $barangay,
-            'applicant_full_name' => $applicantFullName,
-            'patient_full_name' => $patientFullName,
-            'billed_amount_formatted' => $billedAmountFormatted,
+        $placeholders = [
+            '[$application->application_date]' => $applicationDate,
+            '[$application->reapplication_date]' => $reapplicationDate,
+            '[$application->affiliate_partner->ap_name]' => $application->affiliate_partner->ap_name ?? '[Affiliate Partner]',
+            '[$application->billed_amount]' => number_format($billedAmount, 0),
+            '[$application->assistance_amount]' => number_format($assistanceAmount, 0),
+            '[$application->assistance_amount_words]' => $assistanceAmountWords,
+            '[$application->applicant->client->member->first_name]' => $applicantMember->first_name ?? '[Applicant\'s First Name]',
+            '[$application->applicant->client->member->middle_name]' => $applicantMiddleInitial,
+            '[$application->applicant->client->member->last_name]' => $applicantMember->last_name ?? '[Applicant\'s Last Name]',
+            '[$application->applicant->client->member->suffix]' => $applicantMember->suffix ?? '',
+            '[$application->patient->applicant->client->member->first_name]' => $patientMember->first_name ?? '[Patient\'s First Name]',
+            '[$application->patient->applicant->client->member->middle_name]' => $patientMiddleInitial,
+            '[$application->patient->applicant->client->member->last_name]' => $patientMember->last_name ?? '[Patient\'s Last Name]',
+            '[$application->patient->applicant->client->member->suffix]' => $patientMember->suffix ?? '',
+            '[$application->expense_range->service->service]' => $application->expense_range->service->service ?? '[Service]',
+            '[$application->applicant->barangay]' => $application->applicant->barangay ?? '[Barangay]',
         ];
 
-        $pdf = PDF::loadView('pages.sidebar.application-entry.guarantee-letter', $data)
+        $content = Str::replace(array_keys($placeholders), array_values($placeholders), $gl->gl_content);
+
+        $pdf = PDF::loadView('pages.sidebar.application-entry.guarantee-letter', ['content' => $content, 'application' => $application, 'mayor' => $mayor, 'assistant' => $assistant])
             ->setOption('zoom', 1.1)
             ->setOption('disable-smart-shrinking', true)
             ->setOption('dpi', 300)
@@ -121,27 +90,11 @@ class GenerateGLPDF
         return $pdf->inline($gl->gl_id.'.pdf');
     }
 
-    private function aliasId(string $id, string $prefix): string
-    {
-        $withoutPrefix = Str::after($id, $prefix.'-');
-
-        if (Str::contains($withoutPrefix, '-') !== false) {
-            [$year, $num] = Str::of($withoutPrefix)->explode('-', 2)->all();
-        } else {
-            $year = Str::substr($withoutPrefix, 0, 4);
-            $num = Str::substr($withoutPrefix, 4);
-        }
-
-        $numLast5 = Str::substr($num, -5);
-
-        return $year.'-'.$numLast5;
-    }
-
     private function numberToWords($number)
     {
-        $hyphen = '-';
-        $conjunction = ' and ';
-        $separator = ', ';
+        $hyphen = ' ';
+        $conjunction = ' ';
+        $separator = ' ';
         $negative = 'negative ';
         $decimal = ' point ';
         $dictionary = [
@@ -183,31 +136,35 @@ class GenerateGLPDF
         ];
 
         if (! is_numeric($number)) {
-            return '';
+            return false;
         }
+
+        if (($number >= 0 && (int) $number < 0) || (int) $number < -2147483648) {
+            return 'Cannot convert number.';
+        }
+
+        $fraction = null;
+
+        if (strpos($number, '.') !== false) {
+            [$number, $fraction] = explode('.', $number);
+        }
+
+        $string = $i = '';
 
         if ($number < 0) {
-            return $negative.$this->numberToWords(Number::abs($number));
+            $string = $negative;
+            $number = abs($number);
         }
-
-        $string = $fraction = null;
-        $numberString = (string) $number;
-
-        if (Str::contains((string) $number, '.') !== false) {
-            $number = Str::beforeLast($numberString, '.');
-            $fraction = Str::afterLast($numberString, '.');
-        }
-
-        $number = (int) $number;
 
         switch (true) {
             case $number < 21:
-                $string = $dictionary[$number];
+                $string .= $dictionary[$number];
+
                 break;
             case $number < 100:
                 $tens = ((int) ($number / 10)) * 10;
                 $units = $number % 10;
-                $string = $dictionary[$tens];
+                $string .= $dictionary[$tens];
 
                 if ($units) {
                     $string .= $hyphen.$dictionary[$units];
@@ -217,7 +174,7 @@ class GenerateGLPDF
             case $number < 1000:
                 $hundreds = (int) ($number / 100);
                 $remainder = $number % 100;
-                $string = $dictionary[$hundreds].' '.$dictionary[100];
+                $string .= $dictionary[$hundreds].' '.$dictionary[100];
 
                 if ($remainder) {
                     $string .= $conjunction.$this->numberToWords($remainder);
@@ -228,7 +185,7 @@ class GenerateGLPDF
                 $baseUnit = Number::pow(1000, Number::floor(Number::log($number, 1000)));
                 $numBaseUnits = (int) ($number / $baseUnit);
                 $remainder = $number % $baseUnit;
-                $string = $this->numberToWords($numBaseUnits).' '.$dictionary[$baseUnit];
+                $string .= $this->numberToWords($numBaseUnits).' '.$dictionary[$baseUnit];
 
                 if ($remainder) {
                     $string .= $remainder < 100 ? $conjunction : $separator;

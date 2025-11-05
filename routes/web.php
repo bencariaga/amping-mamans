@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');
     Route::get('/tariff-lists', [SearchController::class, 'listTariffs'])->name('tariff-lists');
     Route::get('/request-assistance', [ApplicationController::class, 'showAssistanceRequest'])->name('request-assistance');
-    Route::get('/guarantee-letter', [DashboardController::class, 'guaranteeLetter'])->name('guarantee-letter');
+    Route::get('/guarantee-letter/{template?}', [GLTemplateController::class, 'viewGLTemplate'])->name('guarantee-letter');
 
     Route::prefix('profile/')->group(function () {
         Route::get('/', [UserProfileController::class, 'show'])->name('user.profile.show');
@@ -100,13 +100,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{tariffListId}', [TariffListController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('gl-templates')->group(function () {
-        Route::get('/', [GLTemplateController::class, 'listGLTemplates'])->name('gl-templates.list');
-        Route::get('/create', [GLTemplateController::class, 'createGLTemplate'])->name('gl-templates.create');
-        Route::post('/', [GLTemplateController::class, 'storeGLTemplate'])->name('gl-templates.store');
-        Route::get('/{template}/edit', [GLTemplateController::class, 'editGLTemplate'])->name('gl-templates.edit');
-        Route::put('/{template}', [GLTemplateController::class, 'updateGLTemplate'])->name('gl-templates.update');
-        Route::delete('/{template}', [GLTemplateController::class, 'destroyGLTemplate'])->name('gl-templates.destroy');
+    Route::prefix('gl-templates')->name('gl-templates.')->group(function () {
+        Route::get('/', [GLTemplateController::class, 'listGLTemplates'])->name('list');
+        Route::get('/create', [GLTemplateController::class, 'createGLTemplate'])->name('create');
+        Route::post('/', [GLTemplateController::class, 'storeGLTemplate'])->name('store');
+        Route::get('/{template}/edit', [GLTemplateController::class, 'editGLTemplate'])->name('edit');
+        Route::put('/{template}', [GLTemplateController::class, 'updateGLTemplate'])->name('update');
+        Route::delete('/{template}', [GLTemplateController::class, 'destroyGLTemplate'])->name('destroy');
     });
 
     Route::prefix('message-templates')->group(function () {

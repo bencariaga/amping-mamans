@@ -25,12 +25,12 @@
         '[$application->patient->client->member->middle_name]' => '[Patient\'s Middle Name]',
         '[$application->patient->client->member->last_name]' => '[Patient\'s Last Name]',
         '[$application->patient->client->member->suffix]' => '[Patient\'s Suffix]',
-        '[$application->service_type]' => '[Service Type]',
+        '[$application->service]' => '[Service]',
         '[$application->affiliate_partner->affiliate_partner_name]' => '[Affiliate Partner]',
         '[$application->billed_amount]' => '[Billed Amount]',
         '[$application->assistance_amount]' => '[Assistance Amount]',
-        '[$application->applied_at]' => '[Applied At]',
-        '[$application->reapply_at]' => '[Reapply At]',
+        '[$application->applied_at]' => '[Application Date]',
+        '[$application->reapply_at]' => '[Reapplication Date]',
     ];
 
     $backendMap = array_flip($labelMap);

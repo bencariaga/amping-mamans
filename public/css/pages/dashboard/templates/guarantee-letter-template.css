@@ -1,0 +1,387 @@
+:root {
+    --input-bg: #eee;
+    --editable-border: #999;
+    --editable-bg: #f9f9f9;
+}
+
+[data-theme="dark"] {
+    --input-bg: #222;
+    --editable-border: #555;
+    --editable-bg: #2a2a2a;
+}
+
+.guarantee-letter-preview-container {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+#guarantee-letter-container {
+    border: 1px solid var(--text-color);
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.guarantee-letter-container {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    color: #000;
+    width: 8.5in;
+    height: 11in;
+    padding: 0.5in;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #000;
+}
+
+.left-section,
+.right-section {
+    width: calc(100% / 3);
+    height: 150px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.left-section {
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.right-section {
+    flex-direction: column;
+}
+
+.center-section {
+    width: calc(200% / 3);
+    height: 150px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.republic {
+    font-size: 14px;
+}
+
+.office-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.amping-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.program-desc {
+    font-size: 12px;
+}
+
+.city {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.email {
+    font-size: 12px;
+}
+
+.email-link {
+    color: blue;
+}
+
+.disiplina-muna {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+}
+
+.slogan {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.document-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    letter-spacing: 1px;
+}
+
+.reference-box {
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid black;
+    padding: 5px 10px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.letter-section {
+    min-height: 300px;
+    line-height: 1.25;
+    font-size: 14px;
+}
+
+#editable-letter-section {
+    outline: none;
+    padding: 1rem;
+    min-height: 300px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border: 2px dashed var(--editable-border);
+}
+
+#editable-letter-section:hover,
+#editable-letter-section:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+.date-section {
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.addressee {
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.body-text {
+    text-align: justify;
+    font-size: 14px;
+    line-height: 1.5rem;
+}
+
+.body-text p {
+    text-indent: 3rem;
+}
+
+.body-text .validity {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.signature-section {
+    font-size: 14px;
+}
+
+.mayor-signature {
+    text-align: center;
+}
+
+.mayor-name,
+.assistant-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.mayor-name {
+    justify-content: center;
+}
+
+#mayor-name,
+#assistant-name {
+    margin-top: 5rem;
+}
+
+.signer-input {
+    width: 100%;
+    color: #000;
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: bold;
+    border-radius: 4px;
+    border: 1px solid #000;
+    background-color: #eee !important;
+}
+
+#gl_tmp_title {
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--primary-border-color) !important;
+    color: var(--text-color);
+}
+
+#gl_tmp_title:hover,
+#gl_tmp_title:focus {
+    border-color: #007bff !important;
+    background-color: var(--input-bg-hover) !important;
+}
+
+.signer-input:hover,
+.signer-input:focus {
+    border-color: #007bff !important;
+    background-color: #fff !important;
+}
+
+#gl_tmp_title::placeholder,
+.signer-input::placeholder {
+    font-weight: normal;
+    color: #666;
+}
+
+.mayor-title,
+.assistant-title {
+    margin-top: 8px;
+}
+
+#mayor-title,
+#assistant-title {
+    margin-top: 0;
+}
+
+.authority {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.signature-rectangle {
+    position: relative;
+    width: 160px;
+    height: 90px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.signature-plus {
+    text-align: center;
+    margin-bottom: 0;
+    font-size: 60px;
+    color: #000;
+    z-index: 1;
+}
+
+.signature-text {
+    line-height: 1.5;
+    font-size: 12px !important;
+    text-align: center;
+}
+
+#signature-box-1,
+#signature-box-2 {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+#signature-box-1 {
+    justify-content: center;
+}
+
+.signature-image {
+    width: 160px;
+    height: 90px;
+    object-fit: contain;
+    max-width: none;
+    max-height: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    display: none;
+}
+
+.signature-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 32px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 2;
+}
+
+.signature-rectangle.has-signature .signature-plus,
+.signature-rectangle.has-signature .signature-text {
+    display: none;
+}
+
+.signature-rectangle.has-signature .signature-image {
+    display: block;
+}
+
+.signature-rectangle:hover .signature-overlay {
+    opacity: 1;
+}
+
+[data-theme="dark"] .guarantee-letter-container {
+    background-color: #fff;
+    color: #000;
+}
+
+[data-theme="dark"] .signer-input {
+    background-color: #fff;
+    color: #000;
+    border-color: #999;
+}
+
+.formatting-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+.formatting-toolbar .format-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+}
+
+.formatting-toolbar .format-btn i,
+.formatting-toolbar .format-btn span {
+    color: #000;
+}
+
+.formatting-toolbar .format-btn:hover,
+.formatting-toolbar .format-btn.active {
+    background-color: lightblue;
+    border-color: lightblue;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #000;
+    margin: 0 8px;
+}

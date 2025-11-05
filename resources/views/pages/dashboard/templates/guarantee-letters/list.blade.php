@@ -15,28 +15,6 @@
     <a href="{{ route('gl-templates.list') }}" class="text-decoration-none text-white">Guarantee Letter Templates</a>
 @endsection
 
-@php
-    $labelMap = [
-        '[$application->applicant->client->member->first_name]' => '[Applicant\'s First Name]',
-        '[$application->applicant->client->member->middle_name]' => '[Applicant\'s Middle Name]',
-        '[$application->applicant->client->member->last_name]' => '[Applicant\'s Last Name]',
-        '[$application->applicant->client->member->suffix]' => '[Applicant\'s Suffix]',
-        '[$application->patient->client->member->first_name]' => '[Patient\'s First Name]',
-        '[$application->patient->client->member->middle_name]' => '[Patient\'s Middle Name]',
-        '[$application->patient->client->member->last_name]' => '[Patient\'s Last Name]',
-        '[$application->patient->client->member->suffix]' => '[Patient\'s Suffix]',
-        '[$application->service_type]' => '[Service Type]',
-        '[$application->affiliate_partner->affiliate_partner_name]' => '[Affiliate Partner]',
-        '[$application->billed_amount]' => '[Billed Amount]',
-        '[$application->assistance_amount]' => '[Assistance Amount]',
-        '[$application->applied_at]' => '[Applied At]',
-        '[$application->reapply_at]' => '[Reapply At]',
-        '[$application->applicant->barangay]' => '[Barangay]',
-    ];
-
-    $backendMap = array_flip($labelMap);
-@endphp
-
 @section('content')
     <div class="container">
         <div id="template-filter-controls">
@@ -122,32 +100,25 @@
                     <thead>
                         <tr>
                             <th class="text-center template-table-header fs-5">Template Title</th>
-                            <th class="text-center template-table-header fs-5">Template Content</th>
                             <th class="text-center template-table-header fs-5">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @foreach($templates as $template)
-                            @php
-                                $readableText = str_replace(array_keys($labelMap), array_values($labelMap), $template->gl_content);
-                                $readableText = str_replace(';', '<br>', $readableText);
-                            @endphp
-
                             <tr class="{{ $loop->even ? 'bg-light' : '' }}">
-                                <td class="px-4 py-3 text-center fw-bold fs-5">{{ $template->gl_tmp_title }}</td>
-                                <td class="px-5 py-3 template-text">{!! $readableText !!}</td>
+                                <td class="px-4 py-3 text-center fw-semibold fs-5">{{ $template->gl_tmp_title }}</td>
 
-                                <td class="px-3 py-3 text-center action-buttons">
+                                <td class="px-0 py-3 text-center action-buttons">
                                     <div class="gap-3 d-flex justify-content-center">
-                                        <a href="{{ route('gl-templates.edit', $template->gl_tmp_id) }}" class="btn btn-sm btn-warning px-2 py-2 fs-6" style="width: 12rem;">Edit Template</a>
-                                        <a href="{{ route('guarantee-letter', $template->gl_tmp_id) }}" class="btn btn-sm btn-warning px-2 py-2 fs-6" style="width: 12rem;">View Template</a>
+                                        <a href="{{ route('gl-templates.edit', $template->gl_tmp_id) }}" class="btn btn-warning px-5 py-2 fs-5">Edit Template</a>
+                                        <a href="{{ route('guarantee-letter', $template->gl_tmp_id) }}" class="btn btn-primary px-5 py-2 fs-5">View Template</a>
 
                                         <form action="{{ route('gl-templates.destroy', $template->gl_tmp_id) }}" method="POST" style="display: inline;">
                                             @csrf
                                             @method('DELETE')
 
-                                            <button class="btn btn-sm btn-danger px-2 py-2 fs-6" style="width: 12rem;" onclick="return confirm('Are you sure you want to delete this GL template?')">Delete Template</button>
+                                            <button class="btn btn-danger px-5 py-2 fs-5" onclick="return confirm('Are you sure you want to delete this GL template?')">Delete Template</button>
                                         </form>
                                     </div>
                                 </td>
