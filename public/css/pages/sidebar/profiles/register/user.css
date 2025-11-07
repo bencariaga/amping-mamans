@@ -153,7 +153,7 @@
 #suffixDropdownBtn:hover,
 #roleDropdownBtn:hover,
 #customRoleInput:hover {
-    background-color: var(--input-bg-focus) !important;
+    background-color: var(--input-bg-focus);
 }
 
 .form-control:focus,
@@ -165,10 +165,10 @@
 #suffixDropdownBtn:focus,
 #roleDropdownBtn:focus,
 #customRoleInput:focus {
-    background-color: var(--input-bg-focus) !important;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-    border-color: var(--primary-color);
+    background-color: var(--input-bg-focus);
     color: var(--input-text);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
 }
 
 #roleDropdownBtn::after,
@@ -418,4 +418,18 @@
 .role-info-list .text-muted {
     font-style: italic;
     color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .image-upload-wrap {
+        width: 160px;
+        height: 160px;
+    }
+    .wrap-placeholder {
+        font-size: 42px;
+    }
+    .image-placeholder-label {
+        width: 160px;
+        font-size: 12px;
+    }
 }

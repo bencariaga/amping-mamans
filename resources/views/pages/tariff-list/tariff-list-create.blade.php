@@ -33,7 +33,7 @@
                             @foreach($services as $service)
                                 <div class="form-check mb-3 d-flex align-items-center p-3 service-card ms-3 service-row">
                                     <input class="form-check-input service-checkbox" type="checkbox" name="selectedServices[]" value="{{ $service->service_id }}" id="service_modal_{{ $service->service_id }}">
-                                    <label class="form-check-label ms-3 service-label fs-5" for="service_modal_{{ $service->service_id }}">{{ $service->service }}</label>
+                                    <label class="form-check-label ms-3 service-label fs-5" for="service_modal_{{ $service->service_id }}">{{ $service->service_type }}</label>
                                 </div>
                             @endforeach
                         </div>

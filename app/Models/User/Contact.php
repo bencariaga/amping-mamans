@@ -2,9 +2,9 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateContactId;
 use App\Models\Communication\Message;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Contact extends Model
@@ -27,7 +27,7 @@ class Contact extends Model
         'contact_id',
         'client_id',
         'contact_type',
-        'contact_number',
+        'phone_number',
     ];
 
     protected static function boot()
@@ -36,7 +36,12 @@ class Contact extends Model
 
         static::creating(function ($c) {
             if (empty($c->contact_id)) {
-                $c->contact_id = GenerateContactId::execute();
+                $year = Carbon::now()->year;
+                $base = "CONTACT-{$year}";
+                $latest = static::where('contact_id', 'like', "{$base}%")->latest('contact_id')->first();
+                $last = $latest ? (int) Str::substr($latest->contact_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $c->contact_id = "{$base}-{$next}";
             }
         });
     }
@@ -56,7 +61,7 @@ class Contact extends Model
         return $this->hasMany(Message::class, 'contact_id', 'contact_id');
     }
 
-    public function setContactNumberAttribute($value)
+    public function setPhoneNumberAttribute($value)
     {
         $n = Str::squish($value);
 
@@ -70,6 +75,6 @@ class Contact extends Model
             $n = '0'.Str::substr($n, 2);
         }
 
-        $this->attributes['contact_number'] = $n;
+        $this->attributes['phone_number'] = $n;
     }
 }

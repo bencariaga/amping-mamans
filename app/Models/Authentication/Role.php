@@ -2,8 +2,7 @@
 
 namespace App\Models\Authentication;
 
-use App\Actions\IdGeneration\GenerateRoleId;
-use App\Models\Operation\Data;
+use App\Models\Storage\Data;
 use App\Models\User\Staff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,17 +28,6 @@ class Role extends Model
         'allowed_actions',
         'access_scope',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($role) {
-            if (empty($role->role_id)) {
-                $role->role_id = GenerateRoleId::execute();
-            }
-        });
-    }
 
     public static function getPrimaryKey()
     {

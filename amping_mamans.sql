@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 10:45 PM
--- Server version: 8.0.43
--- PHP Version: 8.4.13
+-- Host: localhost:3306
+-- Generation Time: Nov 07, 2025 at 12:03 AM
+-- Server version: 8.0.30
+-- PHP Version: 8.4.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,18 +28,43 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounts` (
-  `account_id` varchar(21) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `account_status` enum('Active','Deactivated') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `account_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `account_status` enum('Active','Deactivated') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `registered_at` datetime NOT NULL,
+  `last_deactivated_at` datetime DEFAULT NULL,
+  `last_reactivated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`account_id`, `data_id`, `account_status`) VALUES
-('ACCOUNT-2025-AUG-0001', 'DATA-2025-AUG-000000001', 'Active'),
-('ACCOUNT-2025-NOV-0001', 'DATA-2025-NOV-000000001', 'Active');
+INSERT INTO `accounts` (`account_id`, `data_id`, `account_status`, `registered_at`, `last_deactivated_at`, `last_reactivated_at`) VALUES
+('ACCOUNT-2025-000000001', 'DATA-2025-000000001', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000002', 'DATA-2025-000000006', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000003', 'DATA-2025-000000007', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000004', 'DATA-2025-000000008', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000005', 'DATA-2025-000000009', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000006', 'DATA-2025-000000010', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000007', 'DATA-2025-000000011', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000008', 'DATA-2025-000000012', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000009', 'DATA-2025-000000013', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000010', 'DATA-2025-000000014', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000011', 'DATA-2025-000000015', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000012', 'DATA-2025-000000016', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000013', 'DATA-2025-000000017', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000014', 'DATA-2025-000000032', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000015', 'DATA-2025-000000033', 'Active', '2025-08-01 04:00:00', NULL, NULL),
+('ACCOUNT-2025-000000016', 'DATA-2025-000000032', 'Active', '2025-10-06 03:02:04', NULL, NULL),
+('ACCOUNT-2025-000000017', 'DATA-2025-000000037', 'Active', '2025-10-18 15:55:24', NULL, NULL),
+('ACCOUNT-2025-000000018', 'DATA-2025-000000046', 'Active', '2025-10-28 20:18:13', NULL, NULL),
+('ACCOUNT-2025-000000019', 'DATA-2025-000000049', 'Active', '2025-10-31 03:10:18', NULL, NULL),
+('ACCOUNT-2025-000000020', 'DATA-2025-000000051', 'Active', '2025-11-05 15:05:15', NULL, NULL),
+('ACCOUNT-2025-000000021', 'DATA-2025-000000053', 'Active', '2025-11-05 15:38:05', NULL, NULL),
+('ACCOUNT-2025-000000022', 'DATA-2025-000000058', 'Active', '2025-11-06 21:08:06', NULL, NULL),
+('ACCOUNT-2025-000000023', 'DATA-2025-000000060', 'Active', '2025-11-06 23:58:24', NULL, NULL),
+('ACCOUNT-2025-000000024', 'DATA-2025-000000061', 'Active', '2025-11-07 02:45:20', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -48,11 +73,50 @@ INSERT INTO `accounts` (`account_id`, `data_id`, `account_status`) VALUES
 --
 
 CREATE TABLE `affiliate_partners` (
-  `ap_id` varchar(10) NOT NULL,
-  `tp_id` varchar(11) NOT NULL,
-  `ap_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `ap_type` enum('Hospital / Clinic','Pharmacy / Drugstore','Funeral Company') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `affiliate_partner_id` varchar(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `account_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `affiliate_partner_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `affiliate_partner_type` enum('N / A','Hospital / Clinic','Pharmacy / Drugstore','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `affiliate_partners`
+--
+
+INSERT INTO `affiliate_partners` (`affiliate_partner_id`, `account_id`, `affiliate_partner_name`, `affiliate_partner_type`) VALUES
+('AP-2025-000000001', 'ACCOUNT-2025-000000006', 'St. Elizabeth Hospital, Inc.', 'Hospital / Clinic'),
+('AP-2025-000000002', 'ACCOUNT-2025-000000007', 'Rojon Pharmacy', 'Pharmacy / Drugstore'),
+('AP-2025-000000003', 'ACCOUNT-2025-000000008', 'Auguis Clinic and Hospital', 'Hospital / Clinic'),
+('AP-2025-000000004', 'ACCOUNT-2025-000000009', 'Mercury Drug Corporation', 'Pharmacy / Drugstore');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `affiliate_partner_services`
+--
+
+CREATE TABLE `affiliate_partner_services` (
+  `affiliate_partner_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `service_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `affiliate_partner_services`
+--
+
+INSERT INTO `affiliate_partner_services` (`affiliate_partner_id`, `service_id`) VALUES
+('AP-2025-000000001', 'SERVICE-2025-000000001'),
+('AP-2025-000000003', 'SERVICE-2025-000000001'),
+('AP-2025-000000001', 'SERVICE-2025-000000002'),
+('AP-2025-000000002', 'SERVICE-2025-000000002'),
+('AP-2025-000000003', 'SERVICE-2025-000000002'),
+('AP-2025-000000004', 'SERVICE-2025-000000002'),
+('AP-2025-000000001', 'SERVICE-2025-000000003'),
+('AP-2025-000000003', 'SERVICE-2025-000000003'),
+('AP-2025-000000001', 'SERVICE-2025-000000004'),
+('AP-2025-000000003', 'SERVICE-2025-000000004'),
+('AP-2025-000000001', 'SERVICE-2025-000000005'),
+('AP-2025-000000003', 'SERVICE-2025-000000005');
 
 -- --------------------------------------------------------
 
@@ -61,27 +125,41 @@ CREATE TABLE `affiliate_partners` (
 --
 
 CREATE TABLE `applicants` (
-  `applicant_id` varchar(23) NOT NULL,
-  `client_id` varchar(20) NOT NULL,
-  `province` enum('South Cotabato') NOT NULL,
-  `city` enum('General Santos') NOT NULL,
-  `municipality` enum('N / A') DEFAULT NULL,
-  `barangay` enum('Apopong','Baluan','Batomelong','Buayan','Bula','Calumpang','City Heights','Conel','Dadiangas East','Dadiangas North','Dadiangas South','Dadiangas West','Fatima','Katangawan','Labangal','Lagao','Ligaya','Mabuhay','Olympog','San Isidro','San Jose','Siguel','Sinawal','Tambler','Tinagacan','Upper Labay') NOT NULL,
-  `subdivision` varchar(20) DEFAULT NULL,
-  `purok` varchar(20) DEFAULT NULL,
-  `sitio` varchar(20) DEFAULT NULL,
-  `street` varchar(20) DEFAULT NULL,
-  `phase` varchar(10) DEFAULT NULL,
-  `block_number` varchar(10) DEFAULT NULL,
-  `house_number` varchar(10) DEFAULT NULL,
-  `job_status` enum('Permanent','Contractual','Casual','Retired') NOT NULL,
-  `house_occupation_status` enum('Owner','Renter','House Sharer') NOT NULL,
-  `lot_occupation_status` enum('Owner','Renter','Lot Sharer','Informal Settler') NOT NULL,
-  `phic_affiliation` enum('Affiliated','Unaffiliated') NOT NULL,
-  `phic_category` enum('Self-Employed','Sponsored / Indigent','Employed') DEFAULT NULL,
-  `is_also_patient` enum('yes','no') NOT NULL,
-  `patient_quantity` int(10) UNSIGNED ZEROFILL NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `applicant_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `province` enum('South Cotabato','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `city` enum('General Santos','N / A','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `municipality` enum('N / A','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `barangay` enum('Apopong','Baluan','Batomelong','Buayan','Bula','Calumpang','City Heights','Conel','Dadiangas East','Dadiangas North','Dadiangas South','Dadiangas West','Fatima','Katangawan','Labangal','Lagao','Ligaya','Mabuhay','Olympog','San Isidro','San Jose','Siguel','Sinawal','Tambler','Tinagacan','Upper Labay','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `subdivision` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `purok` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sitio` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `street` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `phase` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `block_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `house_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `job_status` enum('Retired','Permanent','Contractual','Casual') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `house_occup_status` enum('Owner','Renter','House Sharer') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lot_occup_status` enum('Owner','Renter','Lot Sharer','Informal Settler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `phic_affiliation` enum('Affiliated','Unaffiliated') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `phic_category` enum('Self-Employed','Sponsored / Indigent','Employed') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_also_patient` enum('Yes','No') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `patient_number` int(2) UNSIGNED ZEROFILL NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `applicants`
+--
+
+INSERT INTO `applicants` (`applicant_id`, `client_id`, `province`, `city`, `municipality`, `barangay`, `subdivision`, `purok`, `sitio`, `street`, `phase`, `block_number`, `house_number`, `job_status`, `house_occup_status`, `lot_occup_status`, `phic_affiliation`, `phic_category`, `created_at`, `is_also_patient`, `patient_number`) VALUES
+('APPLICANT-2025-000000001', 'CLIENT-2025-000000001', 'South Cotabato', 'General Santos', 'N / A', 'Labangal', 'Doña Soledad', NULL, NULL, '', NULL, NULL, NULL, 'Casual', 'Renter', 'Renter', 'Affiliated', 'Employed', '2025-11-01 05:19:05', 'Yes', 02),
+('APPLICANT-2025-000000002', 'CLIENT-2025-000000003', 'South Cotabato', 'General Santos', 'N / A', NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, 'Owner', 'Owner', 'Affiliated', 'Sponsored / Indigent', '2025-11-01 05:19:05', 'Yes', 03),
+('APPLICANT-2025-000000003', 'CLIENT-2025-000000007', 'South Cotabato', 'General Santos', 'N / A', 'City Heights', NULL, NULL, NULL, 'Daproza', NULL, NULL, NULL, 'Casual', 'Owner', 'Owner', 'Affiliated', 'Employed', '2025-11-01 05:19:05', 'Yes', 02),
+('APPLICANT-2025-000000004', 'CLIENT-2025-000000009', 'South Cotabato', 'General Santos', 'N / A', 'Buayan', NULL, 'Cientodiez', NULL, '', NULL, NULL, NULL, 'Permanent', 'Owner', 'Owner', 'Affiliated', 'Self-Employed', '2025-11-01 05:19:05', 'No', 01),
+('APPLICANT-2025-000000005', 'CLIENT-2025-000000011', 'South Cotabato', 'General Santos', 'N / A', 'San Isidro', 'Issabella Homes', NULL, NULL, '', NULL, '4', '27', 'Permanent', 'Owner', 'Owner', 'Affiliated', 'Self-Employed', '2025-11-05 07:38:05', 'No', 01),
+('APPLICANT-2025-000000006', 'CLIENT-2025-000000015', 'South Cotabato', 'General Santos', 'N / A', 'Labangal', 'Dona Soledad', NULL, NULL, '', '3-B', '1', NULL, 'Permanent', 'Owner', 'Owner', 'Affiliated', 'Self-Employed', '2025-11-06 13:08:06', 'No', 01),
+('APPLICANT-2025-000000007', 'CLIENT-2025-000000017', 'South Cotabato', 'General Santos', 'N / A', 'Mabuhay', 'Isssabella homes', NULL, NULL, '', NULL, '6', '3', 'Permanent', 'Owner', 'Owner', 'Affiliated', 'Self-Employed', '2025-11-06 18:45:20', 'No', 01);
 
 -- --------------------------------------------------------
 
@@ -90,30 +168,29 @@ CREATE TABLE `applicants` (
 --
 
 CREATE TABLE `applications` (
-  `application_id` varchar(25) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `patient_id` varchar(22) NOT NULL,
-  `ap_id` varchar(10) NOT NULL,
-  `exp_range_id` varchar(24) NOT NULL,
-  `message_id` varchar(21) NOT NULL,
-  `billed_amount` int(7) UNSIGNED ZEROFILL DEFAULT NULL,
+  `application_id` varchar(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `applicant_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `patient_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `affiliate_partner_id` varchar(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `exp_range_id` varchar(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `message_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `billed_amount` int(7) UNSIGNED ZEROFILL NOT NULL,
   `assistance_amount` int(7) UNSIGNED ZEROFILL NOT NULL,
-  `application_date` datetime DEFAULT NULL,
-  `reapplication_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+  `applied_at` date NOT NULL,
+  `reapply_at` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Table structure for table `audit_logs`
+-- Dumping data for table `applications`
 --
 
-CREATE TABLE `audit_logs` (
-  `al_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `staff_id` varchar(13) NOT NULL,
-  `al_type` enum('Login','Logout','Page Access','Data Creation','Data Update','Data Deletion') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `al_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `applications` (`application_id`, `applicant_id`, `patient_id`, `affiliate_partner_id`, `exp_range_id`, `message_id`, `billed_amount`, `assistance_amount`, `applied_at`, `reapply_at`) VALUES
+('APPLICATION-2025-000000001', 'APPLICANT-2025-000000003', 'PATIENT-2025-000000008', 'AP-2025-000000001', 'EXP-RANGE-2025-000000002', 'MESSAGE-2025-000000003', 0000150, 0000015, '2025-10-28', '2026-01-26'),
+('APPLICATION-2025-000000002', 'APPLICANT-2025-000000004', 'PATIENT-2025-000000010', 'AP-2025-000000004', 'EXP-RANGE-2025-000000047', 'MESSAGE-2025-000000004', 0001000, 0000400, '2025-10-31', '2026-01-29'),
+('APPLICATION-2025-000000003', 'APPLICANT-2025-000000005', 'PATIENT-2025-000000011', 'AP-2025-000000002', 'EXP-RANGE-2025-000000048', 'MESSAGE-2025-000000005', 0001200, 0000480, '2025-11-05', '2026-02-03'),
+('APPLICATION-2025-000000004', 'APPLICANT-2025-000000005', 'PATIENT-2025-000000012', 'AP-2025-000000001', 'EXP-RANGE-2025-000000047', 'MESSAGE-2025-000000006', 0001000, 0000400, '2025-11-06', '2026-02-04'),
+('APPLICATION-2025-000000005', 'APPLICANT-2025-000000006', 'PATIENT-2025-000000014', 'AP-2025-000000002', 'new-sz67ghu8f', 'MESSAGE-2025-000000007', 0000500, 0000150, '2025-11-06', '2026-02-04'),
+('APPLICATION-2025-000000006', 'APPLICANT-2025-000000007', 'PATIENT-2025-000000015', 'AP-2025-000000001', 'EXPMHrjsTs3zq', 'MESSAGE-2025-000000008', 0001000, 0000100, '2025-11-07', '2026-02-05');
 
 -- --------------------------------------------------------
 
@@ -122,17 +199,36 @@ CREATE TABLE `audit_logs` (
 --
 
 CREATE TABLE `budget_updates` (
-  `budget_update_id` varchar(22) NOT NULL,
-  `sponsor_id` varchar(15) NOT NULL,
-  `possessor` enum('AMPING','Sponsor') DEFAULT NULL,
-  `amount_accum` int(16) UNSIGNED ZEROFILL DEFAULT NULL,
-  `amount_spent` int(16) UNSIGNED ZEROFILL DEFAULT NULL,
-  `amount_recent` int(16) UNSIGNED ZEROFILL DEFAULT NULL,
-  `amount_before` int(16) UNSIGNED ZEROFILL DEFAULT NULL,
-  `amount_change` int(16) UNSIGNED ZEROFILL DEFAULT NULL,
-  `direction` enum('Positive','Negative') DEFAULT NULL,
-  `reason` enum('Yearly Budget Provision','Supplementary Budget','GL Release','Sponsor Donation','Sponsored GL Release','Budget Manipulation') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `budget_update_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sponsor_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `possessor` enum('AMPING','Sponsor') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `amount_accum` int(16) UNSIGNED ZEROFILL NOT NULL,
+  `amount_recent` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `amount_before` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `amount_change` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `amount_spent` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `direction` enum('Increase','Decrease') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reason` enum('Yearly Budget Provision','Supplementary Budget','GL Release','Sponsor Donation','Budget Manipulation') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `budget_updates`
+--
+
+INSERT INTO `budget_updates` (`budget_update_id`, `data_id`, `sponsor_id`, `possessor`, `amount_accum`, `amount_recent`, `amount_before`, `amount_change`, `amount_spent`, `direction`, `reason`) VALUES
+('BDG-UPD-2025-000000001', 'DATA-2025-000000026', NULL, 'AMPING', 0000000500000000, 0500000000, 0000000000, 0500000000, 0000000000, 'Increase', 'Yearly Budget Provision'),
+('BDG-UPD-2025-000000002', 'DATA-2025-000000027', 'SPONSOR-2025-000000001', 'Sponsor', 0000000600000000, 0600000000, 0500000000, 0100000000, 0000000000, 'Increase', 'Sponsor Donation'),
+('BDG-UPD-2025-000000003', 'DATA-2025-000000028', 'SPONSOR-2025-000000002', 'Sponsor', 0000000700000000, 0700000000, 0600000000, 0100000000, 0000000000, 'Increase', 'Sponsor Donation'),
+('BDG-UPD-2025-000000004', 'DATA-2025-000000029', 'SPONSOR-2025-000000003', 'Sponsor', 0000000800000000, 0800000000, 0700000000, 0100000000, 0000000000, 'Increase', 'Sponsor Donation'),
+('BDG-UPD-2025-000000005', 'DATA-2025-000000030', 'SPONSOR-2025-000000003', 'Sponsor', 0000000900000000, 0900000000, 0800000000, 0100000000, 0000000000, 'Increase', 'Sponsor Donation'),
+('BDG-UPD-2025-000000006', 'DATA-2025-000000031', 'SPONSOR-2025-000000004', 'Sponsor', 0000001000000000, 1000000000, 0900000000, 0100000000, 0000000000, 'Increase', 'Sponsor Donation'),
+('BDG-UPD-2025-000000007', 'DATA-2025-000000047', NULL, 'AMPING', 0000000500000000, 0499999985, 0500000000, 0000000015, 0000000015, 'Decrease', 'GL Release'),
+('BDG-UPD-2025-000000008', 'DATA-2025-000000050', NULL, 'AMPING', 0000000500000000, 0499999585, 0499999985, 0000000400, 0000000415, 'Decrease', 'GL Release'),
+('BDG-UPD-2025-000000009', 'DATA-2025-000000054', NULL, 'AMPING', 0000000500000000, 0499999105, 0499999585, 0000000480, 0000000895, 'Decrease', 'GL Release'),
+('BDG-UPD-2025-000000010', 'DATA-2025-000000056', NULL, 'AMPING', 0000000500000000, 0499998705, 0499999105, 0000000400, 0000001295, 'Decrease', 'GL Release'),
+('BDG-UPD-2025-000000011', 'DATA-2025-000000059', NULL, 'AMPING', 0000000500000000, 0499998555, 0499998705, 0000000150, 0000001445, 'Decrease', 'GL Release'),
+('BDG-UPD-2025-000000012', 'DATA-2025-000000062', NULL, 'AMPING', 0000000500000000, 0499998455, 0499998555, 0000000100, 0000001545, 'Decrease', 'GL Release');
 
 -- --------------------------------------------------------
 
@@ -165,16 +261,38 @@ CREATE TABLE `cache_locks` (
 --
 
 CREATE TABLE `clients` (
-  `client_id` varchar(20) NOT NULL,
-  `member_id` varchar(20) NOT NULL,
-  `occupation_id` varchar(21) DEFAULT NULL,
-  `client_type` enum('Applicant','Household Member') NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `occupation_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `age` int(3) UNSIGNED ZEROFILL NOT NULL,
-  `sex` enum('Male','Female') DEFAULT NULL,
-  `civil_status` enum('Single','Married','Separated','Widowed') DEFAULT NULL,
+  `sex` enum('Male','Female') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `civil_status` enum('Single','Married','Separated','Widowed') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `monthly_income` int(7) UNSIGNED ZEROFILL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `clients`
+--
+
+INSERT INTO `clients` (`client_id`, `member_id`, `occupation_id`, `birthdate`, `age`, `sex`, `civil_status`, `monthly_income`) VALUES
+('CLIENT-2025-000000001', 'MEMBER-2025-000000008', 'OCCUP-2025-000000011', '2003-04-02', 022, 'Male', 'Single', 0010000),
+('CLIENT-2025-000000003', 'MEMBER-2025-000000010', 'OCCUP-2025-000000013', '2003-04-02', 022, 'Male', 'Single', 0010000),
+('CLIENT-2025-000000004', 'MEMBER-2025-000000011', NULL, NULL, 100, 'Male', NULL, NULL),
+('CLIENT-2025-000000005', 'MEMBER-2025-000000012', NULL, NULL, 040, 'Male', NULL, NULL),
+('CLIENT-2025-000000006', 'MEMBER-2025-000000013', NULL, NULL, 022, 'Female', NULL, NULL),
+('CLIENT-2025-000000007', 'MEMBER-2025-000000014', 'OCCUP-2025-000000010', '2000-01-01', 025, 'Female', 'Single', 0015000),
+('CLIENT-2025-000000008', 'MEMBER-2025-000000015', NULL, NULL, 022, 'Male', NULL, NULL),
+('CLIENT-2025-000000009', 'MEMBER-2025-000000016', 'OCCUP-2025-000000014', '2004-01-04', 021, 'Female', 'Single', 0020000),
+('CLIENT-2025-000000010', 'MEMBER-2025-000000017', NULL, NULL, 004, 'Female', NULL, NULL),
+('CLIENT-2025-000000011', 'MEMBER-2025-000000019', 'OCCUP-2025-000000014', '2004-10-05', 021, 'Female', 'Single', 0015000),
+('CLIENT-2025-000000012', 'MEMBER-2025-000000020', NULL, NULL, 022, 'Male', NULL, NULL),
+('CLIENT-2025-000000013', 'MEMBER-2025-000000021', NULL, NULL, 063, 'Female', NULL, NULL),
+('CLIENT-2025-000000014', 'MEMBER-2025-000000022', NULL, NULL, 024, 'Male', NULL, NULL),
+('CLIENT-2025-000000015', 'MEMBER-2025-000000023', 'OCCUP-2025-000000010', '2002-08-22', 023, 'Female', 'Single', 0012000),
+('CLIENT-2025-000000016', 'MEMBER-2025-000000024', NULL, NULL, 020, 'Female', NULL, NULL),
+('CLIENT-2025-000000017', 'MEMBER-2025-000000026', 'OCCUP-2025-000000001', '1990-01-24', 035, 'Male', 'Married', 0015000),
+('CLIENT-2025-000000018', 'MEMBER-2025-000000027', NULL, NULL, 016, 'Female', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -183,11 +301,24 @@ CREATE TABLE `clients` (
 --
 
 CREATE TABLE `contacts` (
-  `contact_id` varchar(21) NOT NULL,
-  `client_id` varchar(20) NOT NULL,
-  `contact_type` enum('Application','Emergency') NOT NULL,
-  `contact_number` varchar(17) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `contact_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `contact_type` enum('Application','Emergency') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `phone_number` varchar(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`contact_id`, `client_id`, `contact_type`, `phone_number`) VALUES
+('CONTACT-2025-000000001', 'CLIENT-2025-000000001', 'Application', '0912-345-6789'),
+('CONTACT-2025-000000002', 'CLIENT-2025-000000003', 'Application', '0907-632-3656'),
+('CONTACT-2025-000000003', 'CLIENT-2025-000000007', 'Application', '0993-959-7683'),
+('CONTACT-2025-000000004', 'CLIENT-2025-000000009', 'Application', '0909-118-3372'),
+('CONTACT-2025-000000005', 'CLIENT-2025-000000011', 'Application', '0994-883-7395'),
+('CONTACT-2025-000000006', 'CLIENT-2025-000000015', 'Application', '0946-403-7646'),
+('CONTACT-2025-000000007', 'CLIENT-2025-000000017', 'Application', '0910-149-8062');
 
 -- --------------------------------------------------------
 
@@ -196,47 +327,72 @@ CREATE TABLE `contacts` (
 --
 
 CREATE TABLE `data` (
-  `data_id` varchar(23) NOT NULL,
-  `archive_status` enum('Archived','Unarchived') NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_status` enum('Archived','Unarchived','Recently Used') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `archived_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `data`
 --
 
-INSERT INTO `data` (`data_id`, `archive_status`, `created_at`, `updated_at`, `archived_at`) VALUES
-('DATA-2025-AUG-000000001', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000003', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000004', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000005', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000006', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000007', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000008', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000009', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000010', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000011', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000012', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000013', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000014', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000015', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000016', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000017', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000018', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000019', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000020', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000021', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000022', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000023', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000024', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000025', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-11-04 19:36:19', NULL),
-('DATA-2025-AUG-000000038', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
-('DATA-2025-AUG-000000041', 'Unarchived', '2025-10-28 11:40:00', '2025-10-28 11:40:00', NULL),
-('DATA-2025-NOV-000000001', 'Archived', '2025-11-01 07:06:20', '2025-11-03 06:56:58', '2025-11-03 06:56:58'),
-('DATA-2025-NOV-000000002', 'Archived', '2025-11-01 20:37:45', '2025-11-01 20:37:45', NULL);
+INSERT INTO `data` (`data_id`, `data_status`, `created_at`, `updated_at`, `archived_at`) VALUES
+('DATA-2025-000000001', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000003', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000004', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000005', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000006', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000007', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000008', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000009', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000010', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000011', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000012', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000013', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000014', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000015', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000016', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000017', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000018', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000019', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000020', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000021', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000022', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000023', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000024', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000025', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000026', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000027', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000028', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000029', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000030', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000031', 'Unarchived', '2025-08-01 04:00:00', '2025-08-01 04:00:00', NULL),
+('DATA-2025-000000032', 'Unarchived', '2025-10-06 03:02:04', '2025-10-06 03:02:04', NULL),
+('DATA-2025-000000033', 'Unarchived', '2025-10-09 19:59:15', '2025-10-28 08:10:52', NULL),
+('DATA-2025-000000034', 'Unarchived', '2025-10-17 15:38:38', '2025-10-17 15:38:38', NULL),
+('DATA-2025-000000035', 'Unarchived', '2025-10-17 15:43:08', '2025-10-17 15:43:08', NULL),
+('DATA-2025-000000036', 'Unarchived', '2025-10-17 15:45:54', '2025-10-17 15:45:54', NULL),
+('DATA-2025-000000037', 'Unarchived', '2025-10-18 15:55:24', '2025-10-18 15:55:24', NULL),
+('DATA-2025-000000041', 'Unarchived', '2025-10-28 11:40:00', '2025-10-28 11:40:00', NULL),
+('DATA-2025-000000042', 'Unarchived', '2025-10-28 11:45:18', '2025-10-28 11:45:18', NULL),
+('DATA-2025-000000044', 'Archived', '2025-10-28 10:30:00', '2025-10-28 18:04:01', NULL),
+('DATA-2025-000000046', 'Unarchived', '2025-10-28 20:18:13', '2025-10-28 20:18:13', NULL),
+('DATA-2025-000000047', 'Unarchived', '2025-10-28 20:24:16', '2025-10-28 20:24:16', NULL),
+('DATA-2025-000000049', 'Unarchived', '2025-10-31 03:10:18', '2025-10-31 03:10:18', NULL),
+('DATA-2025-000000050', 'Unarchived', '2025-10-31 03:15:49', '2025-10-31 03:15:49', NULL),
+('DATA-2025-000000051', 'Unarchived', '2025-11-05 15:05:15', '2025-11-05 15:05:15', NULL),
+('DATA-2025-000000053', 'Unarchived', '2025-11-05 15:38:05', '2025-11-05 15:38:05', NULL),
+('DATA-2025-000000054', 'Unarchived', '2025-11-05 15:39:24', '2025-11-05 15:39:24', NULL),
+('DATA-2025-000000055', 'Unarchived', '2025-11-05 15:51:55', '2025-11-05 15:51:55', NULL),
+('DATA-2025-000000056', 'Unarchived', '2025-11-06 04:05:57', '2025-11-06 04:05:57', NULL),
+('DATA-2025-000000057', 'Archived', '2025-11-06 16:54:37', '2025-11-06 16:54:37', NULL),
+('DATA-2025-000000058', 'Unarchived', '2025-11-06 21:08:06', '2025-11-06 21:08:06', NULL),
+('DATA-2025-000000059', 'Unarchived', '2025-11-06 21:13:41', '2025-11-06 21:13:41', NULL),
+('DATA-2025-000000060', 'Unarchived', '2025-11-06 23:58:24', '2025-11-06 23:58:24', NULL),
+('DATA-2025-000000061', 'Unarchived', '2025-11-07 02:45:20', '2025-11-07 02:45:20', NULL),
+('DATA-2025-000000062', 'Unarchived', '2025-11-07 03:31:08', '2025-11-07 03:31:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -245,32 +401,276 @@ INSERT INTO `data` (`data_id`, `archive_status`, `created_at`, `updated_at`, `ar
 --
 
 CREATE TABLE `expense_ranges` (
-  `exp_range_id` varchar(24) NOT NULL,
-  `tariff_list_id` varchar(13) NOT NULL,
-  `service_id` varchar(15) NOT NULL,
-  `exp_range_min` int(7) UNSIGNED ZEROFILL NOT NULL,
-  `exp_range_max` int(7) UNSIGNED ZEROFILL NOT NULL,
-  `coverage_percent` int(3) UNSIGNED ZEROFILL NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `exp_range_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tariff_list_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `service_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `exp_range_min` int(7) UNSIGNED ZEROFILL DEFAULT NULL,
+  `exp_range_max` int(7) UNSIGNED ZEROFILL DEFAULT NULL,
+  `coverage_percent` int(3) UNSIGNED ZEROFILL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `expense_ranges`
 --
 
+INSERT INTO `expense_ranges` (`exp_range_id`, `tariff_list_id`, `service_id`, `exp_range_min`, `exp_range_max`, `coverage_percent`) VALUES
+('EXP-RANGE-2025-000000001', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000002', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000003', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000004', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000005', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000006', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000007', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000008', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000009', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000010', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000011', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000012', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000013', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000014', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000015', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000016', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000017', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000018', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000019', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000020', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000021', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000022', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000023', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000024', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000025', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000026', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000027', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000028', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000029', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000030', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000031', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000032', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000033', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000034', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000035', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000036', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000037', 'TL-2025-AUG-1', 'SERVICE-2025-000000001', 0900001, 1000000, 100),
+('EXP-RANGE-2025-000000038', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000039', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000040', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000041', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000042', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000043', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000044', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000045', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000046', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000047', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000048', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000049', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000050', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000051', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000052', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000053', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000054', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000055', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000056', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000057', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000058', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000059', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000060', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000061', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000062', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000063', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000064', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000065', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000066', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000067', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000068', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000069', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000070', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000071', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000072', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000073', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000074', 'TL-2025-AUG-1', 'SERVICE-2025-000000002', 0900001, 1000000, 100),
+('EXP-RANGE-2025-000000075', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000076', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000077', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000078', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000079', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000080', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000081', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000082', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000083', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000084', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000085', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000086', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000087', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000088', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000089', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000090', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000091', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000092', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000093', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000094', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000095', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000096', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000097', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000098', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000099', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000100', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000101', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000102', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000103', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000104', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000105', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000106', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000107', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000108', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000109', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000110', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000111', 'TL-2025-AUG-1', 'SERVICE-2025-000000003', 0900001, 1000000, 100),
+('EXP-RANGE-2025-000000112', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000113', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000114', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000115', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000116', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000117', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000118', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000119', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000120', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000121', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000122', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000123', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000124', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000125', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000126', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000127', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000128', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000129', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000130', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000131', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000132', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000133', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000134', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000135', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000136', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000137', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000138', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000139', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000140', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000141', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000142', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000143', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000144', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000145', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000146', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000147', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000148', 'TL-2025-AUG-1', 'SERVICE-2025-000000004', 0900001, 1000000, 100),
+('EXP-RANGE-2025-000000149', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000150', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000151', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000152', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000153', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000154', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000155', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000156', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000157', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000158', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000159', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000160', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000161', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000162', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000163', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000164', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000165', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000166', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000167', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000168', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000169', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000170', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000171', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000172', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000173', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000174', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000175', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000176', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000177', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000178', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000179', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000180', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000181', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000182', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000183', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000184', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000185', 'TL-2025-AUG-1', 'SERVICE-2025-000000005', 0900001, 1000000, 100),
+('EXP-RANGE-2025-000000186', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000001, 0000100, 010),
+('EXP-RANGE-2025-000000187', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000101, 0000200, 010),
+('EXP-RANGE-2025-000000188', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000201, 0000300, 010),
+('EXP-RANGE-2025-000000189', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000301, 0000400, 020),
+('EXP-RANGE-2025-000000190', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000401, 0000500, 020),
+('EXP-RANGE-2025-000000191', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000501, 0000600, 020),
+('EXP-RANGE-2025-000000192', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000601, 0000700, 030),
+('EXP-RANGE-2025-000000193', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000701, 0000800, 030),
+('EXP-RANGE-2025-000000194', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000801, 0000900, 030),
+('EXP-RANGE-2025-000000195', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0000901, 0001000, 040),
+('EXP-RANGE-2025-000000196', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0001001, 0002000, 040),
+('EXP-RANGE-2025-000000197', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0002001, 0003000, 040),
+('EXP-RANGE-2025-000000198', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0003001, 0004000, 040),
+('EXP-RANGE-2025-000000199', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0004001, 0005000, 050),
+('EXP-RANGE-2025-000000200', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0005001, 0006000, 050),
+('EXP-RANGE-2025-000000201', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0006001, 0007000, 050),
+('EXP-RANGE-2025-000000202', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0007001, 0008000, 050),
+('EXP-RANGE-2025-000000203', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0008001, 0009000, 060),
+('EXP-RANGE-2025-000000204', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0009001, 0010000, 060),
+('EXP-RANGE-2025-000000205', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0010001, 0020000, 060),
+('EXP-RANGE-2025-000000206', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0020001, 0030000, 060),
+('EXP-RANGE-2025-000000207', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0030001, 0040000, 070),
+('EXP-RANGE-2025-000000208', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0040001, 0050000, 070),
+('EXP-RANGE-2025-000000209', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0050001, 0060000, 070),
+('EXP-RANGE-2025-000000210', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0060001, 0070000, 070),
+('EXP-RANGE-2025-000000211', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0070001, 0080000, 080),
+('EXP-RANGE-2025-000000212', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0080001, 0090000, 080),
+('EXP-RANGE-2025-000000213', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0090001, 0100000, 080),
+('EXP-RANGE-2025-000000214', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0100001, 0200000, 080),
+('EXP-RANGE-2025-000000215', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0200001, 0300000, 090),
+('EXP-RANGE-2025-000000216', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0300001, 0400000, 090),
+('EXP-RANGE-2025-000000217', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0400001, 0500000, 090),
+('EXP-RANGE-2025-000000218', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0500001, 0600000, 090),
+('EXP-RANGE-2025-000000219', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0600001, 0700000, 100),
+('EXP-RANGE-2025-000000220', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0700001, 0800000, 100),
+('EXP-RANGE-2025-000000221', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0800001, 0900000, 100),
+('EXP-RANGE-2025-000000222', 'TL-2025-AUG-1', 'SERVICE-2025-000000006', 0900001, 1000000, 100),
+('EXPhWwq8G6ymC', 'TL-2025-NOV-1', 'SERVICE-2025-000000001', 0001000, 0002000, 010),
+('EXPMHrjsTs3zq', 'TL-2025-OCT-1', 'SERVICE-2025-000000001', 0000001, 0001000, 010),
+('EXPwK0MLM3bxA', 'TL-2025-OCT-1', 'SERVICE-2025-000000002', 0000001, 0000100, 010),
+('new-3rcqwds43', 'TL-2025-OCT-1', 'SERVICE-2025-000000001', 0002001, 0003000, 030),
+('new-flnrlynr7', 'TL-2025-NOV-1', 'SERVICE-2025-000000001', 0002001, 0003000, 010),
+('new-j34txywly', 'TL-2025-OCT-1', 'SERVICE-2025-000000001', 0003001, 0004000, 040),
+('new-j8ftkz8h4', 'TL-2025-OCT-1', 'SERVICE-2025-000000002', 0000101, 0000300, 020),
+('new-kdvy9m0jg', 'TL-2025-OCT-1', 'SERVICE-2025-000000001', 0001001, 0002000, 020),
+('new-oiim6jxr0', 'TL-2025-OCT-1', 'SERVICE-2025-000000002', 0000601, 0001000, 040),
+('new-sz67ghu8f', 'TL-2025-OCT-1', 'SERVICE-2025-000000002', 0000301, 0000600, 030);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gl_templates`
+-- Table structure for table `files`
 --
 
-CREATE TABLE `gl_templates` (
-  `gl_tmp_id` varchar(14) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `gl_tmp_title` varchar(30) NOT NULL,
-  `gl_content` text NOT NULL,
-  `signers` text NOT NULL,
-  `signatures` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `files` (
+  `file_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `file_type` enum('Image','Document','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `filename` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `file_extension` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `purpose` enum('Profile Picture','Report','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `downloaded_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `files`
+--
+
+INSERT INTO `files` (`file_id`, `data_id`, `member_id`, `file_type`, `filename`, `file_extension`, `purpose`, `downloaded_at`) VALUES
+('FILE-2025-000000001', 'DATA-2025-000000039', 'MEMBER-2025-000000001', 'Image', 'profile_pictures/9v06HSc7tl1zcY1R2tgzFNMPqpwESdaT6kKMdrtx.png', 'png', NULL, NULL),
+('FILE-2025-000000002', 'DATA-2025-000000055', 'MEMBER-2025-000000018', 'Image', 'profile_pictures/y34IrQr2SoK2e8iXCP2NXRIdwVfE6BW22yJNF4u9.jpg', 'jpg', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -279,13 +679,22 @@ CREATE TABLE `gl_templates` (
 --
 
 CREATE TABLE `guarantee_letters` (
-  `gl_id` varchar(16) NOT NULL,
-  `gl_tmp_id` varchar(14) NOT NULL,
-  `application_id` varchar(25) NOT NULL,
-  `budget_update_id` varchar(22) NOT NULL,
-  `is_cancelled` enum('Yes','No') NOT NULL,
-  `is_sponsored` enum('Yes','No') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `gl_id` varchar(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `application_id` varchar(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `budget_update_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `guarantee_letters`
+--
+
+INSERT INTO `guarantee_letters` (`gl_id`, `application_id`, `budget_update_id`) VALUES
+('GL-2025-000000001', 'APPLICATION-2025-000000001', 'BDG-UPD-2025-000000007'),
+('GL-2025-000000002', 'APPLICATION-2025-000000002', 'BDG-UPD-2025-000000008'),
+('GL-2025-000000003', 'APPLICATION-2025-000000003', 'BDG-UPD-2025-000000009'),
+('GL-2025-000000004', 'APPLICATION-2025-000000004', 'BDG-UPD-2025-000000010'),
+('GL-2025-000000005', 'APPLICATION-2025-000000005', 'BDG-UPD-2025-000000011'),
+('GL-2025-000000006', 'APPLICATION-2025-000000006', 'BDG-UPD-2025-000000012');
 
 -- --------------------------------------------------------
 
@@ -294,30 +703,34 @@ CREATE TABLE `guarantee_letters` (
 --
 
 CREATE TABLE `households` (
-  `household_id` varchar(22) NOT NULL,
-  `household_name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `household_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `household_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `educational_attainment` enum('Elementary','High School','College') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `relationship_to_applicant` enum('Self','Friend','Wife','Husband','Daughter','Son','Sister','Brother','Mother','Father','Granddaughter','Grandson','Grandmother','Grandfather','Aunt','Uncle','Nephew','Niece','Cousin','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `households`
 --
 
-INSERT INTO `households` (`household_id`, `household_name`) VALUES
-('HOUSEHOLD-2025-NOV-001', 'Cariaga');
+INSERT INTO `households` (`household_id`, `client_id`, `household_name`, `educational_attainment`, `relationship_to_applicant`) VALUES
+('HOUSEHOLD-2025-000000001', 'CLIENT-2025-000000001', 'Cariaga', 'College', 'Self'),
+('HOUSEHOLD-2025-000000002', 'CLIENT-2025-000000003', 'Carreon', 'College', 'Self');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `household_members`
+-- Table structure for table `logs`
 --
 
-CREATE TABLE `household_members` (
-  `household_member_id` varchar(17) NOT NULL,
-  `household_id` varchar(22) NOT NULL,
-  `client_id` varchar(20) NOT NULL,
-  `educational_attainment` enum('Elementary','High School','College') DEFAULT NULL,
-  `relationship_to_applicant` enum('Self','Friend','Wife','Husband','Daughter','Son','Sister','Brother','Mother','Father','Granddaughter','Grandson','Grandmother','Grandfather','Aunt','Uncle','Nephew','Niece','Cousin') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `logs` (
+  `log_id` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `staff_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `log_type` enum('Info','Warning','Error','Debug') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `log_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `happened_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -326,22 +739,47 @@ CREATE TABLE `household_members` (
 --
 
 CREATE TABLE `members` (
-  `member_id` varchar(20) NOT NULL,
-  `account_id` varchar(21) NOT NULL,
-  `member_type` enum('Client','Staff','Signer','Third-Party') NOT NULL,
-  `last_name` varchar(20) NOT NULL,
-  `middle_name` varchar(20) DEFAULT NULL,
-  `first_name` varchar(20) NOT NULL,
-  `suffix` enum('Jr.','Sr.','II','III','IV','V') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `account_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_type` enum('Staff','Mayor','Executive Assistant','Sponsor','Applicant','Patient','Emergency Contact','Household Member','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `first_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `middle_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `last_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `suffix` enum('Jr.','Sr.','II','III','IV','V') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `full_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `members`
 --
 
-INSERT INTO `members` (`member_id`, `account_id`, `member_type`, `last_name`, `middle_name`, `first_name`, `suffix`) VALUES
-('MEMBER-2025-AUG-0001', 'ACCOUNT-2025-AUG-0001', 'Staff', 'Cariaga', 'Leproso', 'Benhur', NULL),
-('MEMBER-2025-NOV-0001', 'ACCOUNT-2025-NOV-0001', 'Staff', 'Dela Cruz', 'Santos', 'Maria', NULL);
+INSERT INTO `members` (`member_id`, `account_id`, `member_type`, `first_name`, `middle_name`, `last_name`, `suffix`, `full_name`) VALUES
+('MEMBER-2025-000000001', 'ACCOUNT-2025-000000001', 'Staff', 'Benhur', 'Leproso', 'Cariaga', NULL, 'Benhur Leproso Cariaga'),
+('MEMBER-2025-000000002', 'ACCOUNT-2025-000000010', 'Sponsor', 'Mariam', 'Marbella', 'Al-Alawi', NULL, 'Mariam Marbella Al-Alawi'),
+('MEMBER-2025-000000003', 'ACCOUNT-2025-000000011', 'Sponsor', 'Zeinab', 'Ocampo', 'Harake', NULL, 'Zeinab Ocampo Harake'),
+('MEMBER-2025-000000004', 'ACCOUNT-2025-000000012', 'Sponsor', 'Taylor', NULL, 'Otwell', NULL, 'Taylor Otwell'),
+('MEMBER-2025-000000005', 'ACCOUNT-2025-000000013', 'Sponsor', 'Emmanuel', 'Dapidran', 'Pacquiao', 'Sr.', 'Emmanuel Dapidran Pacquiao Sr.'),
+('MEMBER-2025-000000006', 'ACCOUNT-2025-000000014', 'Mayor', 'Lorelie', 'Geronimo', 'Pacquiao', NULL, 'Lorelie Geronimo Pacquiao'),
+('MEMBER-2025-000000007', 'ACCOUNT-2025-000000015', 'Executive Assistant', 'Maritess', 'Dapidran', 'Ambuang', NULL, 'Maritess Dapidran Ambuang'),
+('MEMBER-2025-000000008', 'ACCOUNT-2025-000000016', 'Applicant', 'Benhur', 'Leproso', 'Cariaga', NULL, 'Benhur Leproso Cariaga'),
+('MEMBER-2025-000000010', 'ACCOUNT-2025-000000017', 'Applicant', 'Benjamin', 'Ledesma', 'Carreon', 'Jr.', 'Benjamin Ledesma Carreon Jr.'),
+('MEMBER-2025-000000011', 'ACCOUNT-2025-000000017', 'Patient', 'Simoun', 'Ibarra', 'Rivera', NULL, 'Simoun Ibarra Rivera'),
+('MEMBER-2025-000000012', 'ACCOUNT-2025-000000017', 'Patient', 'Julito', NULL, 'Saavedra', NULL, 'Julito Saavedra'),
+('MEMBER-2025-000000013', 'ACCOUNT-2025-000000016', 'Patient', 'Angel', 'Provendido', 'Hinoctan', NULL, 'Angel Provendido Hinoctan'),
+('MEMBER-2025-000000014', 'ACCOUNT-2025-000000018', 'Staff', 'Key', NULL, 'Castañeda', NULL, 'Key Castañeda'),
+('MEMBER-2025-000000015', 'ACCOUNT-2025-000000018', 'Patient', 'Benhur', NULL, 'Cariaga', NULL, 'Benhur Cariaga'),
+('MEMBER-2025-000000016', 'ACCOUNT-2025-000000019', 'Staff', 'Angel', 'Provendido', 'Hinoctan', NULL, 'Angel Provendido Hinoctan'),
+('MEMBER-2025-000000017', 'ACCOUNT-2025-000000019', 'Patient', 'Freya', 'Y', 'Hinoctan', NULL, 'Freya Y Hinoctan'),
+('MEMBER-2025-000000018', 'ACCOUNT-2025-000000020', 'Staff', 'Angel Kate', 'Provendido', 'Hinoctan', NULL, 'Angel Kate Provendido Hinoctan'),
+('MEMBER-2025-000000019', 'ACCOUNT-2025-000000021', 'Staff', 'Hera', NULL, 'Carino', NULL, 'Hera Carino'),
+('MEMBER-2025-000000020', 'ACCOUNT-2025-000000021', 'Patient', 'Derf', 'L.', 'Espana', NULL, 'Derf L. Espana'),
+('MEMBER-2025-000000021', 'ACCOUNT-2025-000000021', 'Patient', 'Shy', 'P.', 'Hinoctan', NULL, 'Shy P. Hinoctan'),
+('MEMBER-2025-000000022', 'ACCOUNT-2025-000000021', 'Patient', 'Homer', 'P', 'Alaman', 'Jr.', 'Homer P Alaman Jr.'),
+('MEMBER-2025-000000023', 'ACCOUNT-2025-000000022', 'Applicant', 'Jewel', 'R.', 'Jenoctan', NULL, 'Jewel R. Jenoctan'),
+('MEMBER-2025-000000024', 'ACCOUNT-2025-000000022', 'Patient', 'Enjelros', 'R.', 'Jenoctan', NULL, 'Enjelros R. Jenoctan'),
+('MEMBER-2025-000000025', 'ACCOUNT-2025-000000023', 'Staff', 'Aimee', NULL, 'Cando', NULL, 'Aimee Cando'),
+('MEMBER-2025-000000026', 'ACCOUNT-2025-000000024', 'Applicant', 'Anghelito', 'K.', 'Rivera', 'Sr.', 'Anghelito K. Rivera Sr.'),
+('MEMBER-2025-000000027', 'ACCOUNT-2025-000000024', 'Patient', 'Angela', 'M.', 'Rivera', NULL, 'Angela M. Rivera');
 
 -- --------------------------------------------------------
 
@@ -350,12 +788,27 @@ INSERT INTO `members` (`member_id`, `account_id`, `member_type`, `last_name`, `m
 --
 
 CREATE TABLE `messages` (
-  `message_id` varchar(21) NOT NULL,
-  `staff_id` varchar(13) NOT NULL,
-  `contact_id` varchar(21) NOT NULL,
-  `message_text` text NOT NULL,
+  `message_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `msg_tmp_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `staff_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `contact_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sent_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`message_id`, `msg_tmp_id`, `staff_id`, `contact_id`, `message_text`, `sent_at`) VALUES
+('MESSAGE-2025-000000001', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000001', 'Greetings, Benhur Leproso Cariaga ! Here are the important details for your AMPING application today.<br><br>For Patient: Angel Provendido Hinoctan <br>Service Type: Hospital Bill<br>Billed Amount: ₱ 100,000<br>Assistance Amount: ₱ 80,000<br>Affiliate Partner: St. Elizabeth Hospital, Inc.<br>Applied At: October 28, 2025<br>Reapply At: January 26, 2026<br><br>Thank you for your visit with us! Come again!', '2025-10-28 18:02:55'),
+('MESSAGE-2025-000000002', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000001', 'Greetings, Benhur Leproso Cariaga ! Here are the important details for your AMPING application today.<br><br>For Patient: Angel Provendido Hinoctan <br>Service Type: Hospital Bill<br>Billed Amount: ₱ 100,000<br>Assistance Amount: ₱ 80,000<br>Affiliate Partner: St. Elizabeth Hospital, Inc.<br>Applied At: October 28, 2025<br>Reapply At: January 26, 2026<br><br>Thank you for your visit with us! Come again!', '2025-10-28 19:16:51'),
+('MESSAGE-2025-000000003', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000003', 'Greetings, Key  Castañeda ! Here are the important details for your AMPING application today.<br><br>For Patient: Key  Castañeda <br>Service Type: Hospital Bill<br>Billed Amount: ₱ 150<br>Assistance Amount: ₱ 15<br>Affiliate Partner: St. Elizabeth Hospital, Inc.<br>Applied At: October 28, 2025<br>Reapply At: January 26, 2026<br><br>Thank you for your visit with us! Come again!', '2025-10-28 20:24:19'),
+('MESSAGE-2025-000000004', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000004', 'Greetings, Angel Provendido Hinoctan ! Here are the important details for your AMPING application today.<br><br>For Patient: Freya Y Hinoctan <br>Service Type: Medical Prescription<br>Billed Amount: ₱ 1,000<br>Assistance Amount: ₱ 400<br>Affiliate Partner: Mercury Drug Corporation<br>Applied At: October 31, 2025<br>Reapply At: January 29, 2026<br><br>Thank you for your visit with us! Come again!', '2025-10-31 03:15:55'),
+('MESSAGE-2025-000000005', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000005', 'Greetings, Hera  Carino ! Here are the important details for your AMPING application today.<br><br>For Patient: Derf L. Espana <br>Service Type: Medical Prescription<br>Billed Amount: ₱ 1,200<br>Assistance Amount: ₱ 480<br>Affiliate Partner: Rojon Pharmacy<br>Applied At: November 5, 2025<br>Reapply At: February 3, 2026<br><br>Thank you for your visit with us! Come again!', '2025-11-05 15:39:30'),
+('MESSAGE-2025-000000006', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000005', 'Greetings, Hera  Carino ! Here are the important details for your AMPING application today.<br><br>For Patient: Shy P. Hinoctan <br>Service Type: Medical Prescription<br>Billed Amount: ₱ 1,000<br>Assistance Amount: ₱ 400<br>Affiliate Partner: St. Elizabeth Hospital, Inc.<br>Applied At: November 6, 2025<br>Reapply At: February 4, 2026<br><br>Thank you for your visit with us! Come again!', '2025-11-06 04:06:02'),
+('MESSAGE-2025-000000007', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000002', 'CONTACT-2025-000000006', 'Greetings, Jewel R. Jenoctan ! Here are the important details for your AMPING application today.<br><br>For Patient: Enjelros R. Jenoctan <br>Service Type: Medical Prescription<br>Billed Amount: ₱ 500<br>Assistance Amount: ₱ 150<br>Affiliate Partner: Rojon Pharmacy<br>Applied At: November 6, 2025<br>Reapply At: February 4, 2026<br><br>Thank you for your visit with us! Come again!', '2025-11-06 21:13:47'),
+('MESSAGE-2025-000000008', 'MSG-TMP-2025-000000001', 'STAFF-2025-000000001', 'CONTACT-2025-000000007', 'Greetings, Anghelito K. Rivera Sr.! Here are the important details for your AMPING application today.<br><br>For Patient: Angela M. Rivera <br>Service Type: Hospital Bill<br>Billed Amount: ₱ 1,000<br>Assistance Amount: ₱ 100<br>Affiliate Partner: St. Elizabeth Hospital, Inc.<br>Applied At: November 7, 2025<br>Reapply At: February 5, 2026<br><br>Thank you for your visit with us! Come again!', '2025-11-07 03:31:18');
 
 -- --------------------------------------------------------
 
@@ -364,18 +817,18 @@ CREATE TABLE `messages` (
 --
 
 CREATE TABLE `message_templates` (
-  `msg_tmp_id` varchar(18) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `msg_tmp_title` varchar(30) NOT NULL,
-  `msg_tmp_text` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `msg_tmp_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `msg_tmp_title` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `msg_tmp_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `message_templates`
 --
 
 INSERT INTO `message_templates` (`msg_tmp_id`, `data_id`, `msg_tmp_title`, `msg_tmp_text`) VALUES
-('MSG-TMP-2025-AUG-1', 'DATA-2025-AUG-000000033', 'Text Message Template 1', 'Greetings, [$application->applicant->client->member->first_name] [$application->applicant->client->member->middle_name] [$application->applicant->client->member->last_name] [$application->applicant->client->member->suffix]! Here are the important details for your AMPING application today.;;For Patient: [$application->patient->client->member->first_name] [$application->patient->client->member->middle_name] [$application->patient->client->member->last_name] [$application->patient->client->member->suffix];Service Type: [$application->service];Billed Amount: ₱ [$application->billed_amount];Assistance Amount: ₱ [$application->assistance_amount];Affiliate Partner: [$application->affiliate_partner->affiliate_partner_name];Applied At: [$application->application_date];Reapply At: [$application->reapplication_date];;Thank you for your visit with us! Come again!');
+('MSG-TMP-2025-000000001', 'DATA-2025-000000033', 'Text Message Template 1', 'Greetings, [$application->applicant->client->member->first_name] [$application->applicant->client->member->middle_name] [$application->applicant->client->member->last_name] [$application->applicant->client->member->suffix]! Here are the important details for your AMPING application today.;;For Patient: [$application->patient->client->member->first_name] [$application->patient->client->member->middle_name] [$application->patient->client->member->last_name] [$application->patient->client->member->suffix];Service Type: [$application->service_type];Billed Amount: ₱ [$application->billed_amount];Assistance Amount: ₱ [$application->assistance_amount];Affiliate Partner: [$application->affiliate_partner->affiliate_partner_name];Applied At: [$application->applied_at];Reapply At: [$application->reapply_at];;Thank you for your visit with us! Come again!');
 
 -- --------------------------------------------------------
 
@@ -394,11 +847,17 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2025_07_20_000000_create_cache_table', 1),
-(2, '2025_10_31_000000_remove_foreign_key_constraints', 2),
-(3, '2025_10_31_000000_remove_all_accounts_except_program_head', 3),
-(4, '2025_10_31_000000_delete_all_accounts_except_program_head', 4),
-(5, '2025_10_31_000000_enable_foreign_key_constraints', 5);
+(3, '2025_10_05_212612_update_applicants_table_with_address_fields', 1),
+(4, '2025_10_06_183306_reorganize_custom_ids', 2),
+(5, '2025_10_18_200000_delete_test_accounts', 3),
+(6, '2019_12_14_000000_create_personal_access_tokens_table', 4),
+(7, '2025_07_20_000000_create_cache_table', 4),
+(8, '2025_10_06_000000_reorganize_custom_ids', 4),
+(9, '2025_10_31_000001_alter_applicants_address_lengths', 5),
+(10, '2025_10_31_093500_add_created_at_to_applicants_and_patients', 5),
+(12, '2024_11_06_170200_create_affiliate_partner_services_table', 6),
+(13, '2025_11_06_232033_add_username_to_staff_table', 7),
+(14, '2025_11_07_005404_add_performance_indexes', 8);
 
 -- --------------------------------------------------------
 
@@ -407,30 +866,30 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `occupations` (
-  `occupation_id` varchar(21) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `occupation` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `occupation_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `occupation` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `occupations`
 --
 
 INSERT INTO `occupations` (`occupation_id`, `data_id`, `occupation`) VALUES
-('OCCUP-2025-01', 'DATA-2025-AUG-000000013', 'Jeepney Driver'),
-('OCCUP-2025-02', 'DATA-2025-AUG-000000014', 'Tricycle Driver'),
-('OCCUP-2025-03', 'DATA-2025-AUG-000000015', 'Pedicab Driver'),
-('OCCUP-2025-04', 'DATA-2025-AUG-000000016', 'Construction Worker'),
-('OCCUP-2025-05', 'DATA-2025-AUG-000000017', 'Factory Worker'),
-('OCCUP-2025-06', 'DATA-2025-AUG-000000018', 'Warehouse Worker'),
-('OCCUP-2025-07', 'DATA-2025-AUG-000000019', 'Farmer'),
-('OCCUP-2025-08', 'DATA-2025-AUG-000000020', 'Fisherperson'),
-('OCCUP-2025-09', 'DATA-2025-AUG-000000021', 'Janitor'),
-('OCCUP-2025-10', 'DATA-2025-AUG-000000022', 'Teacher'),
-('OCCUP-2025-11', 'DATA-2025-AUG-000000023', 'Student'),
-('OCCUP-2025-12', 'DATA-2025-AUG-000000024', 'Security Guard'),
-('OCCUP-2025-13', 'DATA-2025-AUG-000000038', 'Waiter'),
-('OCCUP-2025-14', 'DATA-2025-AUG-000000041', 'Artist');
+('OCCUP-2025-000000001', 'DATA-2025-000000013', 'Jeepney Driver'),
+('OCCUP-2025-000000002', 'DATA-2025-000000014', 'Tricycle Driver'),
+('OCCUP-2025-000000003', 'DATA-2025-000000015', 'Pedicab Driver'),
+('OCCUP-2025-000000004', 'DATA-2025-000000016', 'Construction Worker'),
+('OCCUP-2025-000000005', 'DATA-2025-000000017', 'Factory Worker'),
+('OCCUP-2025-000000006', 'DATA-2025-000000018', 'Warehouse Worker'),
+('OCCUP-2025-000000007', 'DATA-2025-000000019', 'Farmer'),
+('OCCUP-2025-000000008', 'DATA-2025-000000020', 'Fisherperson'),
+('OCCUP-2025-000000009', 'DATA-2025-000000021', 'Janitor'),
+('OCCUP-2025-000000010', 'DATA-2025-000000022', 'Teacher'),
+('OCCUP-2025-000000011', 'DATA-2025-000000023', 'Student'),
+('OCCUP-2025-000000012', 'DATA-2025-000000024', 'Security Guard'),
+('OCCUP-2025-000000013', 'DATA-2025-000000038', 'Waiter'),
+('OCCUP-2025-000000014', 'DATA-2025-000000041', 'Artist');
 
 -- --------------------------------------------------------
 
@@ -439,11 +898,50 @@ INSERT INTO `occupations` (`occupation_id`, `data_id`, `occupation`) VALUES
 --
 
 CREATE TABLE `patients` (
-  `patient_id` varchar(22) NOT NULL,
-  `client_id` varchar(20) NOT NULL,
-  `applicant_id` varchar(23) NOT NULL,
-  `patient_category` enum('PWD','Senior') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `patient_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `applicant_id` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `patient_category` enum('PWD','Senior') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patients`
+--
+
+INSERT INTO `patients` (`patient_id`, `client_id`, `applicant_id`, `patient_category`, `created_at`) VALUES
+('PATIENT-2025-000000002', 'CLIENT-2025-000000003', 'APPLICANT-2025-000000002', NULL, '2025-11-01 05:19:05'),
+('PATIENT-2025-000000003', 'CLIENT-2025-000000004', 'APPLICANT-2025-000000002', 'Senior', '2025-11-01 05:19:05'),
+('PATIENT-2025-000000004', 'CLIENT-2025-000000005', 'APPLICANT-2025-000000002', 'PWD', '2025-11-01 05:19:05'),
+('PATIENT-2025-000000006', 'CLIENT-2025-000000006', 'APPLICANT-2025-000000001', NULL, '2025-11-01 05:19:05'),
+('PATIENT-2025-000000007', 'CLIENT-2025-000000001', 'APPLICANT-2025-000000001', NULL, '2025-11-01 05:19:05'),
+('PATIENT-2025-000000008', 'CLIENT-2025-000000007', 'APPLICANT-2025-000000003', 'PWD', '2025-11-01 05:19:05'),
+('PATIENT-2025-000000009', 'CLIENT-2025-000000008', 'APPLICANT-2025-000000003', NULL, '2025-11-01 05:19:05'),
+('PATIENT-2025-000000010', 'CLIENT-2025-000000010', 'APPLICANT-2025-000000004', NULL, '2025-11-01 05:19:05'),
+('PATIENT-2025-000000011', 'CLIENT-2025-000000012', 'APPLICANT-2025-000000005', NULL, '2025-11-05 07:38:05'),
+('PATIENT-2025-000000012', 'CLIENT-2025-000000013', 'APPLICANT-2025-000000005', 'Senior', '2025-11-05 19:49:03'),
+('PATIENT-2025-000000013', 'CLIENT-2025-000000014', 'APPLICANT-2025-000000005', NULL, '2025-11-06 06:39:11'),
+('PATIENT-2025-000000014', 'CLIENT-2025-000000016', 'APPLICANT-2025-000000006', NULL, '2025-11-06 13:08:06'),
+('PATIENT-2025-000000015', 'CLIENT-2025-000000018', 'APPLICANT-2025-000000007', NULL, '2025-11-06 18:45:20');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tokenable_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -452,10 +950,12 @@ CREATE TABLE `patients` (
 --
 
 CREATE TABLE `reports` (
-  `report_id` varchar(15) NOT NULL,
-  `staff_id` varchar(13) NOT NULL,
-  `report_type` enum('Daily','Weekly','Monthly','Ad Hoc') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `report_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `staff_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `file_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `report_type` enum('Daily','Weekly','Monthly','Ad Hoc') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `generated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -464,22 +964,20 @@ CREATE TABLE `reports` (
 --
 
 CREATE TABLE `roles` (
-  `role_id` varchar(11) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `role` varchar(20) NOT NULL,
-  `allowed_actions` text,
-  `access_scope` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `role_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `allowed_actions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `access_scope` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `roles`
 --
 
 INSERT INTO `roles` (`role_id`, `data_id`, `role`, `allowed_actions`, `access_scope`) VALUES
-('ROLE-2025-1', 'DATA-2025-AUG-000000010', 'Program Head', 'Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services. Create, view, edit, archive, download, and print reports, including the AMPING\'s financial status and user activity data. Create, view, edit, archive, download, and print templates for assistance request forms, guarantee letters, and text messages. Create, view, edit, and delete tariff lists and change the version of tariff lists to use for assistance amount calculation. Create, view, edit, and delete staff role names and client occupation names. Assign and reassigned roles to staff members. Approve or reject assistance requests and authorize guarantee letters. Send text messages to applicants with approved guarantee letters. Update, add to, and monitor the program budget from government funds, sponsors, and other sources. Delete system cache and log data when necessary', 'Full access to every web page, every feature, and every module, without restrictions. Full access to profiles and system activities of staff members, applicants, patients, sponsors, and affiliate partners. Full access to templates for assistance request forms, guarantee letters, and text messages. Full access to financial records, such as budgets, expenses, and funding sources. Full access to staff role and client occupation names, and tariff lists. Full access to staff role and tariff list adjustments. Full access to data and account archiving, deletion, and deactivation. Full access to logs and reports'),
-('ROLE-2025-2', 'DATA-2025-AUG-000000011', 'Encoder', 'Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services. View and use assistance request templates to create assistance request forms. View the AMPING\'s financial status, including the program budget sources from government funds, sponsors, and other sources. View the staff role names and client occupation names. View the roles of staff members. View accounts of staff members, applicants, sponsors, affiliate partners, and services', 'Access limited to viewing and editing account profiles. Access limited to viewing templates for assistance request forms. Access limited to viewing financial records, such as budgets, expenses, and funding sources. Access limited to viewing staff roles, client occupations, and tariff list versions'),
-('ROLE-2025-3', 'DATA-2025-AUG-000000012', 'GL Operator', 'Approve or reject assistance requests and authorize guarantee letters. View the AMPING\'s financial status, including the program budget sources from government funds, sponsors, and other sources. View the roles of staff members. View the version of tariff lists to use for assistance amount calculation. View and use guarantee letter templates to create guarantee letters. View accounts of staff members, applicants, sponsors, affiliate partners, and services', 'Access limited to viewing account profiles. Access limited to viewing templates for guarantee letters. Access limited to approving and rejecting assistance requests and authorizing guarantee letters'),
-('ROLE-2025-4', 'DATA-2025-AUG-000000003', 'SMS Operator', 'Send text messages to applicants with approved guarantee letters. View and use assistance request templates to create assistance request forms. View the AMPING\'s financial status, including the program budget sources from government funds, sponsors, and other sources. View the roles of staff members. View the version of tariff lists to use for assistance amount calculation. View accounts of staff members, applicants, sponsors, affiliate partners, and services', 'Access limited to viewing account profiles. Access limited to viewing templates for text messages. Access limited to sending text messages to applicants with approved guarantee letters');
+('ROLE-2025-000000001', 'DATA-2025-000000010', 'Program Head', 'Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services. Create, view, edit, archive, download, and print reports, including the AMPING\'s financial status and user activity data. Create, view, edit, archive, download, and print templates for assistance request forms, guarantee letters, and text messages. Create, view, edit, and delete tariff lists and change the version of tariff lists to use for assistance amount calculation. Create, view, edit, and delete staff role names and client occupation names. Assign and reassigned roles to staff members. Approve or reject assistance requests and authorize guarantee letters. Send text messages to applicants with approved guarantee letters. Update, add to, and monitor the program budget from government funds, sponsors, and other sources. Delete system cache and log data when necessary', 'Full access to every web page, every feature, and every module, without restrictions. Full access to profiles and system activities of staff members, applicants, patients, sponsors, and affiliate partners. Full access to templates for assistance request forms, guarantee letters, and text messages. Full access to financial records, such as budgets, expenses, and funding sources. Full access to staff role and client occupation names, and tariff lists. Full access to staff role and tariff list adjustments. Full access to data and account archiving, deletion, and deactivation. Full access to logs and reports'),
+('ROLE-2025-000000002', 'DATA-2025-000000011', 'Encoder', 'Create, view, edit, and deactivate accounts of staff members, applicants, sponsors, affiliate partners, and services. View and use assistance request templates to create assistance request forms. View the AMPING\'s financial status, including the program budget sources from government funds, sponsors, and other sources. View the staff role names and client occupation names. View the roles of staff members. View accounts of staff members, applicants, sponsors, affiliate partners, and services', 'Access limited to viewing and editing account profiles. Access limited to viewing templates for assistance request forms. Access limited to viewing financial records, such as budgets, expenses, and funding sources. Access limited to viewing staff roles, client occupations, and tariff list versions');
 
 -- --------------------------------------------------------
 
@@ -488,22 +986,23 @@ INSERT INTO `roles` (`role_id`, `data_id`, `role`, `allowed_actions`, `access_sc
 --
 
 CREATE TABLE `services` (
-  `service_id` varchar(15) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `service` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `service_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `service_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `assist_scope` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `services`
 --
 
-INSERT INTO `services` (`service_id`, `data_id`, `service`) VALUES
-('SERVICE-2025-01', 'DATA-2025-AUG-000000004', 'Hospital Bill'),
-('SERVICE-2025-02', 'DATA-2025-AUG-000000005', 'Medical Prescription'),
-('SERVICE-2025-03', 'DATA-2025-AUG-000000006', 'Laboratory Test'),
-('SERVICE-2025-04', 'DATA-2025-AUG-000000007', 'Diagnostic Test'),
-('SERVICE-2025-05', 'DATA-2025-AUG-000000008', 'Hemodialysis'),
-('SERVICE-2025-06', 'DATA-2025-AUG-000000009', 'Blood Request');
+INSERT INTO `services` (`service_id`, `data_id`, `service_type`, `assist_scope`) VALUES
+('SERVICE-2025-000000001', 'DATA-2025-000000004', 'Hospital Bill', 'Inpatient Care, Outpatient Care'),
+('SERVICE-2025-000000002', 'DATA-2025-000000005', 'Medical Prescription', 'Generic Drug, Branded Drug'),
+('SERVICE-2025-000000003', 'DATA-2025-000000006', 'Laboratory Test', 'Biopsy, CT Scan, MRI, Pap Test'),
+('SERVICE-2025-000000004', 'DATA-2025-000000007', 'Diagnostic Test', 'PET Scan, Ultrasound, X-Ray Scan, Endoscopy'),
+('SERVICE-2025-000000005', 'DATA-2025-000000008', 'Hemodialysis', 'Electrolyte Imbalance, End-Stage Renal Disease, Drug Overdose, Liver Dialysis, Hypervolemia, Peritoneal Dialysis, Poisoning, Uremia'),
+('SERVICE-2025-000000006', 'DATA-2025-000000009', 'Blood Request', 'Anemia, Blood Transfusion, Childbirth, Hemorrhage');
 
 -- --------------------------------------------------------
 
@@ -512,10 +1011,18 @@ INSERT INTO `services` (`service_id`, `data_id`, `service`) VALUES
 --
 
 CREATE TABLE `signers` (
-  `signer_id` varchar(14) NOT NULL,
-  `member_id` varchar(20) NOT NULL,
-  `post_nominal_letters` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `signer_id` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `post_nominal_letters` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `signers`
+--
+
+INSERT INTO `signers` (`signer_id`, `member_id`, `post_nominal_letters`) VALUES
+('SIGNER-2025-001', 'MEMBER-2025-000000006', NULL),
+('SIGNER-2025-002', 'MEMBER-2025-000000007', 'MMPA');
 
 -- --------------------------------------------------------
 
@@ -524,12 +1031,22 @@ CREATE TABLE `signers` (
 --
 
 CREATE TABLE `sponsors` (
-  `sponsor_id` varchar(15) NOT NULL,
-  `tp_id` varchar(11) NOT NULL,
-  `sponsor_type` enum('Politician','Business Owner','Other') DEFAULT NULL,
-  `designation` varchar(30) DEFAULT NULL,
-  `organization_name` varchar(60) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `sponsor_id` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sponsor_type` enum('N / A','Politician','Business Owner','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `designation` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `organization_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sponsors`
+--
+
+INSERT INTO `sponsors` (`sponsor_id`, `member_id`, `sponsor_type`, `designation`, `organization_name`) VALUES
+('SPONSOR-2025-000000001', 'MEMBER-2025-000000002', 'Business Owner', 'Chief Executive Officer', 'Ivana Skin'),
+('SPONSOR-2025-000000002', 'MEMBER-2025-000000003', 'Other', 'Content Creator', 'YouTube'),
+('SPONSOR-2025-000000003', 'MEMBER-2025-000000004', 'Business Owner', 'Founder', 'Laravel Company'),
+('SPONSOR-2025-000000004', 'MEMBER-2025-000000005', 'Politician', 'Senator', NULL);
 
 -- --------------------------------------------------------
 
@@ -538,21 +1055,21 @@ CREATE TABLE `sponsors` (
 --
 
 CREATE TABLE `staff` (
-  `staff_id` varchar(13) NOT NULL,
-  `member_id` varchar(20) NOT NULL,
-  `role_id` varchar(11) NOT NULL,
-  `file_name` text,
-  `file_extension` enum('.jpg','.jpeg','jfif','.png') DEFAULT NULL,
-  `password` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `staff_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `member_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `role_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`staff_id`, `member_id`, `role_id`, `file_name`, `file_extension`, `password`) VALUES
-('STAFF-2025-01', 'MEMBER-2025-AUG-0001', 'ROLE-2025-1', 'profile_pictures/dRGNkHAAEqiMTUWPdeQlzbgWagXuFnaoQc4zjzqL.png', '.png', '$2y$10$LfnfOs8unDeUIS5BGIxQ9uJWb/O2XW3Hy/5iqBytMyCI6A0qkL12y'),
-('STAFF-2025-02', 'MEMBER-2025-NOV-0001', 'ROLE-2025-2', 'profile_pictures/Cn7qWrMU4ZVN2RfUpOAsUGhuFweUvSSbVNqD2sbJ.jpg', '.jpg', '$2y$10$db9OIjWsv0xXy9xeDS8kXON/pU2Obre8ev4SQmeCwb8H2ylcGMrzC');
+INSERT INTO `staff` (`staff_id`, `member_id`, `role_id`, `username`, `password`) VALUES
+('STAFF-2025-000000001', 'MEMBER-2025-000000001', 'ROLE-2025-000000001', 'benhur@ph', '$2y$10$nFsF2CqfB0GWQDwGYgqfzegf92KOOMynsW4K6MItIm.doKD73QMwO'),
+('STAFF-2025-000000002', 'MEMBER-2025-000000018', 'ROLE-2025-000000002', 'angel@en', '$2y$10$Bt2V0da2awz8gJ6LJQtq1uSV6it4hOPWrtgrG9NKrLrtS1CnEZZ3S'),
+('STAFF-2025-000000003', 'MEMBER-2025-000000025', 'ROLE-2025-000000002', 'aimee@en', '$2y$10$bsjF0AvIQvhIcDbiJVUG2.fCV31c1xBx0X8aCcgtXZGELAq8mb5a6');
 
 -- --------------------------------------------------------
 
@@ -561,30 +1078,20 @@ INSERT INTO `staff` (`staff_id`, `member_id`, `role_id`, `file_name`, `file_exte
 --
 
 CREATE TABLE `tariff_lists` (
-  `tariff_list_id` varchar(13) NOT NULL,
-  `data_id` varchar(23) NOT NULL,
-  `tl_status` enum('Draft','Scheduled','Active','Inactive') NOT NULL,
+  `tariff_list_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_id` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tl_status` enum('Draft','Scheduled','Active','Inactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `effectivity_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tariff_lists`
 --
 
 INSERT INTO `tariff_lists` (`tariff_list_id`, `data_id`, `tl_status`, `effectivity_date`) VALUES
-('TL-2025-AUG-1', 'DATA-2025-AUG-000000025', 'Active', '2025-08-02');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `third_parties`
---
-
-CREATE TABLE `third_parties` (
-  `tp_id` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `account_id` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `tp_type` enum('Affiliate Partner','Sponsor') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+('TL-2025-AUG-1', 'DATA-2025-000000025', 'Active', '2025-08-02'),
+('TL-2025-NOV-1', 'DATA-2025-000000057', 'Scheduled', '2025-11-14'),
+('TL-2025-OCT-1', 'DATA-2025-000000044', 'Active', '2025-10-29');
 
 --
 -- Indexes for dumped tables
@@ -595,20 +1102,28 @@ CREATE TABLE `third_parties` (
 --
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`account_id`),
-  ADD KEY `idx_accounts_data_id` (`data_id`);
+  ADD KEY `idx_accounts_data` (`data_id`);
 
 --
 -- Indexes for table `affiliate_partners`
 --
 ALTER TABLE `affiliate_partners`
-  ADD PRIMARY KEY (`ap_id`),
-  ADD KEY `idx_affiliate_partners_tp_id` (`tp_id`);
+  ADD PRIMARY KEY (`affiliate_partner_id`),
+  ADD KEY `idx_ap_account` (`account_id`) USING BTREE;
+
+--
+-- Indexes for table `affiliate_partner_services`
+--
+ALTER TABLE `affiliate_partner_services`
+  ADD PRIMARY KEY (`affiliate_partner_id`,`service_id`),
+  ADD KEY `affiliate_partner_services_service_id_foreign` (`service_id`);
 
 --
 -- Indexes for table `applicants`
 --
 ALTER TABLE `applicants`
   ADD PRIMARY KEY (`applicant_id`),
+  ADD KEY `idx_applicants_client` (`client_id`),
   ADD KEY `idx_applicants_client_id` (`client_id`);
 
 --
@@ -616,25 +1131,23 @@ ALTER TABLE `applicants`
 --
 ALTER TABLE `applications`
   ADD PRIMARY KEY (`application_id`),
-  ADD KEY `idx_applications_data_id` (`data_id`),
-  ADD KEY `idx_applications_patient_id` (`patient_id`),
-  ADD KEY `idx_applications_ap_id` (`ap_id`),
-  ADD KEY `idx_applications_exp_range_id` (`exp_range_id`),
-  ADD KEY `idx_applications_message_id` (`message_id`);
-
---
--- Indexes for table `audit_logs`
---
-ALTER TABLE `audit_logs`
-  ADD PRIMARY KEY (`al_id`),
-  ADD KEY `idx_audit_logs_staff_id` (`staff_id`);
+  ADD KEY `idx_applications_applicant` (`applicant_id`),
+  ADD KEY `idx_applications_exp_range` (`exp_range_id`),
+  ADD KEY `idx_applications_ap` (`affiliate_partner_id`) USING BTREE,
+  ADD KEY `idx_applications_patient` (`patient_id`),
+  ADD KEY `idx_applications_message` (`message_id`) USING BTREE,
+  ADD KEY `idx_applications_applicant_id` (`applicant_id`);
 
 --
 -- Indexes for table `budget_updates`
 --
 ALTER TABLE `budget_updates`
   ADD PRIMARY KEY (`budget_update_id`),
-  ADD KEY `idx_budget_updates_sponsor_id` (`sponsor_id`);
+  ADD KEY `idx_budget_data` (`data_id`),
+  ADD KEY `idx_budget_sponsor` (`sponsor_id`) USING BTREE,
+  ADD KEY `idx_budget_updates_sponsor_id` (`sponsor_id`),
+  ADD KEY `idx_budget_updates_data_id` (`data_id`),
+  ADD KEY `idx_budget_updates_possessor_reason` (`possessor`,`reason`);
 
 --
 -- Indexes for table `cache`
@@ -653,15 +1166,16 @@ ALTER TABLE `cache_locks`
 --
 ALTER TABLE `clients`
   ADD PRIMARY KEY (`client_id`),
-  ADD KEY `idx_clients_member_id` (`member_id`),
-  ADD KEY `idx_clients_occupation_id` (`occupation_id`);
+  ADD KEY `idx_clients_member` (`member_id`),
+  ADD KEY `idx_clients_occupation` (`occupation_id`),
+  ADD KEY `idx_clients_member_id` (`member_id`);
 
 --
 -- Indexes for table `contacts`
 --
 ALTER TABLE `contacts`
   ADD PRIMARY KEY (`contact_id`),
-  ADD KEY `idx_contacts_client_id` (`client_id`);
+  ADD KEY `idx_contacts_client` (`client_id`);
 
 --
 -- Indexes for table `data`
@@ -674,44 +1188,48 @@ ALTER TABLE `data`
 --
 ALTER TABLE `expense_ranges`
   ADD PRIMARY KEY (`exp_range_id`),
+  ADD KEY `idx_expense_ranges_tariff` (`tariff_list_id`),
+  ADD KEY `idx_expense_ranges_service` (`service_id`),
   ADD KEY `idx_expense_ranges_tariff_list_id` (`tariff_list_id`),
   ADD KEY `idx_expense_ranges_service_id` (`service_id`);
 
 --
--- Indexes for table `gl_templates`
+-- Indexes for table `files`
 --
-ALTER TABLE `gl_templates`
-  ADD PRIMARY KEY (`gl_tmp_id`),
-  ADD KEY `idx_gl_templates_data_id` (`data_id`);
+ALTER TABLE `files`
+  ADD PRIMARY KEY (`file_id`),
+  ADD KEY `idx_files_data` (`data_id`),
+  ADD KEY `idx_files_member` (`member_id`);
 
 --
 -- Indexes for table `guarantee_letters`
 --
 ALTER TABLE `guarantee_letters`
   ADD PRIMARY KEY (`gl_id`),
-  ADD KEY `idx_guarantee_letters_gl_tmp_id` (`gl_tmp_id`),
-  ADD KEY `idx_guarantee_letters_budget_update_id` (`budget_update_id`),
-  ADD KEY `idx_guarantee_letters_application_id` (`application_id`);
+  ADD KEY `idx_gl_application` (`application_id`),
+  ADD KEY `idx_gl_budget` (`budget_update_id`);
 
 --
 -- Indexes for table `households`
 --
 ALTER TABLE `households`
-  ADD PRIMARY KEY (`household_id`);
+  ADD PRIMARY KEY (`household_id`,`client_id`);
 
 --
--- Indexes for table `household_members`
+-- Indexes for table `logs`
 --
-ALTER TABLE `household_members`
-  ADD PRIMARY KEY (`household_member_id`),
-  ADD KEY `idx_household_members_household_id` (`household_id`),
-  ADD KEY `idx_household_members_client_id` (`client_id`);
+ALTER TABLE `logs`
+  ADD PRIMARY KEY (`log_id`),
+  ADD KEY `idx_logs_staff` (`staff_id`);
 
 --
 -- Indexes for table `members`
 --
 ALTER TABLE `members`
   ADD PRIMARY KEY (`member_id`),
+  ADD KEY `idx_members_account` (`account_id`),
+  ADD KEY `idx_members_name` (`first_name`,`last_name`),
+  ADD KEY `idx_members_full_name` (`full_name`),
   ADD KEY `idx_members_account_id` (`account_id`);
 
 --
@@ -719,15 +1237,16 @@ ALTER TABLE `members`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`message_id`),
-  ADD KEY `idx_messages_staff_id` (`staff_id`),
-  ADD KEY `idx_messages_contact_id` (`contact_id`);
+  ADD KEY `idx_messages_tmpl` (`msg_tmp_id`),
+  ADD KEY `idx_messages_staff` (`staff_id`),
+  ADD KEY `idx_messages_contact` (`contact_id`);
 
 --
 -- Indexes for table `message_templates`
 --
 ALTER TABLE `message_templates`
   ADD PRIMARY KEY (`msg_tmp_id`),
-  ADD KEY `idx_message_templates_data_id` (`data_id`);
+  ADD KEY `idx_msgtmpl_data` (`data_id`);
 
 --
 -- Indexes for table `migrations`
@@ -740,237 +1259,107 @@ ALTER TABLE `migrations`
 --
 ALTER TABLE `occupations`
   ADD PRIMARY KEY (`occupation_id`),
-  ADD KEY `idx_occupations_data_id` (`data_id`);
+  ADD KEY `idx_occupations_data` (`data_id`);
 
 --
 -- Indexes for table `patients`
 --
 ALTER TABLE `patients`
   ADD PRIMARY KEY (`patient_id`),
+  ADD KEY `idx_patients_applicant` (`applicant_id`),
+  ADD KEY `idx_patients_client` (`client_id`),
   ADD KEY `idx_patients_client_id` (`client_id`),
   ADD KEY `idx_patients_applicant_id` (`applicant_id`);
+
+--
+-- Indexes for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Indexes for table `reports`
 --
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`report_id`),
-  ADD KEY `idx_reports_staff_id` (`staff_id`);
+  ADD KEY `idx_reports_staff` (`staff_id`),
+  ADD KEY `idx_reports_file` (`file_id`);
 
 --
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`role_id`),
-  ADD KEY `idx_roles_data_id` (`data_id`);
+  ADD KEY `idx_roles_data` (`data_id`);
 
 --
 -- Indexes for table `services`
 --
 ALTER TABLE `services`
   ADD PRIMARY KEY (`service_id`),
-  ADD KEY `idx_services_data_id` (`data_id`);
+  ADD KEY `idx_services_data` (`data_id`);
 
 --
 -- Indexes for table `signers`
 --
 ALTER TABLE `signers`
   ADD PRIMARY KEY (`signer_id`),
-  ADD KEY `idx_signers_member_id` (`member_id`);
+  ADD KEY `idx_signer_member` (`member_id`);
 
 --
 -- Indexes for table `sponsors`
 --
 ALTER TABLE `sponsors`
   ADD PRIMARY KEY (`sponsor_id`),
-  ADD KEY `idx_sponsors_tp_id` (`tp_id`);
+  ADD KEY `idx_sponsor_member` (`member_id`) USING BTREE,
+  ADD KEY `idx_sponsors_member_id` (`member_id`);
 
 --
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
   ADD PRIMARY KEY (`staff_id`),
-  ADD KEY `idx_staff_member_id` (`member_id`),
-  ADD KEY `idx_staff_role_id` (`role_id`);
+  ADD UNIQUE KEY `staff_username_unique` (`username`),
+  ADD KEY `idx_staff_member` (`member_id`),
+  ADD KEY `idx_staff_role` (`role_id`);
 
 --
 -- Indexes for table `tariff_lists`
 --
 ALTER TABLE `tariff_lists`
   ADD PRIMARY KEY (`tariff_list_id`),
-  ADD KEY `idx_tariff_lists_data_id` (`data_id`);
+  ADD KEY `idx_tariffs_data` (`data_id`),
+  ADD KEY `idx_tariff_lists_data_id` (`data_id`),
+  ADD KEY `idx_tariff_lists_effectivity_date` (`effectivity_date`);
 
 --
--- Indexes for table `third_parties`
+-- AUTO_INCREMENT for dumped tables
 --
-ALTER TABLE `third_parties`
-  ADD PRIMARY KEY (`tp_id`),
-  ADD KEY `idx_third_parties_account_id` (`account_id`);
+
+--
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `accounts`
+-- Constraints for table `affiliate_partner_services`
 --
-ALTER TABLE `accounts`
-  ADD CONSTRAINT `fk_accounts_data_data_id` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `affiliate_partners`
---
-ALTER TABLE `affiliate_partners`
-  ADD CONSTRAINT `fk_affiliate_partners_tp_third_parties` FOREIGN KEY (`tp_id`) REFERENCES `third_parties` (`tp_id`);
-
---
--- Constraints for table `applicants`
---
-ALTER TABLE `applicants`
-  ADD CONSTRAINT `fk_applicants_client_clients` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
-
---
--- Constraints for table `applications`
---
-ALTER TABLE `applications`
-  ADD CONSTRAINT `fk_applications_ap_affiliate_partners` FOREIGN KEY (`ap_id`) REFERENCES `affiliate_partners` (`ap_id`),
-  ADD CONSTRAINT `fk_applications_exp_range_expense_ranges` FOREIGN KEY (`exp_range_id`) REFERENCES `expense_ranges` (`exp_range_id`),
-  ADD CONSTRAINT `fk_applications_message_messages` FOREIGN KEY (`message_id`) REFERENCES `messages` (`message_id`),
-  ADD CONSTRAINT `fk_applications_patient_patients` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`);
-
---
--- Constraints for table `audit_logs`
---
-ALTER TABLE `audit_logs`
-  ADD CONSTRAINT `fk_audit_logs_staff_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`);
-
---
--- Constraints for table `budget_updates`
---
-ALTER TABLE `budget_updates`
-  ADD CONSTRAINT `fk_budget_updates_sponsor_sponsors` FOREIGN KEY (`sponsor_id`) REFERENCES `sponsors` (`sponsor_id`);
-
---
--- Constraints for table `clients`
---
-ALTER TABLE `clients`
-  ADD CONSTRAINT `fk_clients_member_members` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`),
-  ADD CONSTRAINT `fk_clients_occupation_occupations` FOREIGN KEY (`occupation_id`) REFERENCES `occupations` (`occupation_id`);
-
---
--- Constraints for table `contacts`
---
-ALTER TABLE `contacts`
-  ADD CONSTRAINT `fk_contacts_client_clients` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
-
---
--- Constraints for table `expense_ranges`
---
-ALTER TABLE `expense_ranges`
-  ADD CONSTRAINT `fk_expense_ranges_service_services` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`),
-  ADD CONSTRAINT `fk_expense_ranges_tariff_list_tariff_lists` FOREIGN KEY (`tariff_list_id`) REFERENCES `tariff_lists` (`tariff_list_id`);
-
---
--- Constraints for table `gl_templates`
---
-ALTER TABLE `gl_templates`
-  ADD CONSTRAINT `fk_gl_templates_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `guarantee_letters`
---
-ALTER TABLE `guarantee_letters`
-  ADD CONSTRAINT `fk_guarantee_letters_application_applications` FOREIGN KEY (`application_id`) REFERENCES `applications` (`application_id`),
-  ADD CONSTRAINT `fk_guarantee_letters_budget_update_budget_updates` FOREIGN KEY (`budget_update_id`) REFERENCES `budget_updates` (`budget_update_id`),
-  ADD CONSTRAINT `fk_guarantee_letters_gltmp_gl_templates` FOREIGN KEY (`gl_tmp_id`) REFERENCES `gl_templates` (`gl_tmp_id`);
-
---
--- Constraints for table `household_members`
---
-ALTER TABLE `household_members`
-  ADD CONSTRAINT `fk_household_members_client_clients` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
-  ADD CONSTRAINT `fk_household_members_household_households` FOREIGN KEY (`household_id`) REFERENCES `households` (`household_id`);
-
---
--- Constraints for table `members`
---
-ALTER TABLE `members`
-  ADD CONSTRAINT `fk_members_account_accounts` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`);
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `fk_messages_contact_contacts` FOREIGN KEY (`contact_id`) REFERENCES `contacts` (`contact_id`),
-  ADD CONSTRAINT `fk_messages_staff_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`);
-
---
--- Constraints for table `message_templates`
---
-ALTER TABLE `message_templates`
-  ADD CONSTRAINT `fk_message_templates_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `occupations`
---
-ALTER TABLE `occupations`
-  ADD CONSTRAINT `fk_occupations_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `patients`
---
-ALTER TABLE `patients`
-  ADD CONSTRAINT `fk_patients_applicant_applicants` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`applicant_id`),
-  ADD CONSTRAINT `fk_patients_client_clients` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
-
---
--- Constraints for table `reports`
---
-ALTER TABLE `reports`
-  ADD CONSTRAINT `fk_reports_staff_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`);
-
---
--- Constraints for table `roles`
---
-ALTER TABLE `roles`
-  ADD CONSTRAINT `fk_roles_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `services`
---
-ALTER TABLE `services`
-  ADD CONSTRAINT `fk_services_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `signers`
---
-ALTER TABLE `signers`
-  ADD CONSTRAINT `fk_signers_member_members` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`);
-
---
--- Constraints for table `sponsors`
---
-ALTER TABLE `sponsors`
-  ADD CONSTRAINT `fk_sponsors_tp_third_parties` FOREIGN KEY (`tp_id`) REFERENCES `third_parties` (`tp_id`);
-
---
--- Constraints for table `staff`
---
-ALTER TABLE `staff`
-  ADD CONSTRAINT `fk_staff_member_members` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`),
-  ADD CONSTRAINT `fk_staff_role_roles` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`);
-
---
--- Constraints for table `tariff_lists`
---
-ALTER TABLE `tariff_lists`
-  ADD CONSTRAINT `fk_tariff_lists_data_data` FOREIGN KEY (`data_id`) REFERENCES `data` (`data_id`);
-
---
--- Constraints for table `third_parties`
---
-ALTER TABLE `third_parties`
-  ADD CONSTRAINT `fk_third_parties_account_accounts` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`);
+ALTER TABLE `affiliate_partner_services`
+  ADD CONSTRAINT `affiliate_partner_services_affiliate_partner_id_foreign` FOREIGN KEY (`affiliate_partner_id`) REFERENCES `affiliate_partners` (`affiliate_partner_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `affiliate_partner_services_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

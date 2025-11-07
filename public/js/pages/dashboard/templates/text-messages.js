@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
     reapplicationDate.setDate(applicationDate.getDate() + 90);
     const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
 
-    const applicationDateFormatted = applicationDate.toLocaleDateString('en-US', dateOptions);
-    const reapplicationDateFormatted = reapplicationDate.toLocaleDateString('en-US', dateOptions);
+    const appliedAtFormatted = applicationDate.toLocaleDateString('en-US', dateOptions);
+    const reapplyAtFormatted = reapplicationDate.toLocaleDateString('en-US', dateOptions);
 
     if (!templateTextarea || !previewOutput || !undoButton || !redoButton || !form) return;
 
@@ -84,12 +84,12 @@ document.addEventListener('DOMContentLoaded', function () {
         "patient->client->member->middle_name": "Cruz",
         "patient->client->member->last_name": "Santos",
         "patient->client->member->suffix": "Jr.",
-        "application->service": "Hospital Bill",
+        "application->service_type": "Hospital Bill",
         "application->affiliate_partner->affiliate_partner_name": "St. Elizabeth Hospital, Inc.",
         "application->billed_amount": "100,000",
         "application->assistance_amount": "80,000",
-        "application->application_date": applicationDateFormatted,
-        "application->reapplication_date": reapplicationDateFormatted
+        "application->applied_at": appliedAtFormatted,
+        "application->reapply_at": reapplyAtFormatted
     };
 
     const labelMap = {
@@ -101,12 +101,12 @@ document.addEventListener('DOMContentLoaded', function () {
         "[$application->patient->client->member->middle_name]": "[Patient's Middle Name]",
         "[$application->patient->client->member->last_name]": "[Patient's Last Name]",
         "[$application->patient->client->member->suffix]": "[Patient's Suffix Name]",
-        "[$application->service]": "[Service]",
+        "[$application->service_type]": "[Service Type]",
         "[$application->affiliate_partner->affiliate_partner_name]": "[Affiliate Partner]",
         "[$application->billed_amount]": "[Billed Amount]",
         "[$application->assistance_amount]": "[Assistance Amount]",
-        "[$application->application_date]": "[Application Date]",
-        "[$application->reapplication_date]": "[Reapplication Date]",
+        "[$application->applied_at]": "[Applied At]",
+        "[$application->reapply_at]": "[Reapply At]",
     };
 
     const backendMap = Object.fromEntries(Object.entries(labelMap).map(([key, value]) => [value, key]));
@@ -121,12 +121,12 @@ document.addEventListener('DOMContentLoaded', function () {
         "[Patient's Middle Name]": exampleData["patient->client->member->middle_name"],
         "[Patient's Last Name]": exampleData["patient->client->member->last_name"],
         "[Patient's Suffix Name]": exampleData["patient->client->member->suffix"],
-        "[Service]": exampleData["application->service"],
+        "[Service Type]": exampleData["application->service_type"],
         "[Affiliate Partner]": exampleData["application->affiliate_partner->affiliate_partner_name"],
         "[Billed Amount]": exampleData["application->billed_amount"],
         "[Assistance Amount]": exampleData["application->assistance_amount"],
-        "[Application Date]": exampleData["application->application_date"],
-        "[Reapplication Date]": exampleData["application->reapplication_date"]
+        "[Applied At]": exampleData["application->applied_at"],
+        "[Reapply At]": exampleData["application->reapply_at"]
     };
 
     let history = [];

@@ -20,12 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 dropdownButton.textContent = this.textContent.trim();
                 dropdownItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                toggleRoleCustom();
                 if (inputId === 'roleInput') {
                     updateRoleInfo(val);
-                    if (val === '') {
-                        document.getElementById('customRoleInput').focus();
-                    }
                 }
             });
         });
@@ -64,48 +60,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function toggleRoleCustom() {
-        const roleInput = document.getElementById('roleInput');
-        const roleBtn = document.getElementById('roleDropdownBtn');
-        const customInput = document.getElementById('customRoleInput');
-
-        if (!roleInput || !roleBtn || !customInput) return;
-
-        const customValue = customInput.value.trim();
-
-        if (customValue) {
-            customInput.disabled = false;
-            customInput.required = true;
-            customInput.placeholder = 'Type to add a new role.';
-
-            roleBtn.disabled = true;
-            roleInput.value = '';
-            roleBtn.textContent = 'Clear Role text to enable this.';
-        } else {
-            roleBtn.disabled = false;
-            const sel = document.querySelector('#roleDropdownBtn + .dropdown-menu .dropdown-item.active');
-            roleBtn.textContent = sel ? sel.textContent.trim() : 'Select a role.';
-
-            const roleButtonText = roleBtn.textContent.trim();
-
-            if (roleButtonText === 'Other') {
-                customInput.disabled = false;
-                customInput.required = true;
-                customInput.placeholder = 'Type to add a new role.';
-            } else {
-                customInput.disabled = true;
-                customInput.required = false;
-                customInput.placeholder = 'Choose "Other" to enable this';
-            }
-        }
-    }
-
     setupDropdown('roleDropdownBtn', 'roleInput');
     setupDropdown('suffixDropdownBtn', 'suffixInput');
-
-    const customInputEl = document.getElementById('customRoleInput');
-    if (customInputEl) customInputEl.addEventListener('input', toggleRoleCustom);
-    toggleRoleCustom();
 
     const fileInput = document.getElementById('profilePictureActualInput');
     const imageUploadWrap = document.getElementById('imageUploadWrap');
@@ -116,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const roleAvatarImg = document.getElementById('roleAvatarImg');
     const roleAvatarPlaceholder = document.getElementById('roleAvatarPlaceholder');
     const roleAvatarRemoveBtn = document.getElementById('roleAvatarRemoveBtn');
-    const removeProfilePictureBtn = document.getElementById('removeProfilePictureBtn');
 
     function readURL(input) {
         if (!input) return;
@@ -230,13 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (removeProfilePictureBtn) {
-        removeProfilePictureBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            removeUpload();
-        });
-    }
-
     window.removeUpload = removeUpload;
 
     let rolesMap = {};
@@ -331,4 +279,84 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // Real-time username validation
+    const usernameInput = document.getElementById('form-input-username');
+    let usernameTimeout = null;
+    let lastCheckedUsername = '';
+
+    if (usernameInput) {
+        // Find or create feedback div
+        let feedbackDiv = usernameInput.parentNode.querySelector('.username-feedback');
+        if (!feedbackDiv) {
+            feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'username-feedback';
+            feedbackDiv.style.fontSize = '0.875em';
+            feedbackDiv.style.marginTop = '0.25rem';
+            usernameInput.parentNode.appendChild(feedbackDiv);
+        }
+
+        usernameInput.addEventListener('input', function() {
+            const username = this.value.trim();
+            
+            // Clear previous timeout
+            if (usernameTimeout) {
+                clearTimeout(usernameTimeout);
+            }
+
+            // Reset validation state
+            usernameInput.classList.remove('is-invalid', 'is-valid');
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'username-feedback';
+
+            // Don't validate if empty or same as last checked
+            if (!username || username === lastCheckedUsername) {
+                return;
+            }
+
+            // Show checking message
+            feedbackDiv.textContent = 'Checking username...';
+            feedbackDiv.className = 'username-feedback text-muted';
+
+            // Debounce: wait 500ms after user stops typing
+            usernameTimeout = setTimeout(function() {
+                lastCheckedUsername = username;
+
+                // Make AJAX request
+                fetch('/api/validate-username', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({ username: username })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        usernameInput.classList.remove('is-invalid');
+                        usernameInput.classList.add('is-valid');
+                        feedbackDiv.textContent = data.message;
+                        feedbackDiv.className = 'username-feedback text-success';
+                    } else {
+                        usernameInput.classList.remove('is-valid');
+                        usernameInput.classList.add('is-invalid');
+                        feedbackDiv.textContent = data.message;
+                        feedbackDiv.className = 'username-feedback text-danger';
+                    }
+                })
+                .catch(error => {
+                    console.error('Username validation error:', error);
+                    feedbackDiv.textContent = '';
+                    feedbackDiv.className = 'username-feedback';
+                    usernameInput.classList.remove('is-valid', 'is-invalid');
+                });
+            }, 500);
+        });
+
+        // Clear validation when field is focused
+        usernameInput.addEventListener('focus', function() {
+            lastCheckedUsername = '';
+        });
+    }
 });

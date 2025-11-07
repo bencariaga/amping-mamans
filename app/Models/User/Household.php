@@ -2,8 +2,9 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateHouseholdId;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Household extends Model
 {
@@ -19,7 +20,10 @@ class Household extends Model
 
     protected $fillable = [
         'household_id',
+        'client_id',
         'household_name',
+        'education_attainment',
+        'relation_to_applicant',
     ];
 
     protected static function boot()
@@ -28,7 +32,12 @@ class Household extends Model
 
         static::creating(function ($h) {
             if (empty($h->household_id)) {
-                $h->household_id = GenerateHouseholdId::execute();
+                $year = Carbon::now()->year;
+                $base = "HOUSEHOLD-{$year}";
+                $latest = static::where('household_id', 'like', "{$base}%")->latest('household_id')->first();
+                $last = $latest ? (int) Str::substr($latest->household_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $h->household_id = "{$base}-{$next}";
             }
         });
     }
@@ -38,8 +47,8 @@ class Household extends Model
         return (new static)->getKeyName();
     }
 
-    public function householdMembers()
+    public function client()
     {
-        return $this->hasMany(HouseholdMember::class, 'household_id', 'household_id');
+        return $this->belongsTo(Client::class, 'client_id');
     }
 }

@@ -2,15 +2,18 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateAffiliatePartnerId;
+use App\Models\Authentication\Account;
 use App\Models\Operation\Application;
+use App\Models\Operation\Service;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class AffiliatePartner extends Model
 {
     protected $table = 'affiliate_partners';
 
-    protected $primaryKey = 'ap_id';
+    protected $primaryKey = 'affiliate_partner_id';
 
     public $incrementing = false;
 
@@ -19,10 +22,14 @@ class AffiliatePartner extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ap_id',
-        'tp_id',
-        'ap_name',
-        'ap_type',
+        'affiliate_partner_id',
+        'account_id',
+        'affiliate_partner_name',
+        'affiliate_partner_type',
+        'affiliate_partner_contact',
+        'affiliate_partner_address',
+        'affiliate_partner_email',
+        'affiliate_partner_status',
     ];
 
     protected static function boot()
@@ -30,8 +37,13 @@ class AffiliatePartner extends Model
         parent::boot();
 
         static::creating(function ($ap) {
-            if (empty($ap->ap_id)) {
-                $ap->ap_id = GenerateAffiliatePartnerId::execute();
+            if (empty($ap->affiliate_partner_id)) {
+                $year = Carbon::now()->year;
+                $base = "AP-{$year}";
+                $latest = static::where('affiliate_partner_id', 'like', "{$base}%")->latest('affiliate_partner_id')->first();
+                $last = $latest ? (int) Str::substr($latest->affiliate_partner_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $ap->affiliate_partner_id = "{$base}-{$next}";
             }
         });
     }
@@ -41,13 +53,18 @@ class AffiliatePartner extends Model
         return (new static)->getKeyName();
     }
 
-    public function thirdParty()
+    public function account()
     {
-        return $this->belongsTo(ThirdParty::class, 'tp_id', 'tp_id');
+        return $this->belongsTo(Account::class, 'account_id');
     }
 
     public function applications()
     {
-        return $this->hasMany(Application::class, 'ap_id', 'ap_id');
+        return $this->hasMany(Application::class, 'affiliate_partner_id');
+    }
+    
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'affiliate_partner_services', 'affiliate_partner_id', 'service_id');
     }
 }

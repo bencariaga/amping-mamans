@@ -205,3 +205,9 @@ body {
     width: 100%;
     margin-top: 10px;
 }
+
+@media (max-width: 992px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+}

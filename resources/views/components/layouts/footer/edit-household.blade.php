@@ -7,8 +7,3 @@
     <div class="nav-icon"><i class="fas fa-save"></i></div>
     <div class="nav-text">Save Changes</div>
 </a>
-
-<a type="button" id="exportBtn" class="footer-btn">
-    <div class="nav-icon"><i class="fas fa-file-excel"></i></div>
-    <div class="nav-text">Export as<br>Excel File</div>
-</a>

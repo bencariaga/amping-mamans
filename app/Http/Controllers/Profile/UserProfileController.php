@@ -2,125 +2,226 @@
 
 namespace App\Http\Controllers\Profile;
 
-use App\Actions\User\DeactivateUserAccount;
-use App\Actions\User\DeleteUserAccount;
-use App\Actions\User\UpdateUserProfile;
-use App\Actions\User\ValidateUsernameConfirmation;
 use App\Http\Controllers\Controller;
+use App\Models\Storage\Data;
+use App\Models\Storage\File;
 use App\Models\User\Member;
-use App\Models\User\Staff;
-use App\Rules\MatchesUsername;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Throwable;
 
 class UserProfileController extends Controller
 {
-    public function __construct(
-        private UpdateUserProfile $updateUserProfile,
-        private DeactivateUserAccount $deactivateUserAccount,
-        private DeleteUserAccount $deleteUserAccount,
-        private ValidateUsernameConfirmation $validateUsernameConfirmation
-    ) {}
-
-    protected function resolveUser(?string $staffId = null): Member
+    private function generateNextId(string $prefix, string $table, string $primaryKey): string
     {
-        $auth = Auth::user();
-        $authUserMember = $auth instanceof Member ? $auth : $auth->member;
+        $year = Carbon::now()->year;
+        $base = "{$prefix}-{$year}";
+        $maxId = DB::table($table)->where($primaryKey, 'like', "{$base}%")->max($primaryKey);
+        $lastNum = $maxId ? (int) Str::substr(Str::replace('-', '', $maxId), -9) : 0;
+        $next = Str::padLeft($lastNum + 1, 9, '0');
 
-        if ($staffId === null || ($auth->staff && $staffId === $auth->staff->staff_id)) {
-            return $authUserMember;
-        }
-
-        $staff = Staff::where('staff_id', $staffId)->first();
-
-        if (! $staff) {
-            abort(404, 'User not found.');
-        }
-
-        return $staff->member;
+        return $base.'-'.$next;
     }
 
-    public function show(?string $staffId = null)
+    public function show(?Member $user = null)
     {
-        $user = $this->resolveUser($staffId);
-        $user->load(['staff.role', 'account.data']);
+        if (! $user || Auth::id() === $user->member_id) {
+            $user = Auth::user();
+            $view = 'pages.sidebar.profiles.profile.self';
+        } else {
+            $view = 'pages.sidebar.profiles.profile.users';
+        }
 
-        return view('pages.sidebar.profiles.profile.users', ['user' => $user]);
+        $user->load(['files', 'staff.role', 'account.data']);
+
+        return view($view)->with('user', $user);
     }
 
-    public function update(Request $request, ?string $staffId = null)
+    public function update(Request $request, ?Member $user = null)
     {
-        $target = $this->resolveUser($staffId);
-        $isSelf = Auth::user()->member_id === $target->member_id;
+        $target = $user && Auth::id() !== $user->member_id ? $user->load('account.data', 'files', 'staff') : Auth::user()->load('account.data', 'files', 'staff');
 
         if ($request->input('action') === 'change_password') {
             $request->validate([
-                'username_confirmation_change' => ['required', 'string', new MatchesUsername($target, $this->validateUsernameConfirmation)],
+                'username_confirmation_change' => ['required', 'string', function ($v, $f) use ($target) {
+                    if ($v !== $target->first_name.' '.$target->last_name) {
+                        $f('Your confirmation input does not match with the actual one. Please try again.');
+                    }
+                }],
                 'new_password' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
             ]);
 
-            $this->updateUserProfile->changePassword($target, $request->new_password);
+            $staff = $target->staff;
+            $staff->password = Hash::make($request->new_password);
+            $staff->save();
 
-            if ($isSelf) {
-                return back()->with('success', 'Your password has been updated successfully.');
-            }
-
-            return back()->with('success', 'User password has been updated successfully.');
+            return back()->with('success', 'The user password has been updated.');
         }
 
-        $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'middle_name' => ['nullable', 'string', 'max:255'],
-            'suffix' => ['nullable', 'string', 'max:255'],
+        $val = $request->validate([
+            'first_name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[A-Za-z ]+$/',
+                Rule::unique('members')->where(
+                    fn ($q) => $q->where('member_type', 'Staff')->where('first_name', $request->first_name)->where('middle_name', $request->middle_name)->where('last_name', $request->last_name)->where('suffix', $request->suffix)->where('member_id', '!=', $target->member_id)
+                ),
+            ],
+            'middle_name' => ['nullable', 'string', 'max:255', 'regex:/^[A-Za-z ]*$/'],
+            'last_name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ]+$/'],
+            'suffix' => ['nullable', 'string', Rule::in(['Sr.', 'Jr.', 'II', 'III', 'IV', 'V'])],
+            'profile_picture' => ['nullable', 'image', 'max:8192', 'mimes:jpg,jpeg,jfif,png,webp'],
+            'remove_profile_picture_flag' => ['boolean'],
+        ], [
+            'first_name.unique' => 'This user account already exists with the same name.',
         ]);
 
-        $this->updateUserProfile->execute($target, $request->except(['_token', '_method']));
+        $fullName = collect([
+            $request->first_name,
+            $request->middle_name,
+            $request->last_name,
+            $request->suffix,
+        ])->filter()->implode(' ');
 
-        return back()->with('success', 'User profile has been updated successfully.');
+        $target->fill($val);
+        $target->full_name = $fullName;
+
+        if ($request->boolean('remove_profile_picture_flag')) {
+            $picture = $target->files()->where('file_type', 'Image')->first();
+
+            if ($picture) {
+                Storage::disk('public')->delete($picture->filename);
+                $fileDataId = $picture->data_id;
+                $picture->delete();
+
+                if ($fileDataId !== $target->account->data_id) {
+                    Data::where('data_id', $fileDataId)->delete();
+                }
+            }
+        } elseif ($request->hasFile('profile_picture')) {
+            $picture = $target->files()->where('file_type', 'Image')->first();
+
+            if ($picture) {
+                Storage::disk('public')->delete($picture->filename);
+                $fileDataId = $picture->data_id;
+                $picture->delete();
+
+                if ($fileDataId !== $target->account->data_id) {
+                    Data::where('data_id', $fileDataId)->delete();
+                }
+            }
+
+            $fileRaw = $request->file('profile_picture');
+            $path = $fileRaw->store('profile_pictures', 'public');
+            $ext = $fileRaw->extension();
+            $fileDataId = $this->generateNextId('DATA', 'data', 'data_id');
+            $fileId = $this->generateNextId('FILE', 'files', 'file_id');
+
+            Data::create([
+                'data_id' => $fileDataId,
+                'data_status' => 'Unarchived',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            File::create([
+                'file_id' => $fileId,
+                'data_id' => $fileDataId,
+                'member_id' => $target->member_id,
+                'file_type' => 'Image',
+                'filename' => $path,
+                'file_extension' => $ext,
+            ]);
+        }
+
+        $target->save();
+
+        return back()->with('success', 'User profile has been updated.');
     }
 
-    public function updateDeactivate(Request $request, ?string $staffId = null)
+    public function deactivate(Request $request, Member $user)
     {
         $auth = Auth::user();
-        $target = $this->resolveUser($staffId);
+        $target = $user->member_id !== $auth->member_id ? $user : $auth;
 
-        $wasActive = $target->account->account_status === 'Active';
-        $this->deactivateUserAccount->execute($target);
+        $target->account->account_status = $target->account->account_status == 'Deactivated' ? 'Active' : 'Deactivated';
+        $target->account->last_deactivated_at = now();
+        $target->account->save();
 
-        if ($auth->member_id === $target->member_id && $wasActive) {
+        if ($auth->member_id === $target->member_id) {
             Auth::logout();
-
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect('/login')->with('success', 'Your account has been deactivated successfully.');
+            return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
         }
 
-        return redirect()->route('profiles.users.list')->with('success', 'User account has been '.($wasActive ? 'deactivated' : 'reactivated').' successfully.');
+        return response()->json(['message' => 'Your account has been deactivated successfully.'], 200);
     }
 
-    public function destroy(Request $request, ?string $staffId = null)
+    public function destroy(Request $request, Member $user)
     {
         $auth = Auth::user();
-        $target = $this->resolveUser($staffId);
-        $request->validate(['username_confirmation_delete' => ['required', 'string', new MatchesUsername($target, $this->validateUsernameConfirmation)]]);
+        $target = $user->member_id !== $auth->member_id ? $user : $auth;
+
+        $request->validate([
+            'username_confirmation_delete' => ['required', 'string', function ($v, $f) use ($target) {
+                $expectedRaw = Str::of($target->first_name.' '.$target->last_name)->trim();
+
+                $normalize = function (string $s): string {
+                    return Str::of($s)->trim()->replace('/\s+/', ' ')->lower();
+                };
+
+                $match = $normalize($v) === $normalize($expectedRaw);
+                Log::debug('Delete Confirmation', ['submitted' => $v, 'expected' => $expectedRaw, 'match' => $match]);
+
+                if (! $match) {
+                    $f("Your confirmation input \"{$v}\" does not match \"{$expectedRaw}\".");
+                }
+            }],
+        ]);
+
+        DB::beginTransaction();
 
         try {
-            $this->deleteUserAccount->execute($target);
+            $mainMemberDataId = $target->account->data_id;
+
+            foreach ($target->files as $file) {
+                if ($file->file_type === 'Image') {
+                    Storage::disk('public')->delete($file->filename);
+                }
+
+                $fileDataId = $file->data_id;
+                $file->delete();
+                Data::where('data_id', $fileDataId)->delete();
+            }
+
+            $target->staff()->delete();
+            $target->delete();
+            $target->account()->delete();
+            Data::where('data_id', $mainMemberDataId)->delete();
+            DB::commit();
 
             if ($auth->member_id === $target->member_id) {
                 Auth::logout();
-
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect('/login')->with('success', 'Your account has been deleted successfully.');
+                return redirect('/')->with('success', 'Your account has been deleted successfully.');
             }
 
             return redirect()->route('profiles.users.list')->with('success', 'User account has been deleted successfully.');
         } catch (Throwable $e) {
+            DB::rollBack();
+
             return back()->with('error', 'Failed to delete user account: '.$e->getMessage());
         }
     }

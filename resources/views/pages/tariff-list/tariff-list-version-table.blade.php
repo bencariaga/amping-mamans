@@ -46,9 +46,22 @@
                         }
 
                         if (!$hasValidRanges) {
-                            $status = 'Draft';
-                            $badgeClass = 'warning';
-                            $textColorClass = 'black';
+                            // If effectivity date is in the future, mark as Scheduled (even without valid ranges)
+                            if ($effDate->startOfDay()->gt($currentDateTime->copy()->startOfDay())) {
+                                $hoursUntilEffective = $currentDateTime->diffInHours($effDate->startOfDay(), false);
+                                $status = 'Scheduled';
+                                if ($hoursUntilEffective <= 24) {
+                                    $badgeClass = 'danger';
+                                } else {
+                                    $badgeClass = 'primary';
+                                }
+                                $textColorClass = 'white';
+                            } else {
+                                // Otherwise, mark as Draft if effectivity date has passed
+                                $status = 'Draft';
+                                $badgeClass = 'warning';
+                                $textColorClass = 'black';
+                            }
                         } elseif ($effDate->startOfDay()->lte($currentDateTime->copy()->startOfDay())) {
                             $allTariffLists = \App\Models\Operation\TariffList::all();
                             $tariffServiceIds = \App\Models\Operation\ExpenseRange::where('tariff_list_id', $tariffModel->tariff_list_id)
@@ -92,13 +105,11 @@
                         } else {
                             $hoursUntilEffective = $currentDateTime->diffInHours($effDate->startOfDay(), false);
                             $status = 'Scheduled';
-
                             if ($hoursUntilEffective <= 24) {
                                 $badgeClass = 'danger';
                             } else {
                                 $badgeClass = 'primary';
                             }
-
                             $textColorClass = 'white';
                         }
                     @endphp
@@ -111,10 +122,11 @@
                         </td>
 
                         <td class="py-3 text-center align-middle">
-                            <span class="d-flex justify-content-start align-items-center badge rounded-pill bg-{{ $badgeClass }} text-{{ $textColorClass }} fw-bold gap-2 px-3 mx-auto w-auto">
-                                <i class="fas fa-circle my-auto ps-1" style="font-size: 10px; margin-top: 3px;"></i>
-                                <span class="ps-1 pe-2">{{ $status }}</span>
-                            </span>
+                            <span
+                                class="d-flex justify-content-start align-items-center badge rounded-pill bg-{{ $badgeClass }} text-{{ $textColorClass }} fw-bold gap-2 px-3 mx-auto w-auto"><i
+                                    class="fas fa-circle my-auto ps-1"
+                                    style="font-size: 10px; margin-top: 3px;"></i><span
+                                    class="ps-1 pe-2">{{ $status }}</span></span>
                         </td>
 
                         <td class="py-3 text-center align-middle">
@@ -133,7 +145,7 @@
                         <td class="text-center">
                             <div class="d-flex justify-content-center action-button-group gap-3">
                                 <a type="button" href="{{ route('tariff-lists.edit', $tariffModel->tariff_list_id) }}"
-                                    class="btn btn-sm btn-primary d-flex justify-content-between py-2 gap-1">
+                                    class="btn btn-sm btn-info d-flex justify-content-between py-2 gap-1">
                                     <i class="fas fa-edit me-2"></i>Edit
                                 </a>
 

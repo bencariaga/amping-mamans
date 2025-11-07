@@ -2,8 +2,9 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\IdGeneration\GenerateExpenseRangeId;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class ExpenseRange extends Model
 {
@@ -32,23 +33,23 @@ class ExpenseRange extends Model
 
         static::creating(function ($er) {
             if (empty($er->exp_range_id)) {
-                $er->exp_range_id = GenerateExpenseRangeId::execute();
+                $year = Carbon::now()->year;
+                $base = "EXP-RANGE-{$year}";
+                $latest = static::where('exp_range_id', 'like', "{$base}%")->latest('exp_range_id')->first();
+                $last = $latest ? (int) Str::substr($latest->exp_range_id, -9) : 0;
+                $next = Str::padLeft((string) ($last + 1), 9, '0');
+                $er->exp_range_id = "{$base}-{$next}";
             }
         });
     }
 
     public function tariffList()
     {
-        return $this->belongsTo(TariffList::class, 'tariff_list_id', 'tariff_list_id');
+        return $this->belongsTo(TariffList::class, 'tariff_list_id');
     }
 
     public function service()
     {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id');
-    }
-
-    public function applications()
-    {
-        return $this->hasMany(Application::class, 'exp_range_id', 'exp_range_id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }

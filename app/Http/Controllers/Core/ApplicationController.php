@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Core;
 
-use App\Actions\Application\DeleteApplication;
-use App\Actions\Application\GetLatestActiveTariff;
-use App\Actions\Application\VerifyPhoneNumber;
 use App\Http\Controllers\Communication\MessageController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Financial\BudgetUpdateController;
 use App\Models\Communication\MessageTemplate;
+use App\Models\Operation\Application;
 use App\Models\Operation\ExpenseRange;
+use App\Models\Operation\GuaranteeLetter;
 use App\Models\Operation\Service;
+use App\Models\Operation\TariffList;
 use App\Models\User\AffiliatePartner;
 use App\Models\User\Applicant;
 use App\Services\FakeSmsService;
@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Carbon;
 
 class ApplicationController extends Controller
 {
@@ -55,8 +56,8 @@ class ApplicationController extends Controller
 
     public function showAssistanceRequest(Request $request)
     {
-        $services = Service::orderBy('service')->get();
-        $affiliate_partners = AffiliatePartner::orderBy('ap_name')->get();
+        $services = Service::orderBy('service_type')->get();
+        $affiliate_partners = AffiliatePartner::orderBy('affiliate_partner_name')->get();
         $message_templates = MessageTemplate::orderBy('msg_tmp_title')->get();
 
         $applicantId = $request->query('applicant');
@@ -82,24 +83,60 @@ class ApplicationController extends Controller
             }
         }
 
-        return view('pages.sidebar.application-entry.request-assistance', [
+        return view('pages.sidebar.application-entry.request-service-assistance', [
             'services' => $services,
             'affiliate_partners' => $affiliate_partners,
             'message_templates' => $message_templates,
             'applicantData' => $applicantData,
         ]);
     }
+    
+    public function getAffiliatePartnersByService(Request $request)
+    {
+        try {
+            $request->validate([
+                'service_id' => 'required|string|exists:services,service_id',
+            ]);
+            
+            $serviceId = $request->input('service_id');
+            
+            // Get affiliate partners that provide this service
+            $affiliatePartners = AffiliatePartner::whereHas('services', function ($query) use ($serviceId) {
+                $query->where('services.service_id', $serviceId);
+            })
+            ->orderBy('affiliate_partner_name')
+            ->get(['affiliate_partner_id', 'affiliate_partner_name']);
+            
+            return response()->json([
+                'affiliate_partners' => $affiliatePartners,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (Exception $e) {
+            Log::error('getAffiliatePartnersByService error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'An unexpected error occurred while fetching affiliate partners.'], 500);
+        }
+    }
 
-    public function verifyPhoneNumber(Request $request, VerifyPhoneNumber $verifyPhoneNumber)
+    public function verifyPhoneNumber(Request $request)
     {
         try {
             $request->validate(['phone_number' => 'required|string|max:30']);
             $phoneNumber = $request->input('phone_number');
             $clientCandidates = $request->input('candidates', []);
+            $normalizedCandidates = $this->buildPhoneCandidates($phoneNumber, $clientCandidates);
 
-            $applicant = $verifyPhoneNumber->execute($phoneNumber, $clientCandidates);
+            if (empty($normalizedCandidates)) {
+                return response()->json(['error' => 'No phone candidates generated.'], 422);
+            }
+
+            $applicant = Applicant::whereHas('client.contacts', function ($query) use ($normalizedCandidates) {
+                $query->where('contact_type', 'Application')->whereIn('phone_number', $normalizedCandidates);
+            })->with(['client.member', 'patients.client.member'])->first();
 
             if (! $applicant) {
+                Log::debug('Phone verification candidates', ['candidates' => $normalizedCandidates, 'input' => $phoneNumber]);
+
                 return response()->json(['error' => 'Applicant with this phone number does not exist.'], 404);
             }
 
@@ -112,6 +149,7 @@ class ApplicationController extends Controller
             }
 
             $fullName = $member->full_name ?? '';
+
             $patientData = $this->formatPatientData($applicant);
 
             return response()->json(collect([
@@ -132,7 +170,125 @@ class ApplicationController extends Controller
         }
     }
 
-    public function calculateAssistanceAmount(Request $request, GetLatestActiveTariff $getLatestActiveTariff)
+    private function buildPhoneCandidates($inputPhone, $clientCandidates = [])
+    {
+        $candidates = collect();
+
+        if ($inputPhone) {
+            $raw = Str::of($inputPhone)->trim()->toString();
+            $digits = Str::of($raw)->replaceMatches('/\D+/', '')->toString();
+            $candidates->push($raw);
+            $candidates->push($digits);
+
+            if (Str::startsWith($digits, '63') && Str::length($digits) >= 12) {
+                $local = '0'.Str::substr($digits, 2);
+                $candidates->push($local);
+                $candidates->push(Str::substr($local, 0, 4).'-'.Str::substr($local, 4, 3).'-'.Str::substr($local, 7));
+                $candidates->push('+'.$digits);
+            } elseif (Str::startsWith($digits, '0') && Str::length($digits) === 11) {
+                $candidates->push(Str::substr($digits, 0, 4).'-'.Str::substr($digits, 4, 3).'-'.Str::substr($digits, 7));
+                $candidates->push('+63'.Str::substr($digits, 1));
+            } elseif (Str::startsWith($digits, '9') && Str::length($digits) === 10) {
+                $local = '0'.$digits;
+                $candidates->push($local);
+                $candidates->push(Str::substr($local, 0, 4).'-'.Str::substr($local, 4, 3).'-'.Str::substr($local, 7));
+                $candidates->push('+63'.Str::substr($local, 1));
+            }
+        }
+
+        collect($clientCandidates)->each(function ($cand) use ($candidates) {
+            $c = Str::of($cand)->trim()->toString();
+
+            if ($c) {
+                $candidates->push($c);
+                $d = Str::of($c)->replaceMatches('/\D+/', '')->toString();
+
+                if ($d) {
+                    $candidates->push($d);
+                }
+            }
+        });
+
+        return $candidates->filter()->unique()->values()->all();
+    }
+
+    /**
+     * Get the latest active tariff list for a specific service
+     */
+    private function getLatestActiveTariffForService($serviceId)
+    {
+        $currentDateTime = Carbon::now();
+        
+        // Get all tariff lists that have the service and are effective (not future-dated)
+        $candidateTariffs = TariffList::whereHas('expenseRanges', function ($q) use ($serviceId) {
+            $q->where('service_id', $serviceId);
+        })
+        ->where('effectivity_date', '<=', $currentDateTime)
+        ->orderBy('effectivity_date', 'desc')
+        ->get();
+
+        if ($candidateTariffs->isEmpty()) {
+            return null;
+        }
+
+        // Check each tariff to find the latest active one
+        foreach ($candidateTariffs as $tariff) {
+            if ($this->isTariffActiveForService($tariff, $serviceId, $candidateTariffs)) {
+                return $tariff;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if a tariff is active for a specific service
+     */
+    private function isTariffActiveForService($tariff, $serviceId, $allTariffs)
+    {
+        $currentDateTime = Carbon::now();
+        $effectivityDate = Carbon::parse($tariff->effectivity_date)->startOfDay();
+
+        // Check if tariff is effective (not future-dated)
+        if ($effectivityDate->gt($currentDateTime->copy()->startOfDay())) {
+            return false;
+        }
+
+        // Check if tariff has valid expense ranges for the service
+        $hasValidRanges = ExpenseRange::where('tariff_list_id', $tariff->tariff_list_id)
+            ->where('service_id', $serviceId)
+            ->whereNotNull('exp_range_min')
+            ->whereNotNull('exp_range_max')
+            ->whereNotNull('coverage_percent')
+            ->where('exp_range_min', '>=', 0)
+            ->where('exp_range_max', '>', 0)
+            ->where('coverage_percent', '>', 0)
+            ->count() >= 1;
+
+        if (!$hasValidRanges) {
+            return false;
+        }
+
+        // Check if this is the latest tariff for this service
+        $latestTariffForService = $allTariffs
+            ->filter(function ($tl) use ($serviceId, $currentDateTime) {
+                $tlEffDate = Carbon::parse($tl->effectivity_date)->startOfDay();
+                if ($tlEffDate->gt($currentDateTime->copy()->startOfDay())) {
+                    return false;
+                }
+                return ExpenseRange::where('tariff_list_id', $tl->tariff_list_id)
+                    ->where('service_id', $serviceId)
+                    ->exists();
+            })
+            ->sortByDesc(function ($tl) {
+                return Carbon::parse($tl->effectivity_date)->timestamp;
+            })
+            ->first();
+
+        return $latestTariffForService && $latestTariffForService->tariff_list_id === $tariff->tariff_list_id;
+    }
+
+    public function calculateAssistanceAmount(Request $request)
     {
         try {
             $request->validate([
@@ -142,18 +298,25 @@ class ApplicationController extends Controller
 
             $serviceId = $request->input('service_id');
             $billedAmount = $request->input('billed_amount');
-            $tariffList = $getLatestActiveTariff->execute($serviceId);
+
+            // Get the latest active tariff for the specific service
+            $tariffList = $this->getLatestActiveTariffForService($serviceId);
 
             if (! $tariffList) {
                 return response()->json(['error' => 'No active tariff list found for this service.'], 404);
             }
 
-            $expenseRange = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)->where('service_id', $serviceId)->where('exp_range_min', '<=', $billedAmount)->where('exp_range_max', '>=', $billedAmount)->first();
+            $expenseRange = ExpenseRange::where('tariff_list_id', $tariffList->tariff_list_id)
+                ->where('service_id', $request->input('service_id'))
+                ->where('exp_range_min', '<=', $billedAmount)
+                ->where('exp_range_max', '>=', $billedAmount)
+                ->first();
 
             if (! $expenseRange) {
                 return response()->json(['error' => 'The expense ranges of this service type for this amount does not exist.'], 404);
             }
 
+            // Calculate assistance amount using coverage_percent
             $coveragePercent = (float) $expenseRange->coverage_percent;
             $assistanceAmount = ($billedAmount * $coveragePercent) / 100;
 
@@ -170,7 +333,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function store(Request $request, BudgetUpdateController $budgetUpdateController, MessageController $messageController, TextBeeService $textBeeService, FakeSmsService $fakeSmsService)
+    public function store(Request $request, MessageController $messageController, BudgetUpdateController $budgetUpdateController, GLController $glController, TextBeeService $textBeeService, FakeSmsService $fakeSmsService)
     {
         DB::beginTransaction();
 
@@ -191,8 +354,37 @@ class ApplicationController extends Controller
                 'message_text' => 'required|string|max:1000',
             ]);
 
-            $createApplication = app(\App\Actions\Application\CreateApplication::class);
-            $createApplication->execute($request, $budgetUpdateController, $messageController, $textBeeService, $fakeSmsService);
+            $billedAmount = (int) Str::replace(',', '', $request->input('billed_amount'));
+            $assistanceAmount = (int) Str::replace(',', '', $request->input('assistance_amount'));
+            $serviceId = $request->input('service_id');
+            $tariffListVersion = $request->input('tariff_list_version');
+            
+            // Find the correct expense range based on the tariff list version and service
+            $expRange = ExpenseRange::where('tariff_list_id', $tariffListVersion)
+                ->where('service_id', $serviceId)
+                ->where('exp_range_min', '<=', $billedAmount)
+                ->where('exp_range_max', '>=', $billedAmount)
+                ->first();
+
+            $data = [
+                'applicant_id' => $request->input('applicant_id'),
+                'patient_id' => $request->input('patient_id'),
+                'affiliate_partner_id' => $request->input('affiliate_partner_id'),
+                'exp_range_id' => $expRange->exp_range_id ?? null,
+                'billed_amount' => $billedAmount,
+                'assistance_amount' => $assistanceAmount,
+                'applied_at' => $request->input('applied_at'),
+                'reapply_at' => $request->input('reapply_at'),
+            ];
+
+            $application = Application::create($data);
+
+            $budgetUpdate = $budgetUpdateController->createForApplication($application, $assistanceAmount);
+            $guaranteeLetter = $glController->createForApplication($application, $budgetUpdate);
+
+            $request->merge(['application_id' => $application->application_id]);
+            $messageId = $messageController->sendMessage($request, $textBeeService, $fakeSmsService);
+            $application->update(['message_id' => $messageId]);
 
             DB::commit();
 
@@ -202,13 +394,14 @@ class ApplicationController extends Controller
             ]);
         } catch (ValidationException $e) {
             DB::rollBack();
+            Log::error('Store application validation error: '.$e->getMessage(), ['errors' => $e->errors(), 'trace' => $e->getTraceAsString()]);
 
-            return response()->json(['errors' => $e->errors()], 422);
+            return response()->json(['error' => 'Validation failed: Please check your inputs.', 'errors' => $e->errors()], 422);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Application creation failed: '.$e->getMessage());
+            Log::error('Store application error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'An unexpected error occurred while creating the application.'], 500);
         }
     }
 
@@ -246,7 +439,7 @@ class ApplicationController extends Controller
                 'm.last_name as client_last_name',
                 'er.exp_range_min',
                 'er.exp_range_max',
-                's.service as service_type',
+                's.service_type',
                 'apn.affiliate_partner_name'
             )
             ->where('a.application_id', $applicationId)
@@ -257,32 +450,20 @@ class ApplicationController extends Controller
         }
 
         $applicationAlias = $this->aliasId($application->application_id, 'APPLICATION');
-
-        $applicantParts = collect([
-            $application->client_last_name ? $application->client_last_name.',' : null,
-            $application->client_first_name,
-            $application->client_middle_name,
-        ])->filter()->implode(' ');
-
-        $applicantName = trim($applicantParts);
-
+        $middleInitial = $application->client_middle_name ? Str::substr($application->client_middle_name, 0, 1).'.' : '';
+        $applicantName = Str::of("{$application->client_last_name}, {$application->client_first_name} {$middleInitial}")->trim();
         $patientName = '';
+
         if ($application->patient_id) {
             $patient = DB::table('patients as p')
                 ->join('clients as c', 'p.client_id', '=', 'c.client_id')
                 ->join('members as m', 'c.member_id', '=', 'm.member_id')
                 ->where('p.patient_id', $application->patient_id)
-                ->select('m.first_name as patient_first_name', 'm.middle_name as patient_middle_name', 'm.last_name as patient_last_name', 'm.suffix as patient_suffix')
+                ->select('m.first_name as patient_first_name', 'm.middle_name as patient_middle_name', 'm.last_name as patient_last_name')
                 ->first();
 
-            $patientParts = collect([
-                $patient->patient_last_name ? $patient->patient_last_name.',' : null,
-                $patient->patient_first_name,
-                $patient->patient_middle_name,
-                $patient->patient_suffix,
-            ])->filter()->implode(' ');
-
-            $patientName = trim($patientParts);
+            $middleInitial = $patient->patient_middle_name ? Str::substr($patient->patient_middle_name, 0, 1).'.' : '';
+            $patientName = Str::of("{$patient->patient_last_name}, {$patient->patient_first_name} {$middleInitial}")->trim();
         }
 
         $html = '<div class="details-grid">';
@@ -317,12 +498,16 @@ class ApplicationController extends Controller
         return response()->json(['html' => $html]);
     }
 
-    public function destroy(string $applicationId, DeleteApplication $deleteApplication)
+    public function destroy(string $applicationId)
     {
         DB::beginTransaction();
 
         try {
-            $deleteApplication->execute($applicationId);
+            $application = Application::where('application_id', $applicationId)->firstOrFail();
+
+            GuaranteeLetter::where('application_id', $applicationId)->delete();
+            $application->delete();
+
             DB::commit();
 
             return response()->json([

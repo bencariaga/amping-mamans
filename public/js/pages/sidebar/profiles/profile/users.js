@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const firstNameInput = document.querySelector('input[name="first_name"]');
     const middleNameInput = document.querySelector('input[name="middle_name"]');
     const lastNameInput = document.querySelector('input[name="last_name"]');
-    const profileForm = document.querySelector('#profileForm');
 
     if (removeProfilePictureBtn) {
         removeProfilePictureBtn.addEventListener('click', function () {
@@ -115,11 +114,4 @@ document.addEventListener('DOMContentLoaded', function () {
     if (firstNameInput) validateNameInput(firstNameInput);
     if (middleNameInput) validateNameInput(middleNameInput);
     if (lastNameInput) validateNameInput(lastNameInput);
-
-    if (updateUserBtn && profileForm) {
-        updateUserBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            profileForm.submit();
-        });
-    }
 });

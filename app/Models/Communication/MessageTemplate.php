@@ -2,9 +2,10 @@
 
 namespace App\Models\Communication;
 
-use App\Actions\IdGeneration\GenerateMessageTemplateId;
-use App\Models\Operation\Data;
+use App\Models\Storage\Data;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class MessageTemplate extends Model
 {
@@ -31,7 +32,12 @@ class MessageTemplate extends Model
 
         static::creating(function ($tmpl) {
             if (empty($tmpl->msg_tmp_id)) {
-                $tmpl->msg_tmp_id = GenerateMessageTemplateId::execute();
+                $year = Carbon::now()->year;
+                $base = "MSG-TMP-{$year}";
+                $latest = static::where('msg_tmp_id', 'like', "{$base}%")->latest('msg_tmp_id')->first();
+                $last = $latest ? (int) Str::substr($latest->msg_tmp_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $tmpl->msg_tmp_id = "{$base}-{$next}";
             }
         });
     }
@@ -43,6 +49,11 @@ class MessageTemplate extends Model
 
     public function data()
     {
-        return $this->belongsTo(Data::class, 'data_id', 'data_id');
+        return $this->belongsTo(Data::class, 'data_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'msg_tmp_id');
     }
 }

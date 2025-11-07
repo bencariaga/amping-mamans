@@ -2,8 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateStaffId;
-use App\Models\Audit\AuditLog;
+use App\Models\Audit\Log;
 use App\Models\Audit\Report;
 use App\Models\Authentication\Role;
 use App\Models\Communication\Message;
@@ -28,25 +27,9 @@ class Staff extends Model
         'staff_id',
         'member_id',
         'role_id',
-        'file_name',
-        'file_extension',
+        'username',
         'password',
     ];
-
-    protected $casts = [
-        'file_extension' => 'string',
-    ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($staff) {
-            if (empty($staff->staff_id)) {
-                $staff->staff_id = GenerateStaffId::execute();
-            }
-        });
-    }
 
     public static function getPrimaryKey()
     {
@@ -55,26 +38,26 @@ class Staff extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'member_id', 'member_id');
+        return $this->belongsTo(Member::class, 'member_id');
     }
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id', 'role_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function messages()
     {
-        return $this->hasMany(Message::class, 'staff_id', 'staff_id');
+        return $this->hasMany(Message::class, 'staff_id');
     }
 
-    public function auditLogs()
+    public function logs()
     {
-        return $this->hasMany(AuditLog::class, 'staff_id', 'staff_id');
+        return $this->hasMany(Log::class, 'staff_id');
     }
 
     public function reports()
     {
-        return $this->hasMany(Report::class, 'staff_id', 'staff_id');
+        return $this->hasMany(Report::class, 'staff_id');
     }
 }

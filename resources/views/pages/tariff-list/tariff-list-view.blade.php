@@ -1,12 +1,13 @@
 @extends('layouts.personal-pages')
 
-@section('title', 'Editing Tariff List Version')
+@section('title', 'Edit Tariff List Version')
 
 @push('styles')
     <link href="{{ asset('css/pages/dashboard/landing/tariff-list-view.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="{{ asset('js/pages/tariff-list/tariff-list-view.js') }}" defer></script>
 @endpush
 
@@ -22,56 +23,57 @@
         <form id="tariffForm" class="mb-5" method="POST" action="{{ route('tariff-lists.update', $tariffListModel->tariff_list_id) }}">
             @csrf
             @method('PUT')
+
             <div id="unsavedChangesBanner" class="alert alert-warning d-none" role="alert">
                 <i class="fas fa-triangle-exclamation me-2"></i>
                 You have unsaved changes. Click <strong>Save Changes</strong> below to persist your edits.
             </div>
+
             @php
-                use Illuminate\Support\Carbon;
-                use App\Models\Operation\ExpenseRange;
-                use App\Models\Operation\TariffList;
-                $effDate = Carbon::parse($tariffListModel->effectivity_date);
-                $createdAt = Carbon::parse($tariffListModel->data->created_at);
-                $currentDateTime = Carbon::now();
-                $serviceIds = ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)->whereNotNull('exp_range_min')->whereNotNull('exp_range_max')->whereNotNull('coverage_percent')->where('exp_range_min', '>', 0)->where('exp_range_max', '>', 0)->where('coverage_percent', '>', 0)->distinct()->pluck('service_id');
+                $effDate = \Illuminate\Support\Carbon::parse($tariffListModel->effectivity_date);
+                $createdAt = \Illuminate\Support\Carbon::parse($tariffListModel->data->created_at);
+                $currentDateTime = \Illuminate\Support\Carbon::now();
+
+                $serviceIds = \App\Models\Operation\ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)
+                    ->whereNotNull('exp_range_min')
+                    ->whereNotNull('exp_range_max')
+                    ->whereNotNull('coverage_percent')
+                    ->where('exp_range_min', '>', 0)
+                    ->where('exp_range_max', '>', 0)
+                    ->where('coverage_percent', '>', 0)
+                    ->distinct()
+                    ->pluck('service_id');
+
                 $hasValidRanges = false;
                 foreach ($serviceIds as $serviceId) {
-                    $rangeCount = ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)->where('service_id', $serviceId)->whereNotNull('exp_range_min')->whereNotNull('exp_range_max')->whereNotNull('coverage_percent')->where('exp_range_min', '>', 0)->where('exp_range_max', '>', 0)->where('coverage_percent', '>', 0)->count();
-                    if ($rangeCount >= 2) {
-                        $hasValidRanges = true;
-                        break;
-                    }
+                    $rangeCount = \App\Models\Operation\ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)
+                        ->where('service_id', $serviceId)
+                        ->whereNotNull('exp_range_min')
+                        ->whereNotNull('exp_range_max')
+                        ->whereNotNull('coverage_percent')
+                        ->where('exp_range_min', '>', 0)
+                        ->where('exp_range_max', '>', 0)
+                        ->where('coverage_percent', '>', 0)
+                        ->count();
+                    if ($rangeCount >= 2) { $hasValidRanges = true; break; }
                 }
+
                 if (!$hasValidRanges) {
-                    $status = 'Draft';
-                    $badgeClass = 'warning';
-                    $textColorClass = 'black';
+                    $status = 'Draft'; $badgeClass = 'warning'; $textColorClass = 'black';
                 } elseif ($effDate->startOfDay()->lte($currentDateTime->copy()->startOfDay())) {
-                    $allTariffLists = TariffList::all();
-                    $tariffServiceIds = ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)->distinct()->pluck('service_id')->toArray();
+                    $allTariffLists = \App\Models\Operation\TariffList::all();
+                    $tariffServiceIds = \App\Models\Operation\ExpenseRange::where('tariff_list_id', $tariffListModel->tariff_list_id)->distinct()->pluck('service_id')->toArray();
                     $hasActiveService = false;
                     foreach ($tariffServiceIds as $sid) {
                         $latestForService = $allTariffLists->filter(function ($tl) use ($sid, $currentDateTime) {
-                            $tlEffDate = Carbon::parse($tl->effectivity_date)->startOfDay();
-                            if ($tlEffDate->gt($currentDateTime->copy()->startOfDay()))
-                                return false;
-                            return ExpenseRange::where('tariff_list_id', $tl->tariff_list_id)->where('service_id', $sid)->exists();
-                        })->sortByDesc(function ($tl) {
-                            return Carbon::parse($tl->effectivity_date)->timestamp; })->first();
-                        if ($latestForService && $latestForService->tariff_list_id === $tariffListModel->tariff_list_id) {
-                            $hasActiveService = true;
-                            break;
-                        }
+                            $tlEffDate = \Illuminate\Support\Carbon::parse($tl->effectivity_date)->startOfDay();
+                            if ($tlEffDate->gt($currentDateTime->copy()->startOfDay())) return false;
+                            return \App\Models\Operation\ExpenseRange::where('tariff_list_id', $tl->tariff_list_id)->where('service_id', $sid)->exists();
+                        })->sortByDesc(function ($tl) { return \Illuminate\Support\Carbon::parse($tl->effectivity_date)->timestamp; })->first();
+                        if ($latestForService && $latestForService->tariff_list_id === $tariffListModel->tariff_list_id) { $hasActiveService = true; break; }
                     }
-                    if ($hasActiveService) {
-                        $status = 'Active';
-                        $badgeClass = 'success';
-                        $textColorClass = 'white';
-                    } else {
-                        $status = 'Inactive';
-                        $badgeClass = 'secondary';
-                        $textColorClass = 'white';
-                    }
+                    if ($hasActiveService) { $status = 'Active'; $badgeClass = 'success'; $textColorClass = 'white'; }
+                    else { $status = 'Inactive'; $badgeClass = 'secondary'; $textColorClass = 'white'; }
                 } else {
                     $hoursUntilEffective = $currentDateTime->diffInHours($effDate->startOfDay(), false);
                     $status = 'Scheduled';
@@ -79,10 +81,15 @@
                     $textColorClass = 'white';
                 }
             @endphp
+
             <div class="service-info">
-                <h3 class="service-count m-0">TL Version's Number of Services: {{ count($serviceLists) }}</h3>
-                <h3 class="service-status">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <h3 class="service-count m-0">TL Version's Number of Services: {{ count($serviceLists) }}</h3>
+                    <span class="badge rounded-pill bg-{{ $badgeClass }} text-{{ $textColorClass }} fw-bold px-3 py-2">{{ $status }}</span>
+                </div>
+                <h3 class="service-status mt-3">
                     <span class="view-mode">Currently Viewing: <span id="currentService">{{ $serviceTypes[0] ?? 'No Service' }}</span></span>
+
                     @if($tariffListModel->tl_status === 'Draft')
                         <span class="edit-mode" style="display: none;">Currently Adding: <span id="editingService">{{ $serviceTypes[0] ?? 'No Service' }}</span></span>
                     @else
@@ -90,22 +97,43 @@
                     @endif
                 </h3>
             </div>
+
             <ul class="nav nav-tabs mb-4" id="serviceTabs" role="tablist">
                 @foreach($serviceTypes as $index => $type)
                     @php
-    $serviceId = null;
-    foreach ($serviceLists[$type] ?? [] as $range) {
-        $serviceId = $range->service_id;
-        break;
-    }
+                        $serviceId = null;
+
+                        foreach($serviceLists[$type] ?? [] as $range) {
+                            $serviceId = $range->service_id;
+                            break;
+                        }
                     @endphp
+
                     <li class="nav-item" role="presentation" data-service-type="{{ $type }}" data-service-id="{{ $serviceId }}">
-                        <button class="nav-link {{ $index === 0 ? 'active' : '' }}" id="tab-{{ $index }}" data-bs-toggle="tab" data-bs-target="#service-{{ $index }}" type="button" role="tab" aria-controls="service-{{ $index }}" aria-selected="{{ $index === 0 ? 'true' : 'false' }}">
-                            {{ $type }}
-                        </button>
+                        <div class="service-tab-wrapper">
+                            <button class="nav-link {{ $index === 0 ? 'active' : '' }}" id="tab-{{ $index }}" data-bs-toggle="tab" data-bs-target="#service-{{ $index }}" type="button" role="tab" aria-controls="service-{{ $index }}" aria-selected="{{ $index === 0 ? 'true' : 'false' }}">
+                                {{ $type }}
+                            </button>
+
+                            <button type="button" class="btn-remove-service" data-service-type="{{ $type }}" data-service-id="{{ $serviceId }}" title="Remove this service type" style="display: none;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </li>
                 @endforeach
+
+                <li class="nav-item" role="presentation" id="addServiceDropdownContainer" style="display: none;">
+                    <select class="form-select service-type-dropdown" id="addServiceDropdown">
+                        <option value="" selected>— Select Service —</option>
+                        @foreach($allServiceTypes as $serviceId => $serviceType)
+                            @if(!in_array($serviceId, $usedServiceIds))
+                                <option value="{{ $serviceId }}">{{ $serviceType }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </li>
             </ul>
+
             <div class="tab-content" id="serviceTabsContent">
                 @foreach($serviceTypes as $index => $type)
                     <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="service-{{ $index }}" role="tabpanel" aria-labelledby="tab-{{ $index }}">
@@ -125,6 +153,7 @@
                                                     <th class="money-amount-header text-center">Maximum</th>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
                                                 @foreach ($serviceLists[$type] ?? [] as $row)
                                                     <tr>
@@ -134,15 +163,17 @@
                                                                 <input type="text" name="range_min[{{ $row->service_id }}][{{ $row->exp_range_id }}]" class="form-control form-control-sm range-input range-min text-end money-value" value="{{ number_format($row->exp_range_min, 0) }}" placeholder="0" maxlength="8" readonly>
                                                             </div>
                                                         </td>
+
                                                         <td class="money-amount-cell">
                                                             <div class="money-amount-container">
                                                                 <span class="money-currency fw-bold pe-2">₱</span>
-                                                                <input type="text" name="range_max[{{ $row->service_id }}][{{ $row->exp_range_id }}]" class="form-control form-control-sm range-input range-max text-end money-value" value="{{ number_format($row->exp_range_max, 0) }}" placeholder="0" maxlength="8" readonly disabled>
+                                                                <input type="text" name="range_max[{{ $row->service_id }}][{{ $row->exp_range_id }}]" class="form-control form-control-sm range-input range-max text-end money-value" value="{{ number_format($row->exp_range_max, 0) }}" maxlength="8" readonly disabled>
                                                             </div>
                                                         </td>
+
                                                         <td class="money-amount-cell">
                                                             <div class="money-amount-container">
-                                                                <input type="text" name="tariff_amount[{{ $row->service_id }}][{{ $row->exp_range_id }}]" class="form-control form-control-sm tariff-input coverage-percent text-end money-value" value="{{ $row->coverage_percent }}" placeholder="0" maxlength="4" readonly disabled>
+                                                                <input type="text" name="tariff_amount[{{ $row->service_id }}][{{ $row->exp_range_id }}]" class="form-control form-control-sm tariff-input coverage-percent text-end money-value" value="{{ $row->coverage_percent }}" maxlength="4" readonly disabled>
                                                                 <span class="money-currency fw-bolder pe-1">%</span>
                                                             </div>
                                                         </td>
@@ -173,6 +204,6 @@
 @endsection
 
 @section('footer')
-    @include('components.layouts.footer.edit-tariff-exp-ranges')
+    @include('components.layouts.footer.edit-tariff')
     @include('components.layouts.footer.profile-buttons-2')
 @endsection

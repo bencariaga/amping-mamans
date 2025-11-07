@@ -1,112 +1,135 @@
 @extends('layouts.personal-pages')
 
-@section('title', ucfirst($type) . ' Report')
+@section('title', ucfirst($type).' Report')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/dashboard/system/reports.css') }}">
+    <style>
+        .reports-filter .section-title { font-weight: 700; }
+        .reports-filter .form-control,
+        .reports-filter .form-select,
+        .reports-filter .btn { height: 38px; }
+        .stat-pill { border-radius: 999px; padding: .35rem .75rem; font-weight: 600; }
+        .stat-pill .label { opacity: .8; margin-right: .5rem; }
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style>
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/pages/dashboard/system/reports.js') }}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const filterMode = document.getElementById('filterMode');
+            const groupRange = document.getElementById('group-range');
+            const groupMonth = document.getElementById('group-month');
+            const groupYear = document.getElementById('group-year');
+            function setMode(v){
+                groupRange.style.display = (v==='range') ? '' : 'none';
+                groupMonth.style.display = (v==='month') ? '' : 'none';
+                groupYear.style.display = (v==='year') ? '' : 'none';
+            }
+            if (filterMode){
+                filterMode.addEventListener('change', function(){ setMode(this.value); });
+                setMode(filterMode.value);
+            }
+        });
+    </script>
 @endpush
 
 @section('breadcrumbs')
-    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
-    <a href="{{ route('reports.index') }}" class="text-decoration-none text-white">Reports</a><span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">Dashboard</a>
+    <span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
+    <a href="{{ route('reports.index') }}" class="text-decoration-none text-white">Reports</a>
+    <span class="cursor-default unselectable">&nbsp;&nbsp;&nbsp;<span class="fw-normal text-info">&gt;</span>&nbsp;&nbsp;</span>
     <a href="{{ route('reports.show', ['type' => $type]) }}" class="text-decoration-none text-reset">{{ ucfirst($type) }}</a>
 @endsection
 
 @section('content')
     <div class="container">
         <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2 no-print">
-            <h2 class="fw-semibold m-0">{{ ucfirst($type) }} Report</h2>
-
+            <h2 class="m-0">{{ ucfirst($type) }} Report</h2>
             <div>
-                <a href="{{ route('reports.xlsx', array_merge(['type' => $type], $query)) }}" class="btn btn-outline-success me-3 gap-2 fw-bold">
-                    <i class="fas fa-file-excel me-2"></i>Download XLSX
+                <a href="{{ route('reports.csv', array_merge(['type'=>$type], $query)) }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-file-csv me-2"></i>Download CSV
                 </a>
-                <a href="{{ route('reports.pdf_dom', array_merge(['type' => $type], $query)) }}" class="btn btn-outline-danger gap-2 fw-bold">
+                <a href="{{ route('reports.pdf_dom', array_merge(['type'=>$type], $query)) }}" class="btn btn-outline-danger">
                     <i class="fas fa-file-pdf me-2"></i>Download PDF
                 </a>
             </div>
         </div>
 
-        <div class="reports-filter card shadow-sm mb-4 no-print">
+        <div class="reports-filter card shadow-sm mb-3 no-print">
             <div class="card-body">
-                <form method="GET" action="{{ route('reports.show', ['type' => $type]) }}" class="row g-3 align-items-end">
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100 fw-bold gap-2" type="submit" style="height: 40px;"><i class="fas fa-filter me-2"></i>Apply</button>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label section-title fw-bold">Filter Mode</label>
-                        <select id="filterMode" class="form-select custom-select-control fw-bold" name="mode">
-                            @php $mode = request('mode', 'range'); @endphp
-                            <option value="range" @selected($mode === 'range')>Date Range</option>
-                            <option value="month" @selected($mode === 'month')>By Month</option>
-                            <option value="year" @selected($mode === 'year')>By Year</option>
+                <form method="GET" action="{{ route('reports.show', ['type' => $type]) }}" class="row g-2 align-items-end">
+                    <div class="col-auto" style="min-width: 150px;">
+                        <label class="form-label section-title mb-1">Filter Mode</label>
+                        <select id="filterMode" class="form-select" name="mode">
+                            @php $mode = request('mode','range'); @endphp
+                            <option value="range" @selected($mode==='range')>Date Range</option>
+                            <option value="month" @selected($mode==='month')>By Month</option>
+                            <option value="year" @selected($mode==='year')>By Year</option>
                         </select>
                     </div>
 
-                    <div class="col-md-5" id="group-range">
-                        <label class="form-label fw-bold">Date Range</label>
-                        <div class="d-flex align-items-center gap-2" id="custom-control">
-                            <input type="date" class="form-control custom-input-control fw-bold" id="custom-control" name="date_from" value="{{ request('date_from') }}" placeholder="From"/>
+                    <div class="col-auto" id="group-range">
+                        <label class="form-label mb-1 fw-bold">Date Range</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="date" class="form-control" name="date_from" value="{{ request('date_from') }}" placeholder="From" style="max-width: 160px;"/>
                             <span class="fw-bold text-muted" style="white-space: nowrap;">To:</span>
-                            <input type="date" class="form-control custom-input-control fw-bold" id="custom-control" name="date_to" value="{{ request('date_to') }}" placeholder="To"/>
+                            <input type="date" class="form-control" name="date_to" value="{{ request('date_to') }}" placeholder="To" style="max-width: 160px;"/>
                         </div>
                     </div>
 
-                    <div class="col-md-5" id="group-month" style="display:none;">
-                        <label class="form-label fw-bold">Month</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <select class="form-select custom-select-control fw-bold" id="custom-control" name="month">
-                                    @for($m = 1; $m <= 12; $m++)
-                                        <option value="{{ $m }}" @selected((int) request('month') === $m)>{{ \Carbon\Carbon::createFromDate(null, $m, 1)->format('F') }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <input type="number" class="form-control custom-input-control fw-bold" id="custom-control" name="year" placeholder="Year" value="{{ request('year', now()->year) }}"/>
-                            </div>
+                    <div class="col" id="group-month" style="display:none;">
+                        <label class="form-label mb-1 fw-bold">Month</label>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" name="month">
+                                @for($m=1;$m<=12;$m++)
+                                    <option value="{{ $m }}" @selected((int)request('month')===$m)>{{ \Carbon\Carbon::createFromDate(null,$m,1)->format('F') }}</option>
+                                @endfor
+                            </select>
+                            <input type="number" class="form-control" name="year" placeholder="Year" value="{{ request('year', now()->year) }}" style="max-width: 100px;"/>
                         </div>
                     </div>
 
-                    <div class="col-md-5" id="group-year" style="display:none;">
-                        <label class="form-label fw-bold">Year</label>
-                        <input type="number" class="form-control custom-input-control fw-bold" id="custom-control" name="year" placeholder="Year" value="{{ request('year', now()->year) }}"/>
+                    <div class="col-auto" id="group-year" style="display:none; min-width: 150px;">
+                        <label class="form-label mb-1 fw-bold">Year</label>
+                        <input type="number" class="form-control" name="year" placeholder="Year" value="{{ request('year', now()->year) }}"/>
                     </div>
 
-                    @if($type === 'applicants')
-                        <div class="col-md-5" id="custom-control">
-                            <label class="form-label fw-bold">Barangay</label>
-                            <input type="text" class="form-control custom-input-control fw-bold" name="barangay" value="{{ request('barangay') }}"/>
+                    @if($type==='applicants')
+                        <div class="col-auto" style="min-width: 180px;">
+                            <label class="form-label mb-1 fw-bold">Barangay</label>
+                            <input type="text" class="form-control" name="barangay" value="{{ request('barangay') }}" placeholder="e.g. San Isidro"/>
                         </div>
                     @endif
 
-                    @if($type === 'applications')
-                        <div class="col-md-5" id="custom-control">
-                            <label class="form-label fw-bold">Service</label>
-                            <select class="form-select custom-select-control fw-bold" name="service_id">
+                    @if($type==='applications')
+                        <div class="col-auto" style="min-width: 200px;">
+                            <label class="form-label mb-1 fw-bold">Service</label>
+                            <select class="form-select" name="service_id">
                                 <option value="">— All Services —</option>
                                 @foreach(($extra['services'] ?? []) as $srv)
-                                    <option value="{{ $srv->service_id }}" @selected(request('service_id') == $srv->service_id)>{{ $srv->service }}</option>
+                                    <option value="{{ $srv->service_id }}" @selected(request('service_id')==$srv->service_id)>{{ $srv->service_type }}</option>
                                 @endforeach
                             </select>
                         </div>
                     @endif
+
+                    <div class="col-auto">
+                        <button class="btn btn-primary" type="submit" style="min-width: 120px;"><i class="fas fa-filter me-2"></i>Apply</button>
+                    </div>
                 </form>
-                <div class="mt-3 text-muted fw-bold">Range: <strong>{{ $rangeLabel }}</strong></div>
+                <div class="mt-2 text-muted no-print"><strong>Range:</strong> <strong>{{ $rangeLabel }}</strong></div>
             </div>
         </div>
 
         <div class="mb-3 d-flex flex-wrap gap-2">
-            @if($type === 'applications')
+            @if($type==='applications')
                 <span class="stat-pill bg-light border"><span class="label">Total:</span> {{ number_format($summary['total']) }}</span>
                 <span class="stat-pill bg-light border"><span class="label">Billed:</span> ₱ {{ number_format($summary['billed']) }}</span>
                 <span class="stat-pill bg-light border"><span class="label">Assisted:</span> ₱ {{ number_format($summary['assisted']) }}</span>
-            @elseif($type === 'tariffs')
+            @elseif($type==='tariffs')
                 <span class="stat-pill bg-light border"><span class="label">Total:</span> {{ number_format($summary['total']) }}</span>
                 <span class="stat-pill bg-light border"><span class="label">Active:</span> {{ number_format($summary['active']) }}</span>
                 <span class="stat-pill bg-light border"><span class="label">Inactive:</span> {{ number_format($summary['inactive']) }}</span>
@@ -119,61 +142,62 @@
 
         <div class="data-table-container shadow-sm">
             <div class="table-responsive">
-                <table class="report-table">
+                <table class="table table-striped">
                     <thead>
-                        @if($type === 'applicants')
+                        @if($type==='applicants')
                             <tr>
-                                <th class="text-center report-table-header">Applicant ID</th>
-                                <th class="text-center report-table-header">Full Name</th>
-                                <th class="text-center report-table-header">Phone</th>
-                                <th class="text-center report-table-header">Monthly Income</th>
-                                <th class="text-center report-table-header">Created</th>
+                                <th>Applicant ID</th>
+                                <th>Full Name</th>
+                                <th>Phone</th>
+                                <th>Monthly Income</th>
+                                <th>Created</th>
                             </tr>
-                        @elseif($type === 'patients')
+                        @elseif($type==='patients')
                             <tr>
-                                <th class="text-center report-table-header">Patient ID</th>
-                                <th class="text-center report-table-header">Full Name</th>
-                                <th class="text-center report-table-header">Sex</th>
-                                <th class="text-center report-table-header">Age</th>
-                                <th class="text-center report-table-header">Category</th>
-                                <th class="text-center report-table-header">Created</th>
+                                <th>Patient ID</th>
+                                <th>Full Name</th>
+                                <th>Sex</th>
+                                <th>Age</th>
+                                <th>Category</th>
+                                <th>Created</th>
                             </tr>
-                        @elseif($type === 'applications')
+                        @elseif($type==='applications')
                             <tr>
-                                <th class="text-center report-table-header">Application ID</th>
-                                <th class="text-center report-table-header">Applicant</th>
-                                <th class="text-center report-table-header">Service ID</th>
-                                <th class="text-center report-table-header">Billed</th>
-                                <th class="text-center report-table-header">Assisted</th>
-                                <th class="text-center report-table-header">Applied At</th>
+                                <th>Applicant</th>
+                                <th>Patient</th>
+                                <th>Affiliate Partner</th>
+                                <th>Service</th>
+                                <th>Billed</th>
+                                <th>Assisted</th>
+                                <th>Applied At</th>
                             </tr>
-                        @elseif($type === 'tariffs')
+                        @elseif($type==='tariffs')
                             <tr>
-                                <th class="text-center report-table-header">Tariff List ID</th>
-                                <th class="text-center report-table-header">Effectivity Date</th>
-                                <th class="text-center report-table-header">Status</th>
-                                <th class="text-center report-table-header">Created</th>
+                                <th>Tariff List ID</th>
+                                <th>Effectivity Date</th>
+                                <th>Status</th>
+                                <th>Created</th>
                             </tr>
                         @endif
                     </thead>
                     <tbody>
                         @forelse($items as $row)
-                            @if($type === 'applicants')
+                            @if($type==='applicants')
                                 <tr>
-                                    <td class="text-center">{{ $row->applicant_id }}</td>
-                                    <td class="text-left">{{ $row->full_name }}</td>
-                                    <td class="text-center">{{ $row->phone_number ?? '—' }}</td>
-                                    <td class="text-right">₱ {{ number_format((int) $row->monthly_income, 0) }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d') }}</td>
+                                    <td>{{ $row->applicant_id }}</td>
+                                    <td>{{ $row->full_name }}</td>
+                                    <td>{{ $row->phone_number ?? '—' }}</td>
+                                    <td>₱ {{ number_format((int)$row->monthly_income, 0) }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d') }}</td>
                                 </tr>
-                            @elseif($type === 'patients')
+                            @elseif($type==='patients')
                                 <tr>
-                                    <td class="text-center">{{ $row->patient_id }}</td>
-                                    <td class="text-left">{{ $row->full_name }}</td>
-                                    <td class="text-center">{{ $row->sex ?: '—' }}</td>
-                                    <td class="text-center">{{ $row->age ?: '—' }}</td>
-                                    <td class="text-center">{{ $row->patient_category ?: '—' }}</td>
-                                    <td class="text-center">
+                                    <td>{{ $row->patient_id }}</td>
+                                    <td>{{ $row->full_name }}</td>
+                                    <td>{{ $row->sex ?: '—' }}</td>
+                                    <td>{{ $row->age ?: '—' }}</td>
+                                    <td>{{ $row->patient_category ?: '—' }}</td>
+                                    <td>
                                         @if(!empty($row->created_at))
                                             {{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d') }}
                                         @elseif(!empty($row->created_year))
@@ -183,26 +207,27 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @elseif($type === 'applications')
+                            @elseif($type==='applications')
                                 <tr>
-                                    <td class="text-center">{{ $row->application_id }}</td>
-                                    <td class="text-left">{{ $row->full_name }}</td>
-                                    <td class="text-center">{{ $row->service_id }}</td>
-                                    <td class="text-right">₱ {{ number_format((int) $row->billed_amount, 0) }}</td>
-                                    <td class="text-right">₱ {{ number_format((int) $row->assistance_amount, 0) }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($row->applied_at)->format('Y-m-d') }}</td>
+                                    <td>{{ $row->applicant_name ?? '—' }}</td>
+                                    <td>{{ $row->patient_name ?? '—' }}</td>
+                                    <td>{{ $row->affiliate_partner_name ?? '—' }}</td>
+                                    <td>{{ $row->service_name ?? '—' }}</td>
+                                    <td>₱ {{ number_format((int)$row->billed_amount, 0) }}</td>
+                                    <td>₱ {{ number_format((int)$row->assistance_amount, 0) }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($row->applied_at)->format('Y-m-d') }}</td>
                                 </tr>
-                            @elseif($type === 'tariffs')
+                            @elseif($type==='tariffs')
                                 <tr>
-                                    <td class="text-center">{{ $row->tariff_list_id }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($row->effectivity_date)->format('Y-m-d') }}</td>
-                                    <td class="text-center"><span class="badge bg-secondary">{{ $row->tl_status }}</span></td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d') }}</td>
+                                    <td>{{ $row->tariff_list_id }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($row->effectivity_date)->format('Y-m-d') }}</td>
+                                    <td><span class="badge bg-secondary">{{ $row->tl_status }}</span></td>
+                                    <td>{{ \Carbon\Carbon::parse($row->created_at)->format('Y-m-d') }}</td>
                                 </tr>
                             @endif
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">No data found for the selected range.</td>
+                                <td colspan="7" class="text-center py-4 text-muted">No data found for the selected range.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -213,5 +238,5 @@
 @endsection
 
 @section('footer')
-    @include('components.layouts.footer.profile-buttons-1')
+    @include('components.layouts.footer.profile-buttons-2')
 @endsection

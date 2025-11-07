@@ -30,3 +30,13 @@
     height: 60px;
     width: 256px;
 }
+
+@media (max-width: 992px) {
+    .action-buttons {
+        flex-direction: column !important;
+    }
+
+    .btn-action {
+        width: 100% !important;
+    }
+}

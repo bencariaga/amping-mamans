@@ -2,10 +2,10 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateSponsorId;
 use App\Models\Operation\BudgetUpdate;
-use App\Models\Operation\GuaranteeLetter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Sponsor extends Model
 {
@@ -21,11 +21,15 @@ class Sponsor extends Model
 
     protected $fillable = [
         'sponsor_id',
-        'tp_id',
+        'member_id',
         'sponsor_type',
         'designation',
         'organization_name',
     ];
+
+    protected $appends = ['sponsor_name'];
+
+    protected $with = ['member'];
 
     protected static function boot()
     {
@@ -33,7 +37,12 @@ class Sponsor extends Model
 
         static::creating(function ($s) {
             if (empty($s->sponsor_id)) {
-                $s->sponsor_id = GenerateSponsorId::execute();
+                $year = Carbon::now()->year;
+                $base = "SPONSOR-{$year}";
+                $latest = static::where('sponsor_id', 'like', "{$base}%")->orderBy('sponsor_id', 'desc')->first();
+                $last = $latest ? (int) Str::substr($latest->sponsor_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $s->sponsor_id = "{$base}-{$next}";
             }
         });
     }
@@ -43,18 +52,18 @@ class Sponsor extends Model
         return (new static)->getKeyName();
     }
 
-    public function thirdParty()
+    public function member()
     {
-        return $this->belongsTo(ThirdParty::class, 'tp_id', 'tp_id');
+        return $this->belongsTo(Member::class, 'member_id');
     }
 
     public function budgetUpdates()
     {
-        return $this->hasMany(BudgetUpdate::class, 'sponsor_id', 'sponsor_id');
+        return $this->hasMany(BudgetUpdate::class, 'sponsor_id');
     }
 
-    public function guaranteeLetters()
+    public function getSponsorNameAttribute()
     {
-        return $this->hasMany(GuaranteeLetter::class, 'sponsor_id', 'sponsor_id');
+        return $this->member->full_name ?? '';
     }
 }

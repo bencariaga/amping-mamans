@@ -90,10 +90,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding-top: 10px;
 }
 
-.navbar-bottom {
-    width: 1240px !important;
-}
-
 .household-profile-container {
     padding: 1rem;
     min-width: 72.5rem;

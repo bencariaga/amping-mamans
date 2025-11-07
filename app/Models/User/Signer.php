@@ -2,8 +2,9 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GenerateSignerId;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Signer extends Model
 {
@@ -29,7 +30,12 @@ class Signer extends Model
 
         static::creating(function ($signer) {
             if (empty($signer->signer_id)) {
-                $signer->signer_id = GenerateSignerId::execute();
+                $year = Carbon::now()->year;
+                $base = "SIGNER-{$year}";
+                $latest = static::where('signer_id', 'like', "{$base}%")->latest('signer_id')->first();
+                $last = $latest ? (int) Str::substr($latest->signer_id, -3) : 0;
+                $next = Str::padLeft($last + 1, 3, '0');
+                $signer->signer_id = "{$base}-{$next}";
             }
         });
     }
@@ -41,6 +47,6 @@ class Signer extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'member_id', 'member_id');
+        return $this->belongsTo(Member::class, 'member_id');
     }
 }

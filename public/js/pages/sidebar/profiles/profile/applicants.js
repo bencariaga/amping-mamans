@@ -326,6 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const applicantBirthdateInput = document.getElementById(
         "applicantBirthdateInput"
     );
+    const applicantAgeInput = document.getElementById("applicantAgeInput");
+    const applicantAgeHidden = document.getElementById("applicantAgeHidden");
     const checkbox = document.getElementById("checkbox");
     const patientNumberInput = document.getElementById("patientNumberInput");
 
@@ -346,14 +348,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateApplicantAge() {
-        if (checkbox.checked) {
-            copyApplicantToPatient1();
+        if (applicantBirthdateInput.value) {
+            const age = calculateAge(applicantBirthdateInput.value);
+            applicantAgeInput.value = age;
+            applicantAgeHidden.value = age;
+
+            const event = new Event("input", { bubbles: true });
+            applicantAgeHidden.dispatchEvent(event);
+
+            if (checkbox.checked) {
+                copyApplicantToPatient1();
+            }
+        } else {
+            applicantAgeInput.value = "";
+            applicantAgeHidden.value = "";
         }
     }
 
-    if (applicantBirthdateInput) {
+    if (applicantBirthdateInput && applicantAgeInput && applicantAgeHidden) {
         applicantBirthdateInput.addEventListener("change", updateApplicantAge);
         applicantBirthdateInput.addEventListener("input", updateApplicantAge);
+
+        if (applicantBirthdateInput.value) {
+            updateApplicantAge();
+        }
     }
 
     function copyApplicantToPatient1() {
@@ -374,6 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "applicantSexDropdownBtn"
         );
         const applicantSexHidden = document.getElementById("sexHidden");
+        const applicantAge = document.getElementById("applicantAgeInput").value;
 
         document.getElementById("patientLastNameInput-1").value =
             applicantLastName;
@@ -389,10 +408,11 @@ document.addEventListener("DOMContentLoaded", () => {
             applicantSexBtn.textContent.trim();
         document.getElementById("patientSexHidden-1").value =
             applicantSexHidden.value;
+        document.getElementById("patientAgeInput-1").value = applicantAge;
 
         document
             .querySelectorAll(
-                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1"
+                "#patientLastNameInput-1, #patientFirstNameInput-1, #patientMiddleNameInput-1, #patientAgeInput-1"
             )
             .forEach((field) => {
                 field.readOnly = true;
@@ -787,8 +807,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </div>
                         <div class="form-group col-md-3">
-                            <label class="form-label fw-bold">Age <span class="required-asterisk">*</span></label>
-                            <input type="number" name="patients[${index}][age]" value="" class="form-control patient-age-input" id="patientAgeInput-${index}" placeholder="0" min="0" max="200">
+                            <label class="form-label fw-bold">Birthdate <span class="required-asterisk">*</span></label>
+                            <input type="date" name="patients[${index}][birthdate]" value="" class="form-control patient-birthdate-input" id="patientBirthdateInput-${index}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="form-label fw-bold">Age (Read-Only)</label>
+                            <input type="text" class="form-control patient-age-display" id="patientAgeDisplay-${index}" readonly>
+                            <input type="hidden" name="patients[${index}][age]" value="" class="patient-age-input" id="patientAgeInput-${index}">
                         </div>
                         <div class="form-group col-md-3">
                             <label class="form-label fw-bold">Category</label>
@@ -802,12 +827,96 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </ul>
                             </div>
                         </div>
-                        <div class="form-group col-md-3 d-flex justify-content-end" id="removePatientBtnContainer">
-                            <button type="button" class="btn btn-danger" id="removePatientBtn" disabled>REMOVE PATIENT</button>
-                        </div>
                     </div>
                 </div>
             </div>
         `;
     }
+
+    // Patient birthdate to age calculation
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList.contains('patient-birthdate-input')) {
+            const birthdateInput = e.target;
+            const index = birthdateInput.id.split('-')[1];
+            const ageDisplay = document.getElementById(`patientAgeDisplay-${index}`);
+            const ageHidden = document.getElementById(`patientAgeInput-${index}`);
+            const categoryBtn = document.getElementById(`patientCategoryDropdownBtn-${index}`);
+            const categoryHidden = document.getElementById(`patientCategoryHidden-${index}`);
+            
+            if (birthdateInput.value && ageDisplay && ageHidden) {
+                const age = calculateAge(birthdateInput.value);
+                ageDisplay.value = age;
+                ageHidden.value = age;
+                
+                // Get the dropdown menu
+                const categoryDropdown = categoryBtn?.nextElementSibling;
+                const seniorOption = categoryDropdown?.querySelector('[data-value="Senior"]')?.parentElement;
+                
+                // Auto-select category based on age
+                if (categoryBtn && categoryHidden) {
+                    if (age >= 60) {
+                        // Automatically set to Senior if 60 or above
+                        categoryBtn.textContent = 'Senior';
+                        categoryHidden.value = 'Senior';
+                        // Show Senior option
+                        if (seniorOption) seniorOption.style.display = '';
+                    } else {
+                        // Clear category selection for younger ages
+                        categoryBtn.textContent = '— Select —';
+                        categoryHidden.value = '';
+                        // Hide Senior option for under 60
+                        if (seniorOption) seniorOption.style.display = 'none';
+                    }
+                }
+            } else if (ageDisplay && ageHidden) {
+                ageDisplay.value = '';
+                ageHidden.value = '';
+                // Clear category if no birthdate
+                if (categoryBtn && categoryHidden) {
+                    categoryBtn.textContent = '— Select —';
+                    categoryHidden.value = '';
+                    // Show all options when no age
+                    const categoryDropdown = categoryBtn.nextElementSibling;
+                    const seniorOption = categoryDropdown?.querySelector('[data-value="Senior"]')?.parentElement;
+                    if (seniorOption) seniorOption.style.display = '';
+                }
+            }
+        }
+    });
+
+    // Initialize age for existing patient birthdate values
+    document.querySelectorAll('.patient-birthdate-input').forEach(function(input) {
+        if (input.value) {
+            const index = input.id.split('-')[1];
+            const ageDisplay = document.getElementById(`patientAgeDisplay-${index}`);
+            const ageHidden = document.getElementById(`patientAgeInput-${index}`);
+            const categoryBtn = document.getElementById(`patientCategoryDropdownBtn-${index}`);
+            const categoryHidden = document.getElementById(`patientCategoryHidden-${index}`);
+            
+            if (ageDisplay && ageHidden) {
+                const age = calculateAge(input.value);
+                ageDisplay.value = age;
+                ageHidden.value = age;
+                
+                // Get the dropdown menu
+                const categoryDropdown = categoryBtn?.nextElementSibling;
+                const seniorOption = categoryDropdown?.querySelector('[data-value="Senior"]')?.parentElement;
+                
+                // Auto-select category based on age
+                if (categoryBtn && categoryHidden) {
+                    if (age >= 60) {
+                        if (!categoryHidden.value) {
+                            categoryBtn.textContent = 'Senior';
+                            categoryHidden.value = 'Senior';
+                        }
+                        // Show Senior option
+                        if (seniorOption) seniorOption.style.display = '';
+                    } else {
+                        // Hide Senior option for under 60
+                        if (seniorOption) seniorOption.style.display = 'none';
+                    }
+                }
+            }
+        }
+    });
 });

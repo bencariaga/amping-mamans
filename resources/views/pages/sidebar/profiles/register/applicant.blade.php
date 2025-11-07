@@ -7,6 +7,7 @@
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="{{ asset('js/pages/sidebar/profiles/register/applicant.js') }}"></script>
 @endpush
 
@@ -18,10 +19,36 @@
 
 @section('content')
     <div class="container-fluid mt-4">
+        <div class="mb-3">
+            <label class="form-label fw-bold d-block">Applicant Mode</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="applicant_mode" id="applicantModeNew" value="new" checked>
+                <label class="form-check-label" for="applicantModeNew">New</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="applicant_mode" id="applicantModeOld" value="old">
+                <label class="form-check-label" for="applicantModeOld">Old</label>
+            </div>
+        </div>
+
+        <div class="mb-3" id="existingSearchSection" style="display: none;">
+            <label class="form-label fw-bold">Search Existing Applicant</label>
+            <div style="position: relative;">
+                <input type="text" class="form-control" id="existingApplicantSearch" placeholder="Type applicant name to search...">
+                <div id="existingApplicantResults" class="list-group shadow-sm" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1050; max-height: 300px; overflow-y: auto; display: none; margin-top: 2px; background-color: white; border: 1px solid #dee2e6; border-radius: 0.375rem;"></div>
+            </div>
+            <input type="hidden" id="selectedApplicantId" name="selected_applicant_id" value="">
+            <div class="alert alert-warning mt-2 d-none" id="existingApplicantBanner">
+                <i class="fas fa-user-check me-2"></i>
+                <span id="existingApplicantText">Existing applicant selected.</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="clearExistingApplicant">Clear selection</button>
+            </div>
+        </div>
+
         <form action="{{ route('profiles.applicants.store') }}" method="POST" class="profile-section" id="profileSection">
         @csrf
 
-            <div class="profile-container">
+            <div class="profile-container" id="applicantDetailsWrapper">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fas fa-user fa-fw"></i><span class="header-title">APPLICANT'S NAME</span>
@@ -63,12 +90,12 @@
                 </div>
             </div>
 
-            <div class="profile-container">
+            <div class="profile-container" id="personalInfoWrapper">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fa fa-info-circle fa-fw"></i><span class="header-title">PERSONAL INFORMATION</span>
                     </legend>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label class="form-label fw-bold">Gender / Sex <span class="required-asterisk">*</span></label>
                         <input type="hidden" name="sex" id="sexHidden" value="{{ old('sex', '') }}">
                         <div class="dropdown">
@@ -83,10 +110,15 @@
                         </div>
                         @error('sex') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label class="form-label fw-bold">Birthdate <span class="required-asterisk">*</span></label>
                         <input type="date" name="birth_date" value="{{ old('birth_date') }}" class="form-control" id="applicantBirthdateInput">
                         @error('birth_date') <span class="text-danger mt-3">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label class="form-label fw-bold">Age (Read-Only)</label>
+                        <input type="text" class="form-control" id="applicantAgeInput" readonly>
+                        <input type="hidden" name="applicant_age" id="applicantAgeHidden" value="{{ old('applicant_age', 0) }}">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Phone Number <span class="required-asterisk">*</span></label>
@@ -113,7 +145,7 @@
                 </div>
             </div>
 
-            <div class="profile-container">
+            <div class="profile-container" id="workInfoWrapper">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fa fa-briefcase fa-fw"></i><span class="header-title">WORK INFORMATION</span>
@@ -170,7 +202,7 @@
                 </div>
             </div>
 
-            <div class="profile-container">
+            <div class="profile-container" id="addressWrapper">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fa fa-home fa-fw"></i><span class="header-title">HOME ADDRESS</span>
@@ -180,34 +212,34 @@
                     <input type="hidden" name="municipality" value="N / A">
                     <div class="form-group col-md-2">
                         <label class="form-label">House # <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="house_number" value="{{ old('house_number') }}" class="form-control" id="applicantHouseNumberInput" placeholder="Either room or lot #">
+                        <input type="text" name="house_number" value="{{ old('house_number') }}" class="form-control" id="applicantHouseNumberInput" placeholder="Either room or lot #" maxlength="20">
                     </div>
                     <div class="form-group col-md-2">
                         <label class="form-label">Block # <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="block_number" value="{{ old('block_number') }}" class="form-control" id="applicantBlockNumberInput" placeholder="Ex: Block 1">
+                        <input type="text" name="block_number" value="{{ old('block_number') }}" class="form-control" id="applicantBlockNumberInput" placeholder="Ex: Block 1" maxlength="20">
                     </div>
                     <div class="form-group col-md-2">
                         <label class="form-label">Phase <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="phase" value="{{ old('phase') }}" class="form-control" id="applicantPhaseInput" placeholder="Ex: Phase 1-A">
+                        <input type="text" name="phase" value="{{ old('phase') }}" class="form-control" id="applicantPhaseInput" placeholder="Ex: Phase 1-A" maxlength="20">
                     </div>
                     <div class="form-group col-md-2">
                         <label class="form-label">Street <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="street" value="{{ old('street') }}" class="form-control" id="applicantStreetInput" placeholder="Ex: Matalam St.">
+                        <input type="text" name="street" value="{{ old('street') }}" class="form-control" id="applicantStreetInput" placeholder="Ex: Matalam St." maxlength="100">
                     </div>
                     <div class="form-group col-md-2">
                         <label class="form-label">Sitio <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="sitio" value="{{ old('sitio') }}" class="form-control" id="applicantSitioInput" placeholder="Ex: Sitio Corazon">
+                        <input type="text" name="sitio" value="{{ old('sitio') }}" class="form-control" id="applicantSitioInput" placeholder="Ex: Sitio Corazon" maxlength="50">
                     </div>
                     <div class="form-group col-md-2">
                         <label class="form-label">Purok <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="purok" value="{{ old('purok') }}" class="form-control" id="applicantPurokInput" placeholder="Ex: Purok Maunlad">
+                        <input type="text" name="purok" value="{{ old('purok') }}" class="form-control" id="applicantPurokInput" placeholder="Ex: Purok Maunlad" maxlength="50">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">Subdivision <span class="fw-normal">(if applicable)</span></label>
-                        <input type="text" name="subdivision" value="{{ old('subdivision') }}" class="form-control" id="applicantSubdivisionInput" placeholder="Ex: Doña Soledad">
+                        <input type="text" name="subdivision" value="{{ old('subdivision') }}" class="form-control" id="applicantSubdivisionInput" placeholder="Ex: Doña Soledad" maxlength="50">
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="form-label">Barangay <span class="required-asterisk">*</span></label>
+                        <label class="form-label">Barangay <span class="fw-normal">(if applicable)</span></label>
                         <input type="hidden" name="barangay" id="barangayHidden" value="{{ old('barangay', '') }}">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="applicantBarangayDropdownBtn">
@@ -220,7 +252,6 @@
                                 @endforeach
                             </ul>
                         </div>
-                        @error('barangay') <span class="text-danger mt-3">{{ $message }}</span> @enderror
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">House Occupancy Status <span class="required-asterisk">*</span></label>
@@ -258,11 +289,24 @@
                 </div>
             </div>
 
-            <div class="profile-container">
+            <div class="profile-container" id="medicalInfoWrapper">
                 <div class="row gx-3 gy-3 mb-3">
                     <legend class="form-legend">
                         <i class="fa-solid fa-file-medical fa-fw"></i><span class="header-title">MEDICAL INFORMATION</span>
                     </legend>
+                    <div class="col-12" id="existingPatientsSection" style="display: none;">
+                        <div class="alert alert-secondary d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fas fa-history me-2"></i>
+                                <strong>Previous Applications</strong>
+                                <span class="text-muted">(belonging to the selected applicant)</span>
+                            </div>
+                            <span class="badge bg-primary" id="existingPatientsCount" title="Total applications">0</span>
+                        </div>
+                        <ul class="list-group mb-3" id="existingPatientsList">
+                            <!-- Filled dynamically by JS -->
+                        </ul>
+                    </div>
                     <div class="form-group col-md-3">
                         <label class="form-label fw-bold">Number of Patients <span class="required-asterisk">*</span></label>
                         <input type="number" name="patient_number" value="{{ old('patient_number', 1) }}" class="form-control" id="patientNumberInput" placeholder="1" min="1" max="10" inputmode="numeric">
@@ -376,8 +420,14 @@
                                     @error("patients.{$index}.sex") <span class="text-danger mt-3">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label class="form-label fw-bold">Age <span class="required-asterisk">*</span></label>
-                                    <input type="number" name="patients[{{ $index }}][age]" value="{{ $patient['age'] ?? '' }}" class="form-control patient-age-input" id="patientAgeInput-{{ $index }}" placeholder="0" min="0" max="200">
+                                    <label class="form-label fw-bold">Birthdate <span class="required-asterisk">*</span></label>
+                                    <input type="date" name="patients[{{ $index }}][birthdate]" value="{{ $patient['birthdate'] ?? '' }}" class="form-control patient-birthdate-input" id="patientBirthdateInput-{{ $index }}">
+                                    @error("patients.{$index}.birthdate") <span class="text-danger mt-3">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="form-label fw-bold">Age (Read-Only)</label>
+                                    <input type="text" class="form-control patient-age-display" id="patientAgeDisplay-{{ $index }}" readonly>
+                                    <input type="hidden" name="patients[{{ $index }}][age]" value="{{ $patient['age'] ?? '' }}" class="patient-age-input" id="patientAgeInput-{{ $index }}">
                                     @error("patients.{$index}.age") <span class="text-danger mt-3">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="form-group col-md-3">
@@ -396,9 +446,7 @@
                                     @error("patients.{$index}.patient_category") <span class="text-danger mt-3">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="form-group col-md-3 d-flex justify-content-end" id="removePatientBtnContainer">
-                                    <button type="button" class="btn btn-danger" id="removePatientBtn" disabled>REMOVE PATIENT</button>
-                                </div>
+                                <div class="form-group col-md-3 d-flex justify-content-end d-none" id="removePatientBtnContainer"></div>
                             </div>
                         </div>
                     </div>
@@ -410,5 +458,5 @@
 
 @section('footer')
     @include('components.layouts.footer.add-applicant')
-    @include('components.layouts.footer.profile-buttons-2')
+    @include('components.layouts.footer.profile-buttons-3')
 @endsection

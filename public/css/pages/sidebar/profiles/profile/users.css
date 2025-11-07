@@ -26,6 +26,12 @@
     --dark-mode-invert: 1;
 }
 
+#commonBtn,
+#updateProfileBtn,
+#removeProfilePictureBtn {
+    font-size: 16px;
+}
+
 .form-control::placeholder {
     color: var(--placeholder-color);
 }
@@ -119,19 +125,10 @@
     margin-bottom: 1rem;
 }
 
-#updateUserBtn,
-#deleteAccountBtn,
-#changePasswordBtn,
-#deactivateAccountBtn {
-    font-size: 20px;
-}
-
 #form-input,
-#updateUserBtn,
-#deleteAccountBtn,
-#changePasswordBtn,
-#suffixDropdownBtn,
-#deactivateAccountBtn {
+#removeProfilePictureBtn,
+#updateProfileBtn,
+#suffixDropdownBtn {
     height: 50px;
 }
 
@@ -186,16 +183,9 @@
 
 .form-label,
 .modal-label {
+    font-weight: 500 !important;
     color: var(--input-text);
     margin-bottom: 0.5rem;
-}
-
-.form-label {
-    font-weight: bold !important;
-}
-
-.modal-label {
-    font-weight: 500 !important;
 }
 
 .required-asterisk {
@@ -231,17 +221,17 @@
 .form-select:hover,
 #form-input:hover,
 #suffixDropdownBtn:hover {
-    background-color: var(--input-bg-focus) !important;
+    background-color: var(--input-bg-focus);
 }
 
 .form-control:focus,
 .form-select:focus,
 #form-input:focus,
 #suffixDropdownBtn:focus {
-    background-color: var(--input-bg-focus) !important;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
-    border-color: var(--primary-color);
+    background-color: var(--input-bg-focus);
     color: var(--input-text);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
 }
 
 #suffixDropdownBtn::after {
@@ -356,4 +346,54 @@
 
 .btn-close {
     filter: invert(var(--dark-mode-invert));
+}
+
+@media (max-width: 768px) {
+    .sidebar-v1 {
+        width: 70px;
+    }
+
+    .sidebar-brand-text,
+    .nav-text {
+        display: none;
+    }
+
+    .sidebar-nav .nav-link {
+        justify-content: center;
+        padding: 15px 10px;
+    }
+
+    .nav-icon {
+        margin-right: 0;
+        font-size: 1.3rem;
+    }
+
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-left-section {
+        margin-right: 0;
+        margin-bottom: 2rem;
+    }
+
+    .profile-grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .navbar-top .name,
+    .navbar-top .contact-number-role {
+        text-align: left;
+    }
+
+    .main-content-v2 {
+        padding-inline: 10px;
+    }
 }

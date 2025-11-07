@@ -32,6 +32,14 @@ document.addEventListener('DOMContentLoaded', function () {
     window.closeCreateModal = function () {
         createForm.reset();
         hideErrors();
+        
+        // Remove any info messages
+        const dateInputParent = effectivityDateInput.parentElement;
+        const existingMessage = dateInputParent.querySelector('.alert-info');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
         createTariffModal.hide();
     };
 
@@ -39,17 +47,51 @@ document.addEventListener('DOMContentLoaded', function () {
         createForm.reset();
         await fetchTakenDates();
 
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowString = tomorrow.toISOString().substring(0, 10);
-        effectivityDateInput.setAttribute('min', tomorrowString);
-        effectivityDateInput.value = tomorrowString;
+        // Get suggested effectivity date from server
+        try {
+            const response = await fetch('/tariff-lists/suggested-date');
+            const result = await response.json();
+            const suggestedDate = result.suggested_date;
+            
+            // Set min date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowString = tomorrow.toISOString().substring(0, 10);
+            effectivityDateInput.setAttribute('min', tomorrowString);
+            
+            // Set the suggested date as the default value
+            effectivityDateInput.value = suggestedDate;
+            
+            // Show message about the suggested date
+            if (result.message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-info mt-2';
+                messageDiv.style.fontSize = '0.875rem';
+                messageDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i>${result.message}`;
+                
+                // Insert message after the date input
+                const dateInputParent = effectivityDateInput.parentElement;
+                const existingMessage = dateInputParent.querySelector('.alert-info');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+                dateInputParent.appendChild(messageDiv);
+            }
 
-        if (isDateTaken(tomorrowString)) {
-            effectivityDateError.querySelector('span').textContent = 'The selected effectivity date is already taken by another tariff list version.';
-            effectivityDateError.style.display = 'block';
-        } else {
-            hideErrors();
+            if (isDateTaken(suggestedDate)) {
+                effectivityDateError.querySelector('span').textContent = 'The selected effectivity date is already taken by another tariff list version.';
+                effectivityDateError.style.display = 'block';
+            } else {
+                hideErrors();
+            }
+        } catch (error) {
+            console.error('Error fetching suggested date:', error);
+            // Fallback to tomorrow if API fails
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowString = tomorrow.toISOString().substring(0, 10);
+            effectivityDateInput.setAttribute('min', tomorrowString);
+            effectivityDateInput.value = tomorrowString;
         }
 
         createTariffModal.show();

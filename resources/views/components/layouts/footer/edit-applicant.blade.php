@@ -8,8 +8,3 @@
     <div class="nav-icon"><i class="fas fa-save"></i></div>
     <div class="nav-text">Save Changes</div>
 </a>
-
-<a type="button" id="deleteApplicantBtn" class="footer-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-    <div class="nav-icon"><i class="fa-solid fa-trash-can"></i></div>
-    <div class="nav-text">Delete Account</div>
-</a>

@@ -187,3 +187,27 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     color: #fff;
 }
+
+@media (max-width: 992px) {
+    .amping-container {
+        width: 100%;
+    }
+
+    .about-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .info-section,
+    .tools-section {
+        width: 100%;
+        height: auto;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+    }
+
+    #back-button {
+        width: 100%;
+    }
+}

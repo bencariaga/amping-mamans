@@ -1,14 +1,13 @@
-<a type="button" id="backToDashboardBtn" class="footer-btn" href="{{ route('dashboard') }}">
-    <div class="nav-icon"><i class="fa fa-long-arrow-alt-left"></i></div>
-    <div class="nav-text">Back to Dashboard</div>
-</a>
-
 <a type="button" id="addApplicantBtn" class="footer-btn" href="{{ route('profiles.applicants.create') }}">
     <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
     <div class="nav-text">Add<br>Applicant</div>
 </a>
 
-<a type="button" id="exportBtn" class="footer-btn">
-    <div class="nav-icon"><i class="fas fa-file-excel"></i></div>
-    <div class="nav-text">Export as<br>Excel File</div>
+{{--
+
+<a type="button" id="householdBtn" class="footer-btn" href="{{ route('profiles.households.list') }}">
+    <div class="nav-icon"><i class="fas fa-house-user"></i></div>
+    <div class="nav-text">Households</div>
 </a>
+
+--}}

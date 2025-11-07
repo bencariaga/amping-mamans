@@ -2,8 +2,11 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\IdGeneration\GenerateServiceId;
+use App\Models\Storage\Data;
+use App\Models\User\AffiliatePartner;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Service extends Model
 {
@@ -20,7 +23,8 @@ class Service extends Model
     protected $fillable = [
         'service_id',
         'data_id',
-        'service',
+        'service_type',
+        'assist_scope',
     ];
 
     protected static function boot()
@@ -29,7 +33,12 @@ class Service extends Model
 
         static::creating(function ($svc) {
             if (empty($svc->service_id)) {
-                $svc->service_id = GenerateServiceId::execute();
+                $year = Carbon::now()->year;
+                $base = "SERVICE-{$year}";
+                $latest = static::where('service_id', 'like', "{$base}%")->orderBy('service_id', 'desc')->first();
+                $last = $latest ? (int) Str::substr($latest->service_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $svc->service_id = "{$base}-{$next}";
             }
         });
     }
@@ -41,11 +50,16 @@ class Service extends Model
 
     public function data()
     {
-        return $this->belongsTo(Data::class, 'data_id', 'data_id');
+        return $this->belongsTo(Data::class, 'data_id');
     }
 
-    public function expenseRanges()
+    public function tariffLists()
     {
-        return $this->hasMany(ExpenseRange::class, 'service_id', 'service_id');
+        return $this->hasMany(TariffList::class, 'service_id');
+    }
+    
+    public function affiliatePartners()
+    {
+        return $this->belongsToMany(AffiliatePartner::class, 'affiliate_partner_services', 'service_id', 'affiliate_partner_id');
     }
 }

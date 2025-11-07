@@ -1,108 +1,77 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     const updateClock = () => {
         const now = new Date();
 
         const options = {
-            timeZone: "Asia/Manila",
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true,
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
         };
 
-        const formatter = new Intl.DateTimeFormat("en-US", options);
+        const formatter = new Intl.DateTimeFormat('en-US', options);
         const formattedDate = formatter.format(now);
-        const [month, day, year, time, ampm] = formattedDate
-            .replace(",", "")
-            .split(" ");
+        const [month, day, year, time, ampm] = formattedDate.replace(',', '').split(' ');
         const formattedTime = `${time} ${ampm}`;
         const finalFormat = `${month}. ${day}, ${year} ${formattedTime}`;
-
-        const clockElement = document.getElementById("live-clock");
-        if (clockElement) {
-            clockElement.textContent = finalFormat;
-        }
+        document.getElementById('live-clock').textContent = finalFormat;
     };
 
     updateClock();
     setInterval(updateClock, 1000);
 
-    const formatCurrency = (amount) => {
-        const value = Number(amount);
-        if (Number.isNaN(value)) return "N/A";
+    const disabledButtons = document.querySelectorAll('#disabled-ui-component');
 
-        return new Intl.NumberFormat("en-PH", {
-            style: "currency",
-            currency: "PHP",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(value);
-    };
+    disabledButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+        });
+    });
 
-    const updateBudgetDisplay = (data) => {
-        const allocatedElement = document.getElementById(
-            "allocated-budget-amount"
-        );
-        const usedElement = document.getElementById("budget-used-amount");
-        const remainingElement = document.getElementById(
-            "remaining-budget-amount"
-        );
-        const supplementaryElement = document.getElementById(
-            "supplementary-budget-status"
-        );
+    fetch('/api/latest-budget', { credentials: 'same-origin' }).then(response => {
+        return response.json();
+    }).then(data => {
+        const formatCurrency = (amount) => {
+            const value = Number(amount);
+            if (Number.isNaN(value)) return 'Error';
+
+            return new Intl.NumberFormat('en-PH', {
+                style: 'currency',
+                currency: 'PHP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        };
 
         if (data && Object.keys(data).length) {
-            if (allocatedElement)
-                allocatedElement.innerText = formatCurrency(data.amount_accum);
-            if (usedElement)
-                usedElement.innerText = formatCurrency(data.amount_change);
-            if (remainingElement)
-                remainingElement.innerText = formatCurrency(data.amount_recent);
+            document.getElementById('allocated-budget-amount').innerText = formatCurrency(data.amount_accum);
+            document.getElementById('budget-used-amount').innerText = formatCurrency(data.amount_change);
+            document.getElementById('remaining-budget-amount').innerText = formatCurrency(data.amount_recent);
 
-            if (supplementaryElement) {
-                const status = data.has_supplementary_budget ? "YES" : "NO";
-                supplementaryElement.innerText = status;
-                supplementaryElement.style.color = status === "YES" ? "#80ff00" : "#ff2400";
+            const supplementaryBudgetStatusElement = document.getElementById('supplementary-budget-status');
+
+            if (data.has_supplementary_budget) {
+                supplementaryBudgetStatusElement.innerText = 'YES';
+                supplementaryBudgetStatusElement.style.color = '#48b748';
+            } else {
+                supplementaryBudgetStatusElement.innerText = 'NO';
+                supplementaryBudgetStatusElement.style.color = '#ff0000';
             }
         } else {
-            handleBudgetError("N/A");
+            document.getElementById('allocated-budget-amount').innerText = 'N/A';
+            document.getElementById('budget-used-amount').innerText = 'N/A';
+            document.getElementById('remaining-budget-amount').innerText = 'N/A';
+            document.getElementById('supplementary-budget-status').innerText = 'N/A';
         }
-    };
-
-    const handleBudgetError = (message = "Error") => {
-        const elements = [
-            "allocated-budget-amount",
-            "budget-used-amount",
-            "remaining-budget-amount",
-            "supplementary-budget-status",
-        ];
-
-        elements.forEach((id) => {
-            const element = document.getElementById(id);
-            if (element) element.innerText = message;
-        });
-    };
-
-    const fetchBudgetData = async () => {
-        try {
-            const response = await fetch("/api/latest-budget", {
-                credentials: "same-origin",
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            updateBudgetDisplay(data);
-        } catch (error) {
-            console.error("Error fetching budget data:", error);
-            handleBudgetError();
-        }
-    };
-
-    fetchBudgetData();
+    }).catch(error => {
+        console.error('Error fetching budget data:', error);
+        document.getElementById('allocated-budget-amount').innerText = 'Error';
+        document.getElementById('budget-used-amount').innerText = 'Error';
+        document.getElementById('remaining-budget-amount').innerText = 'Error';
+        document.getElementById('supplementary-budget-status').innerText = 'Error';
+    });
 });

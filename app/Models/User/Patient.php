@@ -2,9 +2,10 @@
 
 namespace App\Models\User;
 
-use App\Actions\IdGeneration\GeneratePatientId;
 use App\Models\Operation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Patient extends Model
 {
@@ -31,7 +32,12 @@ class Patient extends Model
 
         static::creating(function ($p) {
             if (empty($p->patient_id)) {
-                $p->patient_id = GeneratePatientId::execute();
+                $year = Carbon::now()->year;
+                $base = "PATIENT-{$year}";
+                $latest = static::where('patient_id', 'like', "{$base}%")->latest('patient_id')->first();
+                $last = $latest ? (int) Str::substr($latest->patient_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $p->patient_id = "{$base}-{$next}";
             }
         });
     }
@@ -48,11 +54,11 @@ class Patient extends Model
 
     public function applicant()
     {
-        return $this->belongsTo(Applicant::class, 'applicant_id', 'applicant_id');
+        return $this->belongsTo(Applicant::class, 'applicant_id');
     }
 
     public function applications()
     {
-        return $this->hasMany(Application::class, 'patient_id', 'patient_id');
+        return $this->hasMany(Application::class, 'patient_id');
     }
 }

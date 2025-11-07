@@ -1,13 +1,28 @@
-.theme-toggle {
-    background-color: var(--nav-link-bg);
+.theme-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2980b9, #1a4f8e) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
 }
 
-.theme-toggle:hover {
-    background-color: var(--nav-link-hover-bg);
+.theme-toggle-icon:hover {
+    background: linear-gradient(135deg, #3498db, #2980b9) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
 }
 
-.theme-toggle i {
+.theme-toggle-icon i {
     font-size: 1.5rem;
-    color: white;
+    color: white !important;
 }

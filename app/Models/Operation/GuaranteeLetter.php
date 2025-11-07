@@ -2,8 +2,9 @@
 
 namespace App\Models\Operation;
 
-use App\Actions\IdGeneration\GenerateGuaranteeLetterId;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class GuaranteeLetter extends Model
 {
@@ -19,11 +20,8 @@ class GuaranteeLetter extends Model
 
     protected $fillable = [
         'gl_id',
-        'gl_tmp_id',
         'application_id',
         'budget_update_id',
-        'is_sponsored',
-        'is_cancelled',
     ];
 
     protected static function boot()
@@ -32,7 +30,12 @@ class GuaranteeLetter extends Model
 
         static::creating(function ($gl) {
             if (empty($gl->gl_id)) {
-                $gl->gl_id = GenerateGuaranteeLetterId::execute();
+                $year = Carbon::now()->year;
+                $base = "GL-{$year}";
+                $latest = static::where('gl_id', 'like', "{$base}%")->latest('gl_id')->first();
+                $last = $latest ? (int) Str::substr($latest->gl_id, -9) : 0;
+                $next = Str::padLeft($last + 1, 9, '0');
+                $gl->gl_id = "{$base}-{$next}";
             }
         });
     }
@@ -44,16 +47,11 @@ class GuaranteeLetter extends Model
 
     public function application()
     {
-        return $this->belongsTo(Application::class, 'application_id', 'application_id');
-    }
-
-    public function glTemplate()
-    {
-        return $this->belongsTo(GLTemplate::class, 'gl_tmp_id', 'gl_tmp_id');
+        return $this->belongsTo(Application::class, 'application_id');
     }
 
     public function budgetUpdate()
     {
-        return $this->belongsTo(BudgetUpdate::class, 'budget_update_id', 'budget_update_id');
+        return $this->belongsTo(BudgetUpdate::class, 'budget_update_id');
     }
 }

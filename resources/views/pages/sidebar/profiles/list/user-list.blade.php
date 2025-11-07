@@ -99,10 +99,11 @@
             <div id="user-card-grid">
                 @foreach($users as $user)
                     @php
-                        $file = $user->staff?->file_name;
-                        $name = "{$user->last_name}, {$user->first_name}" . ($user->middle_name ? ' ' . strtoupper(substr($user->middle_name, 0, 1)) . '.' : '') . " {$user->suffix}";
+                        $imageRecord = $user->files()->firstWhere('file_type', 'Image');
+                        $file        = optional($imageRecord)->filename;
+                        $name        = "{$user->last_name}, {$user->first_name}" . ($user->middle_name ? ' ' . strtoupper(substr($user->middle_name, 0, 1)) . '.' : '') . " {$user->suffix}";
                         $currentRole = ($user->member_type === 'Staff' && $user->staff) ? optional($user->staff->role)->role : 'N/A';
-                        $url = Auth::id() === $user->member_id ? route('user.profile.show') : route('profiles.users.show', $user->staff->staff_id);
+                        $url         = Auth::id() === $user->member_id ? route('user.profile.show') : route('profiles.users.show', $user->member_id);
                     @endphp
 
                     <div class="user-card-box">
@@ -145,4 +146,5 @@
 
 @section('footer')
     @include('components.layouts.footer.list-user')
+    @include('components.layouts.footer.profile-buttons-3')
 @endsection
